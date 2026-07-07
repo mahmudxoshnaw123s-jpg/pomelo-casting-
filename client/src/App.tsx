@@ -1,34 +1,65 @@
-import Marquee from './components/Marquee'
+import { AnimatePresence } from 'framer-motion'
+import { useEffect, useState } from 'react'
+import { Route, Routes, useLocation } from 'react-router-dom'
+import CursorGlow from './components/CursorGlow'
 import Navbar from './components/Navbar'
+import PageTransition from './components/PageTransition'
+import Preloader from './components/Preloader'
 import ScrollProgress from './components/ScrollProgress'
-import SectionRail from './components/SectionRail'
 import WhatsappFab from './components/WhatsappFab'
-import About from './sections/About'
-import Contact from './sections/Contact'
-import Faq from './sections/Faq'
 import Footer from './sections/Footer'
-import Hero from './sections/Hero'
-import Insights from './sections/Insights'
-import Services from './sections/Services'
-import Work from './sections/Work'
-import { marquee } from './data/content'
+import Home from './pages/Home'
+import ServiceDetailPage from './pages/ServiceDetailPage'
 
 function App() {
+  const location = useLocation()
+  const [showPreloader, setShowPreloader] = useState(
+    () => typeof window !== 'undefined' && !sessionStorage.getItem('pomelo-visited'),
+  )
+
+  useEffect(() => {
+    if (!showPreloader) return
+    document.body.style.overflow = 'hidden'
+    const timer = window.setTimeout(() => {
+      sessionStorage.setItem('pomelo-visited', '1')
+      setShowPreloader(false)
+      document.body.style.overflow = ''
+    }, 1400)
+    return () => {
+      window.clearTimeout(timer)
+      document.body.style.overflow = ''
+    }
+  }, [showPreloader])
+
   return (
     <>
+      <AnimatePresence>{showPreloader && <Preloader key="preloader" />}</AnimatePresence>
+
       <ScrollProgress />
+      <CursorGlow />
       <Navbar />
-      <SectionRail />
       <WhatsappFab />
       <main>
-        <Hero />
-        <Marquee items={marquee} />
-        <About />
-        <Services />
-        <Work />
-        <Insights />
-        <Faq />
-        <Contact />
+        <AnimatePresence mode="wait">
+          <Routes location={location} key={location.pathname}>
+            <Route
+              path="/"
+              element={
+                <PageTransition>
+                  <Home />
+                </PageTransition>
+              }
+            />
+            <Route
+              path="/services/:slug"
+              element={
+                <PageTransition>
+                  <ServiceDetailPage />
+                </PageTransition>
+              }
+            />
+          </Routes>
+        </AnimatePresence>
       </main>
       <Footer />
     </>

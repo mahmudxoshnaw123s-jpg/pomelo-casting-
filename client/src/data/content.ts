@@ -19,17 +19,8 @@ export const hero = {
 
 export const marquee = ['Models', 'Actors', 'Creators', 'Talent', 'Editorial', 'Campaigns']
 
-export const sections = [
-  { index: '01', label: 'About', href: '#about' },
-  { index: '02', label: 'Services', href: '#services' },
-  { index: '03', label: 'Work', href: '#work' },
-  { index: '04', label: 'Insights', href: '#insights' },
-  { index: '05', label: 'FAQ', href: '#faq' },
-  { index: '06', label: 'Contact', href: '#contact' },
-]
-
 export const about = {
-  label: '01 — About',
+  label: 'About',
   heading: 'Casting with an eye for the right fit, not just the right face.',
   body: 'Pomelo Casting is a talent agency built around one idea: the right person makes the campaign. We work with brands, agencies, and production teams to source, vet, and place models, actors, and creators for shoots, campaigns, and productions of every scale.',
   stats: [
@@ -40,30 +31,79 @@ export const about = {
 }
 
 export const services = {
-  label: '02 — Services',
+  label: 'Services',
   heading: 'What we do',
+  subhead: 'Four ways we get the right talent in front of the right camera.',
   items: [
     {
       title: 'Talent Casting',
+      slug: 'talent-casting',
+      icon: 'spotlight',
       description: 'Sourcing and vetting models, actors, and creators matched to your brief.',
+      overview:
+        'We start with your brief and dig into our roster and open network to build a shortlist that actually fits — not just headshots that photograph well, but people with the right energy, availability, and experience for the project.',
+      workflow: [
+        'Brief intake & scope call',
+        'Roster + open-call sourcing',
+        'Internal shortlist review',
+        'Client shortlist delivery',
+        'Callback coordination',
+      ],
+      deliverables: ['Curated talent shortlist with portfolios', 'Availability & rate confirmation', 'Callback scheduling support'],
+      timeline: '3–7 business days',
+      tools: ['Talent database', 'Digital portfolios', 'Video callback review'],
+      relatedWork: ['New Faces Wanted'],
     },
     {
       title: 'Campaign & Editorial Casting',
+      slug: 'campaign-editorial-casting',
+      icon: 'hanger',
       description: 'Full casting management for fashion, ad, and commercial shoots.',
+      overview:
+        'For campaign and editorial work we manage casting end-to-end — briefing, sourcing, fittings, and being on-set as the point of contact for talent, so your creative team can focus on the shoot.',
+      workflow: [
+        'Creative brief alignment',
+        'Look-book sourcing',
+        'Client selection & approval',
+        'Fittings & confirmations',
+        'On-set talent coordination',
+      ],
+      deliverables: ['Look-matched shortlist', 'Fitting schedule', 'Signed talent releases', 'On-set support'],
+      timeline: '1–2 weeks',
+      tools: ['Mood-board matching', 'Digital contracts', 'Fitting logistics'],
+      relatedWork: ['Editorial Feature'],
     },
     {
       title: 'Production Casting',
+      slug: 'production-casting',
+      icon: 'clapper',
       description: 'Talent placement for film, TV, and video productions.',
+      overview:
+        'From background talent to featured roles, we cast for film, TV, and branded video productions — coordinating auditions, tapes, and scheduling around your production timeline.',
+      workflow: ['Role breakdown review', 'Audition tape collection', 'Director callback rounds', 'Contract & schedule lock'],
+      deliverables: ['Audition tapes', 'Callback shortlist', 'Signed contracts', 'Production-ready schedule'],
+      timeline: '2–4 weeks, depending on scope',
+      tools: ['Self-tape review', 'Scheduling coordination', 'Contract management'],
+      relatedWork: ['On Set'],
     },
     {
       title: 'Talent Management',
+      slug: 'talent-management',
+      icon: 'star',
       description: 'Ongoing representation and booking support for our roster.',
+      overview:
+        'For talent on our roster, we handle ongoing representation — surfacing the right opportunities, negotiating bookings, and managing the relationship with brands and productions over time.',
+      workflow: ['Roster onboarding', 'Opportunity matching', 'Booking negotiation', 'Ongoing career support'],
+      deliverables: ['Booking opportunities', 'Negotiated contracts', 'Career guidance'],
+      timeline: 'Ongoing',
+      tools: ['Roster management', 'Booking pipeline', 'Direct brand relationships'],
+      relatedWork: ['Behind the Scenes'],
     },
   ],
 }
 
 export const work = {
-  label: '03 — Work',
+  label: 'Work',
   heading: 'Selected work',
   items: [
     {
@@ -94,7 +134,7 @@ export const work = {
 }
 
 export const contact = {
-  label: '06 — Contact',
+  label: 'Contact',
   heading: "Let's cast your next project.",
   subhead: "Tell us about your brief — we usually reply within 1 business day.",
   email: 'hello@pomeloagency.com',
@@ -102,7 +142,8 @@ export const contact = {
   phoneHref: 'tel:+9647507127642',
   whatsappHref: 'https://wa.me/9647507127642',
   address: 'Ankawa, 120m Road, Erbil, Kurdistan Region, Iraq',
-  mapQuery: 'Ankawa 120m Road, Erbil, Iraq',
+  mapPlaceName: 'Pomelo Agency',
+  mapCoords: { lat: 36.2409381, lng: 43.9977745 },
   instagramHandle: '@pomelo.casting',
   instagramHref: 'https://www.instagram.com/pomelo.casting',
   hours: [
@@ -140,7 +181,7 @@ export const contact = {
 }
 
 export const insights = {
-  label: '04 — Insights',
+  label: 'Insights',
   heading: 'Stories from the studio',
   subhead: 'Casting tips, behind-the-scenes notes, and perspective from the Pomelo team.',
   featured: {
@@ -212,7 +253,7 @@ export const insights = {
 }
 
 export const faqSection = {
-  label: '05 — FAQ',
+  label: 'FAQ',
   heading: 'Common questions',
   subhead: 'Everything brands typically ask before starting a project with us.',
   items: [

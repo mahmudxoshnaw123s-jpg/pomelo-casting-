@@ -1,14 +1,17 @@
 import { useEffect, useState } from 'react'
 import { AnimatePresence, motion, useMotionValueEvent, useScroll } from 'framer-motion'
+import { Link } from 'react-router-dom'
 import { useTheme } from '../context/ThemeContext'
 import logoLight from '../assets/pomelo-logo.png'
 import logoDark from '../assets/pomelo-logo-dark.png'
+import Magnetic from './Magnetic'
 import ThemeToggle from './ThemeToggle'
 import { nav } from '../data/content'
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
+  const [hoveredHref, setHoveredHref] = useState<string | null>(null)
   const { scrollY } = useScroll()
   const { theme } = useTheme()
 
@@ -30,32 +33,43 @@ export default function Navbar() {
       }`}
     >
       <nav className="mx-auto flex max-w-6xl items-center justify-between px-6 py-3">
-        <a href="#top" className="flex items-center" aria-label="Pomelo Casting home">
-          <img src={theme === 'dark' ? logoDark : logoLight} alt="Pomelo Casting" className="h-11 w-auto sm:h-14" />
-        </a>
+        <Link to="/#top" className="flex items-center" aria-label="Pomelo Casting home">
+          <img src={theme === 'dark' || !scrolled ? logoDark : logoLight} alt="Pomelo Casting" className="h-11 w-auto sm:h-14" />
+        </Link>
 
-        <ul className="hidden items-center gap-8 md:flex">
-          {nav.map((item, i) => (
-            <li key={item.href}>
-              <a
-                href={item.href}
-                className="group flex items-center gap-1.5 text-sm font-medium tracking-wide text-ink-soft transition-colors hover:text-ink"
+        <ul className="hidden items-center gap-1 md:flex" onMouseLeave={() => setHoveredHref(null)}>
+          {nav.map((item) => (
+            <li key={item.href} className="relative">
+              <Link
+                to={`/${item.href}`}
+                onMouseEnter={() => setHoveredHref(item.href)}
+                className={`relative z-10 block rounded-full px-4 py-2 text-sm font-medium tracking-wide transition-colors ${
+                  scrolled ? 'text-ink-soft hover:text-ink' : 'text-white/75 hover:text-white'
+                }`}
               >
-                <span className="text-xs font-bold text-pomelo-blue">{String(i + 1).padStart(2, '0')}</span>
                 {item.label}
-              </a>
+              </Link>
+              {hoveredHref === item.href && (
+                <motion.span
+                  layoutId="nav-hover-pill"
+                  className={`absolute inset-0 rounded-full ${scrolled ? 'bg-pomelo-blue/10' : 'bg-white/10'}`}
+                  transition={{ type: 'spring', stiffness: 380, damping: 32 }}
+                />
+              )}
             </li>
           ))}
         </ul>
 
         <div className="hidden items-center gap-3 md:flex">
           <ThemeToggle />
-          <a
-            href="#contact"
-            className="rounded-full bg-pomelo-blue px-5 py-2 text-sm font-semibold text-[var(--color-on-accent)] transition-transform hover:scale-105"
-          >
-            Get in touch
-          </a>
+          <Magnetic strength={10}>
+            <Link
+              to="/#contact"
+              className="inline-block rounded-full bg-pomelo-blue px-5 py-2 text-sm font-semibold text-[var(--color-on-accent)] transition-transform hover:scale-105"
+            >
+              Get in touch
+            </Link>
+          </Magnetic>
         </div>
 
         <div className="flex items-center gap-2 md:hidden">
@@ -68,12 +82,15 @@ export default function Navbar() {
             onClick={() => setMenuOpen((v) => !v)}
           >
             <motion.span
-              className="h-0.5 w-6 bg-ink"
+              className={`h-0.5 w-6 ${scrolled || menuOpen ? 'bg-ink' : 'bg-white'}`}
               animate={menuOpen ? { rotate: 45, y: 6 } : { rotate: 0, y: 0 }}
             />
-            <motion.span className="h-0.5 w-6 bg-ink" animate={menuOpen ? { opacity: 0 } : { opacity: 1 }} />
             <motion.span
-              className="h-0.5 w-6 bg-ink"
+              className={`h-0.5 w-6 ${scrolled || menuOpen ? 'bg-ink' : 'bg-white'}`}
+              animate={menuOpen ? { opacity: 0 } : { opacity: 1 }}
+            />
+            <motion.span
+              className={`h-0.5 w-6 ${scrolled || menuOpen ? 'bg-ink' : 'bg-white'}`}
               animate={menuOpen ? { rotate: -45, y: -6 } : { rotate: 0, y: 0 }}
             />
           </button>
@@ -90,26 +107,25 @@ export default function Navbar() {
             className="overflow-hidden bg-base/95 backdrop-blur-md md:hidden"
           >
             <ul className="flex flex-col gap-1 px-6 pb-6">
-              {nav.map((item, i) => (
+              {nav.map((item) => (
                 <li key={item.href}>
-                  <a
-                    href={item.href}
+                  <Link
+                    to={`/${item.href}`}
                     onClick={() => setMenuOpen(false)}
-                    className="flex items-center gap-2 py-3 text-lg font-medium text-ink"
+                    className="block py-3 text-lg font-medium text-ink"
                   >
-                    <span className="text-sm font-bold text-pomelo-blue">{String(i + 1).padStart(2, '0')}</span>
                     {item.label}
-                  </a>
+                  </Link>
                 </li>
               ))}
               <li>
-                <a
-                  href="#contact"
+                <Link
+                  to="/#contact"
                   onClick={() => setMenuOpen(false)}
                   className="mt-2 inline-block rounded-full bg-pomelo-blue px-5 py-2 text-sm font-semibold text-[var(--color-on-accent)]"
                 >
                   Get in touch
-                </a>
+                </Link>
               </li>
             </ul>
           </motion.div>

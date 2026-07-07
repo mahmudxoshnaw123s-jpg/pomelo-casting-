@@ -79,6 +79,63 @@ export function IconAlert(props: SVGProps<SVGSVGElement>) {
   )
 }
 
+export function IconArrowRight(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+      <path d="M5 12h14M13 6l6 6-6 6" />
+    </svg>
+  )
+}
+
+export function IconSparkle(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" {...props}>
+      <path d="M12 2l1.8 5.4L19 9l-5.2 1.6L12 16l-1.8-5.4L5 9l5.2-1.6L12 2Z" />
+      <path d="M19 15l.9 2.6L22 18.5l-2.1.9L19 22l-.9-2.6-2.1-.9 2.1-.9L19 15Z" />
+    </svg>
+  )
+}
+
+export function IconSpotlightBadge(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" {...props}>
+      <path d="M5 3l6 7-2 11-6-11 2-7Z" />
+      <path d="M19 3l-6 7 2 11 6-11-2-7Z" />
+      <circle cx="12" cy="10" r="1.4" fill="currentColor" stroke="none" />
+    </svg>
+  )
+}
+
+export function IconFilmCameraBadge(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" {...props}>
+      <rect x="3" y="7" width="12" height="10" rx="1.5" />
+      <path d="M15 10.5 21 8v8l-6-2.5" />
+      <circle cx="7.5" cy="12" r="2" />
+    </svg>
+  )
+}
+
+export function IconClapperBadge(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" {...props}>
+      <path d="M4 10h16v8a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 18v-8Z" />
+      <path d="m4 10 1.5-4.5h3L7 10M10.5 10l1.5-4.5h3L13.5 10M17 10l1.5-4.5H21L19.5 10" />
+    </svg>
+  )
+}
+
+export function IconNetworkBadge(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" {...props}>
+      <circle cx="12" cy="5" r="2" />
+      <circle cx="5" cy="18" r="2" />
+      <circle cx="19" cy="18" r="2" />
+      <path d="M12 7v4M12 11 6.5 16.3M12 11l5.5 5.3" />
+    </svg>
+  )
+}
+
 export function IconSpinner(props: SVGProps<SVGSVGElement>) {
   return (
     <svg viewBox="0 0 24 24" fill="none" {...props}>
