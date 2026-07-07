@@ -4,9 +4,6 @@ import { useRef } from 'react'
 import babylonBg from '../assets/babylon.jpg'
 import { contact } from '../data/content'
 
-const glowConic =
-  'conic-gradient(from 0deg, transparent 0%, #00b2e2 12%, transparent 28%, #895193 50%, transparent 68%, #00b2e2 86%, transparent 100%)'
-
 const particles = Array.from({ length: 18 }).map((_, i) => ({
   left: (i * 43 + 7) % 100,
   top: (i * 27 + 11) % 100,
@@ -105,12 +102,6 @@ export default function StudioMap() {
           style={{ rotateX: tiltX, rotateY: tiltY, transformPerspective: 1200 }}
           className="relative isolate mx-auto mt-14 max-w-3xl rounded-[2rem] p-px"
         >
-          <motion.div
-            className="absolute inset-[-40%] -z-10"
-            style={{ background: glowConic }}
-            animate={{ rotate: 360 }}
-            transition={{ duration: 11, repeat: Infinity, ease: 'linear' }}
-          />
           <div className="overflow-hidden rounded-[calc(2rem-1px)] border border-white/15 bg-white/[0.04] shadow-2xl shadow-black/50 backdrop-blur-xl">
             <iframe
               title="Pomelo Casting location"

@@ -1,5 +1,5 @@
-import { AnimatePresence, motion, useAnimationFrame, useMotionValue, useScroll, useTransform } from 'framer-motion'
-import { useRef, useState } from 'react'
+import { motion, useAnimationFrame, useMotionValue, useScroll, useTransform } from 'framer-motion'
+import { useRef } from 'react'
 import type { MouseEvent } from 'react'
 import AuthorAvatar from './AuthorAvatar'
 import BrandPhoto from './BrandPhoto'
@@ -41,28 +41,10 @@ export default function InsightsEditorial() {
     my.set((e.clientY - rect.top) / rect.height - 0.5)
   }
 
-  const listRef = useRef<HTMLDivElement>(null)
-  const previewX = useMotionValue(0)
-  const previewY = useMotionValue(0)
-  const previewSX = useMotionValue(0)
-  const previewSY = useMotionValue(0)
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
-
   useAnimationFrame(() => {
     sx.set(sx.get() + (mx.get() - sx.get()) * 0.08)
     sy.set(sy.get() + (my.get() - sy.get()) * 0.08)
-    previewSX.set(previewSX.get() + (previewX.get() - previewSX.get()) * 0.22)
-    previewSY.set(previewSY.get() + (previewY.get() - previewSY.get()) * 0.22)
   })
-
-  const updatePreviewPosition = (clientX: number, clientY: number) => {
-    const rect = listRef.current?.getBoundingClientRect()
-    if (!rect) return
-    previewX.set(clientX - rect.left + 110)
-    previewY.set(clientY - rect.top)
-  }
-
-  const handleListMove = (e: MouseEvent<HTMLDivElement>) => updatePreviewPosition(e.clientX, e.clientY)
 
   return (
     <section
@@ -172,21 +154,12 @@ export default function InsightsEditorial() {
           {insights.subhead}
         </motion.h2>
 
-        <div
-          ref={listRef}
-          onMouseMove={handleListMove}
-          onMouseLeave={() => setHoveredIndex(null)}
-          className="relative divide-y divide-white/10 border-y border-white/10"
-        >
+        <div className="relative divide-y divide-white/10 border-y border-white/10">
           {posts.map((post, i) => (
             <motion.a
               key={post.title}
               href="#insights"
               onClick={(e) => e.preventDefault()}
-              onMouseEnter={(e) => {
-                setHoveredIndex(i)
-                updatePreviewPosition(e.clientX, e.clientY)
-              }}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.4 }}
@@ -232,26 +205,6 @@ export default function InsightsEditorial() {
               <span className="pointer-events-none absolute inset-x-0 bottom-0 h-px origin-left scale-x-0 bg-gradient-to-r from-pomelo-blue to-pomelo-purple transition-transform duration-500 group-hover:scale-x-100" />
             </motion.a>
           ))}
-
-          <AnimatePresence>
-            {hoveredIndex !== null && (
-              <motion.div
-                key={hoveredIndex}
-                style={{ left: previewSX, top: previewSY }}
-                initial={{ opacity: 0, scale: 0.85, rotate: -3 }}
-                animate={{ opacity: 1, scale: 1, rotate: -2 }}
-                exit={{ opacity: 0, scale: 0.85 }}
-                transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-                className="pointer-events-none absolute z-20 hidden -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-xl border border-white/15 shadow-2xl shadow-black/50 lg:block"
-              >
-                <BrandPhoto
-                  src={images[posts[hoveredIndex].image]}
-                  alt=""
-                  className="h-[15rem] w-[11rem]"
-                />
-              </motion.div>
-            )}
-          </AnimatePresence>
         </div>
       </div>
     </section>

@@ -25,16 +25,18 @@ const glowConic =
 
 function TogglePlus({ open }: { open: boolean }) {
   return (
-    <Magnetic strength={10} className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-white/15 bg-white/5 transition-colors duration-300 group-hover:border-pomelo-blue/50">
-      <motion.span
-        animate={{ rotate: open ? 45 : 0 }}
-        transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-        className="relative block h-3.5 w-3.5"
-      >
-        <span className="absolute left-1/2 top-0 h-full w-[1.5px] -translate-x-1/2 bg-white" />
-        <span className="absolute left-0 top-1/2 h-[1.5px] w-full -translate-y-1/2 bg-white" />
-      </motion.span>
-    </Magnetic>
+    <span className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-white/15 bg-white/5 transition-colors duration-300 group-hover:border-pomelo-blue/50">
+      <Magnetic strength={10}>
+        <motion.span
+          animate={{ rotate: open ? 45 : 0 }}
+          transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+          className="relative block h-3.5 w-3.5"
+        >
+          <span className="absolute left-1/2 top-0 h-full w-[1.5px] -translate-x-1/2 bg-white" />
+          <span className="absolute left-0 top-1/2 h-[1.5px] w-full -translate-y-1/2 bg-white" />
+        </motion.span>
+      </Magnetic>
+    </span>
   )
 }
 
@@ -50,19 +52,6 @@ function FaqCard({ item, isOpen, onToggle, index }: { item: FaqItem; isOpen: boo
       whileHover={{ y: -4, scale: 1.012 }}
       className="group relative isolate rounded-3xl p-px transition-shadow duration-300 hover:shadow-[0_0_50px_-15px_rgba(0,178,226,0.4)]"
     >
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            className="absolute inset-[-45%] -z-10"
-            style={{ background: glowConic }}
-            initial={{ opacity: 0, rotate: 0 }}
-            animate={{ opacity: 1, rotate: 360 }}
-            exit={{ opacity: 0 }}
-            transition={{ opacity: { duration: 0.5 }, rotate: { duration: 6, repeat: Infinity, ease: 'linear' } }}
-          />
-        )}
-      </AnimatePresence>
-
       <div
         className={`relative overflow-hidden rounded-[calc(1.5rem-1px)] border backdrop-blur-xl transition-colors duration-300 ${
           isOpen ? 'border-pomelo-blue/30 bg-white/[0.06]' : 'border-white/10 bg-white/[0.03] group-hover:border-white/20'
