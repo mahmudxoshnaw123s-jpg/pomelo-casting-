@@ -8,8 +8,10 @@ import Preloader from './components/Preloader'
 import ScrollProgress from './components/ScrollProgress'
 import WhatsappFab from './components/WhatsappFab'
 import Footer from './sections/Footer'
+import ApplyPage from './pages/ApplyPage'
 import Home from './pages/Home'
 import ServiceDetailPage from './pages/ServiceDetailPage'
+import TalentPage from './pages/TalentPage'
 
 function App() {
   const location = useLocation()
@@ -55,6 +57,22 @@ function App() {
               element={
                 <PageTransition>
                   <ServiceDetailPage />
+                </PageTransition>
+              }
+            />
+            <Route
+              path="/talent"
+              element={
+                <PageTransition>
+                  <TalentPage />
+                </PageTransition>
+              }
+            />
+            <Route
+              path="/apply"
+              element={
+                <PageTransition>
+                  <ApplyPage />
                 </PageTransition>
               }
             />

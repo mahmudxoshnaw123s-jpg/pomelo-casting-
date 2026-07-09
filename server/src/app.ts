@@ -4,6 +4,7 @@ import helmet from 'helmet'
 import morgan from 'morgan'
 import { env, isProduction } from './config/env'
 import { errorHandler, notFoundHandler } from './middleware/errorHandler'
+import applyRouter from './routes/apply'
 import contactRouter from './routes/contact'
 
 export function createApp() {
@@ -25,6 +26,7 @@ export function createApp() {
   })
 
   app.use('/api/contact', contactRouter)
+  app.use('/api/apply', applyRouter)
 
   app.use(notFoundHandler)
   app.use(errorHandler)

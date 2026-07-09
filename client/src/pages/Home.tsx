@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
+import FeaturedTalent from '../components/FeaturedTalent'
 import Marquee from '../components/Marquee'
 import About from '../sections/About'
 import Contact from '../sections/Contact'
@@ -25,6 +26,7 @@ export default function Home() {
   return (
     <>
       <Hero />
+      <FeaturedTalent />
       <Marquee items={marquee} />
       <About />
       <Services />

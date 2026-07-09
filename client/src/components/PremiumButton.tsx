@@ -1,8 +1,10 @@
 import { AnimatePresence, motion } from 'framer-motion'
 import { useState } from 'react'
 import type { ReactNode, MouseEvent } from 'react'
-import { useLocation } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { IconArrowRight } from './icons'
+
+const MotionLink = motion.create(Link)
 
 interface Ripple {
   id: number
@@ -38,7 +40,7 @@ export default function PremiumButton({ children, onClick, href, variant = 'soli
   const baseClass = `group relative inline-flex items-center gap-2 overflow-hidden rounded-full px-7 py-3.5 text-sm font-semibold transition-all duration-300 ${
     variant === 'solid'
       ? 'bg-gradient-to-r from-pomelo-blue to-pomelo-purple text-white shadow-lg shadow-pomelo-blue/20 hover:shadow-xl hover:shadow-pomelo-purple/30'
-      : 'border border-line text-ink hover:border-pomelo-blue'
+      : 'border border-white/20 bg-white/[0.03] text-white backdrop-blur-xl hover:border-pomelo-blue/60 hover:bg-white/[0.06]'
   } ${className}`
 
   const content = (
@@ -80,6 +82,14 @@ export default function PremiumButton({ children, onClick, href, variant = 'soli
   }
 
   if (href) {
+    const isInternal = href.startsWith('/') && !href.startsWith('//')
+    if (isInternal) {
+      return (
+        <MotionLink to={href} className={baseClass} {...motionProps}>
+          {content}
+        </MotionLink>
+      )
+    }
     return (
       <motion.a href={resolvedHref} className={baseClass} {...motionProps}>
         {content}

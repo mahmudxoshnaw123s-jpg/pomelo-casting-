@@ -6,6 +6,7 @@ import { services } from '../data/content'
 import { serviceVisuals } from '../data/serviceVisuals'
 import { IconArrowRight } from './icons'
 import Magnetic from './Magnetic'
+import PomeloMark from './PomeloMark'
 import PremiumButton from './PremiumButton'
 import SplitText from './SplitText'
 
@@ -42,9 +43,6 @@ const ServiceNode = memo(function ServiceNode({
   onEnter: () => void
   onLeave: () => void
 }) {
-  const meta = serviceVisuals[node.icon]
-  const Badge = meta.Badge
-
   return (
     <MotionLink
       to={`/services/${node.slug}`}
@@ -71,7 +69,7 @@ const ServiceNode = memo(function ServiceNode({
           )}
         </AnimatePresence>
         <span className="flex h-full w-full items-center justify-center rounded-full border border-white/15 bg-white/[0.05] text-white backdrop-blur-xl transition-colors duration-300 group-hover:border-pomelo-blue/40">
-          <Badge className="h-6 w-6 sm:h-7 sm:w-7" />
+          <PomeloMark className="h-6 w-6 sm:h-7 sm:w-7" />
         </span>
       </span>
       <span className="text-balance text-center text-xs font-semibold uppercase tracking-widest text-white/80 sm:text-sm">
@@ -123,9 +121,15 @@ function Diagram({
         transition={{ duration: 3.4, repeat: Infinity, ease: 'easeInOut' }}
       >
         <div className="absolute inset-0 rounded-full bg-pomelo-blue/20 blur-2xl" />
-        <div className="relative flex h-full w-full flex-col items-center justify-center gap-0.5 rounded-full border border-white/15 bg-white/[0.06] text-center backdrop-blur-xl">
-          <span className="font-display text-lg italic text-white sm:text-xl">Pomelo</span>
-          <span className="text-[0.6rem] font-semibold uppercase tracking-[0.2em] text-white/50">Casting</span>
+        <div className="relative flex h-full w-full flex-col items-center justify-center gap-1.5 rounded-full border border-white/15 bg-white/[0.06] text-center backdrop-blur-xl">
+          <motion.div
+            animate={{ rotate: 360 }}
+            transition={{ duration: 16, repeat: Infinity, ease: 'linear' }}
+            className="h-9 w-9 sm:h-10 sm:w-10"
+          >
+            <PomeloMark className="h-full w-full drop-shadow-[0_0_10px_rgba(0,178,226,0.45)]" />
+          </motion.div>
+          <span className="text-[0.55rem] font-semibold uppercase tracking-[0.25em] text-white/50">Casting</span>
         </div>
       </motion.div>
 
@@ -156,8 +160,6 @@ function MobileStops({
     <div className="relative mx-auto flex max-w-xs flex-col items-center gap-10 py-4">
       <div className="absolute left-1/2 top-6 bottom-6 w-px -translate-x-1/2 bg-gradient-to-b from-transparent via-white/20 to-transparent" />
       {nodes.map((node, i) => {
-        const meta = serviceVisuals[node.icon]
-        const Badge = meta.Badge
         const active = activeIndex === null || activeIndex === i
         return (
           <MotionLink
@@ -184,7 +186,7 @@ function MobileStops({
                 )}
               </AnimatePresence>
               <span className="flex h-full w-full items-center justify-center rounded-full border border-white/15 bg-white/[0.05] text-white backdrop-blur-xl">
-                <Badge className="h-6 w-6" />
+                <PomeloMark className="h-6 w-6" />
               </span>
             </span>
             <span className="text-center text-xs font-semibold uppercase tracking-widest text-white/80">{node.title}</span>

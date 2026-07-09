@@ -137,19 +137,18 @@ export const contact = {
   label: 'Contact',
   heading: "Let's cast your next project.",
   subhead: "Tell us about your brief — we usually reply within 1 business day.",
-  email: 'hello@pomeloagency.com',
-  phoneDisplay: '+964 750 712 7642',
-  phoneHref: 'tel:+9647507127642',
-  whatsappHref: 'https://wa.me/9647507127642',
+  email: 'support@pomeloagency.com',
+  phoneDisplay: '+964 750 765 7877',
+  phoneHref: 'tel:+9647507657877',
+  whatsappHref: 'https://wa.me/9647507657877',
   address: 'Ankawa, 120m Road, Erbil, Kurdistan Region, Iraq',
   mapPlaceName: 'Pomelo Agency',
   mapCoords: { lat: 36.2409381, lng: 43.9977745 },
   instagramHandle: '@pomelo.casting',
   instagramHref: 'https://www.instagram.com/pomelo.casting',
   hours: [
-    { day: 'Monday – Friday', time: '9:00 AM – 6:00 PM' },
-    { day: 'Saturday', time: '10:00 AM – 4:00 PM' },
-    { day: 'Sunday', time: 'Closed' },
+    { day: 'Saturday – Thursday', time: '9:00 AM – 5:00 PM' },
+    { day: 'Friday', time: 'Closed' },
   ],
   subjects: ['Casting inquiry', 'Talent submission', 'Brand partnership', 'Press', 'Other'],
   faq: [
@@ -310,4 +309,74 @@ export const faqSection = {
 
 export const footer = {
   line: `© ${new Date().getUTCFullYear()} Pomelo Casting. All rights reserved.`,
+}
+
+export const featuredTalent = {
+  label: 'Talent',
+  heading: 'Faces ready for your next campaign.',
+  subhead: 'A glimpse of the talent, editorial work, and studio energy behind every Pomelo casting.',
+  images: [
+    { image: 'talent-feature-press.png', caption: 'Press Day', tag: 'Campaign' },
+    { image: 'talent-feature-cover.png', caption: 'Cover Story', tag: 'Editorial' },
+    { image: 'talent-feature-walk.png', caption: 'Studio Walk', tag: 'Commercial' },
+    { image: 'talent-feature-bts.png', caption: 'Behind the Scenes', tag: 'Studio' },
+  ],
+  showTalentCta: 'Show Talent',
+  applyCta: 'Apply Now',
+}
+
+export const talentPage = {
+  label: 'Talent',
+  heading: 'The faces behind every campaign.',
+  subhead: 'A curated look at the talent, editorial work, and studio energy Pomelo Casting brings to every brief.',
+  categories: ['All', 'Editorial', 'Campaign', 'Commercial', 'Studio'],
+  gallery: [
+    {
+      image: 'talent-feature-press.png',
+      title: 'Press Day',
+      category: 'Campaign',
+      description: 'On-brand press coverage, styled and cast for a national campaign push.',
+    },
+    {
+      image: 'talent-feature-cover.png',
+      title: 'Cover Story',
+      category: 'Editorial',
+      description: 'Editorial styling for a cover feature, cast for tone and presence.',
+    },
+    {
+      image: 'talent-feature-walk.png',
+      title: 'Studio Walk',
+      category: 'Commercial',
+      description: 'Commercial lookbook talent, cast for movement and confidence on camera.',
+    },
+    {
+      image: 'talent-feature-bts.png',
+      title: 'Behind the Scenes',
+      category: 'Studio',
+      description: 'A look inside the studio — how we direct and light every casting test.',
+    },
+  ],
+  spotlight: {
+    label: 'Inside the studio',
+    heading: 'Every casting starts with a real studio session.',
+    body: 'Before talent ever reaches a client shortlist, we run them through real studio conditions — lighting, direction, and camera presence — so what you see is what you get on set.',
+    image: 'talent-feature-bts.png',
+  },
+  cta: {
+    heading: 'See yourself here?',
+    body: 'If you have the look and the presence, we want to see your submission.',
+  },
+}
+
+export const application = {
+  label: 'Apply',
+  heading: 'Start your casting journey.',
+  subhead: 'Tell us about yourself and share a few recent photos — our team reviews every submission personally.',
+  hairColors: ['Black', 'Brown', 'Blonde', 'Red', 'Gray / Silver', 'Other'],
+  eyeColors: ['Brown', 'Blue', 'Green', 'Hazel', 'Gray', 'Other'],
+  shirtSizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
+  success: {
+    heading: 'Application received',
+    body: "Thanks for applying — our casting team reviews every submission and will reach out if there's a fit.",
+  },
 }

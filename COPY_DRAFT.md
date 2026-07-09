@@ -36,4 +36,4 @@
 **Heading:** Let's cast your next project.
 **Subhead:** Tell us about your brief — we usually reply within 1 business day.
 **Form fields:** Name, Email, Company (optional), Message
-**Footer line:** © 2026 Pomelo Casting. All rights reserved. · hello@pomeloagency.com
+**Footer line:** © 2026 Pomelo Casting. All rights reserved. · support@pomeloagency.com
