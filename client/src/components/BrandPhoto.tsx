@@ -5,9 +5,10 @@ interface BrandPhotoProps {
   alt: string
   className?: string
   priority?: boolean
+  objectPosition?: string
 }
 
-export default function BrandPhoto({ src, alt, className = '', priority = false }: BrandPhotoProps) {
+export default function BrandPhoto({ src, alt, className = '', priority = false, objectPosition = 'center' }: BrandPhotoProps) {
   return (
     <div className={`relative overflow-hidden ${className}`}>
       <motion.img
@@ -15,6 +16,7 @@ export default function BrandPhoto({ src, alt, className = '', priority = false 
         alt={alt}
         loading={priority ? 'eager' : 'lazy'}
         className="absolute inset-0 h-full w-full object-cover"
+        style={{ objectPosition }}
         initial={{ scale: 1.12, opacity: 0 }}
         whileInView={{ scale: 1, opacity: 1 }}
         viewport={{ once: true, amount: 0.3 }}

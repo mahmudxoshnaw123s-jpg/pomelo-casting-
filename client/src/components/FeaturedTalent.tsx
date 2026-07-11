@@ -51,7 +51,7 @@ function TalentCard({ item, index, wide }: { item: TalentCardData; index: number
         }}
       />
       <motion.div variants={{ hover: { scale: 1.06 } }} transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }} className="absolute inset-0">
-        <BrandPhoto src={item.src} alt={item.caption} className="h-full w-full" />
+        <BrandPhoto src={item.src} alt={item.caption} className="h-full w-full" objectPosition={wide ? 'center top' : 'center'} />
       </motion.div>
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" />
       <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-3 p-5 sm:p-6">
