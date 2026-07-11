@@ -1,7 +1,5 @@
-import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { useEffect, useState } from 'react'
-import type { MouseEvent } from 'react'
-import BrandPhoto from './BrandPhoto'
 import Magnetic from './Magnetic'
 import PremiumButton from './PremiumButton'
 import SplitText from './SplitText'
@@ -15,69 +13,49 @@ interface TalentCardData {
   tag: string
 }
 
-// Placeholder cards used before any featured talent is uploaded (keeps the section full).
+// Placeholder talent used before any featured models are uploaded (keeps the section full).
 const fallbackCards: TalentCardData[] = featuredTalent.images.map((item) => ({
   src: images[item.image],
   caption: item.caption,
   tag: item.tag,
 }))
 
-const particles = Array.from({ length: 14 }).map((_, i) => ({
-  left: (i * 31 + 9) % 100,
-  top: (i * 19 + 13) % 100,
-  size: 2 + (i % 3),
-  duration: 11 + (i % 5) * 2,
-  delay: (i % 6) * 0.7,
-}))
+// Clean staggered rhythm — each column sits at a different height, like an editorial spread.
+const STAGGER = [
+  { mt: 'lg:mt-16', aspect: 'aspect-[3/4]' },
+  { mt: 'lg:mt-0', aspect: 'aspect-[2/3]' },
+  { mt: 'lg:mt-24', aspect: 'aspect-[3/4]' },
+  { mt: 'lg:mt-8', aspect: 'aspect-[2/3]' },
+]
 
-function TalentCard({ item, index, wide }: { item: TalentCardData; index: number; wide?: boolean }) {
+function Portrait({ item, index }: { item: TalentCardData; index: number }) {
+  const layout = STAGGER[index % STAGGER.length]
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 28 }}
+    <motion.figure
+      initial={{ opacity: 0, y: 40 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.3 }}
-      transition={{ duration: 0.6, delay: index * 0.1, ease: [0.16, 1, 0.3, 1] }}
-      whileHover="hover"
-      className={`group relative isolate overflow-hidden rounded-3xl border border-white/10 ${wide ? 'aspect-[21/9]' : 'aspect-[3/4]'}`}
+      transition={{ duration: 0.8, delay: index * 0.1, ease: [0.16, 1, 0.3, 1] }}
+      className={`group ${layout.mt}`}
     >
-      <motion.div
-        className="pointer-events-none absolute -inset-px z-20 rounded-3xl opacity-0 transition-opacity duration-500 group-hover:opacity-100"
-        style={{
-          background: 'conic-gradient(from 0deg, #00b2e2, transparent 35%, transparent 60%, #895193, transparent 90%)',
-          padding: 1,
-          WebkitMask: 'linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)',
-          WebkitMaskComposite: 'xor',
-          maskComposite: 'exclude',
-        }}
-      />
-      <motion.div variants={{ hover: { scale: 1.06 } }} transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }} className="absolute inset-0">
-        <BrandPhoto src={item.src} alt={item.caption} className="h-full w-full" objectPosition={wide ? 'center top' : 'center'} />
-      </motion.div>
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" />
-      <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-3 p-5 sm:p-6">
-        <div>
-          <span className="text-[0.65rem] font-semibold uppercase tracking-[0.25em] text-pomelo-blue">{item.tag}</span>
-          <p className="mt-1 font-display text-lg italic text-white sm:text-xl">{item.caption}</p>
-        </div>
+      <div className={`relative ${layout.aspect} w-full overflow-hidden rounded-xl`}>
+        <img
+          src={item.src}
+          alt={item.caption}
+          loading="lazy"
+          className="h-full w-full object-cover grayscale transition-all duration-[900ms] ease-[cubic-bezier(0.16,1,0.3,1)] will-change-transform group-hover:scale-[1.04] group-hover:grayscale-0"
+          style={{ objectPosition: 'center 15%' }}
+        />
       </div>
-    </motion.div>
+      <figcaption className="mt-4">
+        <p className="font-display text-xl italic leading-tight text-white">{item.caption}</p>
+        <p className="mt-1 text-[0.65rem] font-semibold uppercase tracking-[0.3em] text-white/40">{item.tag}</p>
+      </figcaption>
+    </motion.figure>
   )
 }
 
 export default function FeaturedTalent() {
-  const mx = useMotionValue(0)
-  const my = useMotionValue(0)
-  const sx = useSpring(mx, { stiffness: 40, damping: 20 })
-  const sy = useSpring(my, { stiffness: 40, damping: 20 })
-  const blobX = useTransform(sx, [-0.5, 0.5], [-22, 22])
-  const blobY = useTransform(sy, [-0.5, 0.5], [-16, 16])
-
-  const handleMouseMove = (e: MouseEvent<HTMLElement>) => {
-    const rect = e.currentTarget.getBoundingClientRect()
-    mx.set((e.clientX - rect.left) / rect.width - 0.5)
-    my.set((e.clientY - rect.top) / rect.height - 0.5)
-  }
-
   const [cards, setCards] = useState<TalentCardData[]>(fallbackCards)
 
   useEffect(() => {
@@ -89,56 +67,28 @@ export default function FeaturedTalent() {
           .filter((m) => m.images.length > 0)
           .map((m) => ({ src: m.images[0].url, caption: m.firstName, tag: 'Pomelo Talent' }))
         if (modelCards.length === 0) return
-        // Featured models first; backfill any empty slots with placeholders so it stays full.
         setCards([...modelCards, ...fallbackCards].slice(0, 4))
       })
       .catch(() => {
-        /* keep placeholders on error / before Firebase is configured */
+        /* keep placeholders before Firebase is configured */
       })
     return () => {
       active = false
     }
   }, [])
 
-  const [first, second, third, fourth] = cards
+  const list = cards.slice(0, 4)
 
   return (
-    <section
-      onMouseMove={handleMouseMove}
-      className="relative isolate overflow-hidden bg-gradient-to-b from-[#0a0f1a] via-[#130b21] to-[#0b0713] py-28 sm:py-36"
-    >
+    <section className="relative isolate overflow-hidden bg-[#0a0f1a] py-28 sm:py-36">
+      {/* one soft, calm glow for depth — no grid or particles, so the photos lead */}
       <div
-        className="pointer-events-none absolute inset-0 opacity-[0.06]"
-        style={{
-          backgroundImage:
-            'linear-gradient(rgba(255,255,255,0.7) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.7) 1px, transparent 1px)',
-          backgroundSize: '64px 64px',
-        }}
+        className="pointer-events-none absolute left-1/2 top-1/2 h-[36rem] w-[60rem] max-w-[92vw] -translate-x-1/2 -translate-y-1/2 rounded-[50%] opacity-40 blur-[130px]"
+        style={{ background: 'radial-gradient(ellipse at center, rgba(137,81,147,0.35), rgba(0,178,226,0.12) 50%, transparent 72%)' }}
         aria-hidden="true"
       />
-      <motion.div
-        style={{ x: blobX, y: blobY }}
-        className="pointer-events-none absolute -left-40 top-0 h-[28rem] w-[28rem] rounded-full bg-pomelo-purple/25 blur-[130px]"
-        aria-hidden="true"
-      />
-      <motion.div
-        style={{ x: useTransform(blobX, (v) => -v), y: useTransform(blobY, (v) => -v) }}
-        className="pointer-events-none absolute -right-40 bottom-0 h-[30rem] w-[30rem] rounded-full bg-pomelo-blue/15 blur-[130px]"
-        aria-hidden="true"
-      />
-      <div className="pointer-events-none absolute inset-0" aria-hidden="true">
-        {particles.map((p, i) => (
-          <motion.span
-            key={i}
-            className="absolute rounded-full bg-white/50"
-            style={{ left: `${p.left}%`, top: `${p.top}%`, width: p.size, height: p.size }}
-            animate={{ y: [0, -28, 0], opacity: [0.15, 0.6, 0.15] }}
-            transition={{ duration: p.duration, repeat: Infinity, ease: 'easeInOut', delay: p.delay }}
-          />
-        ))}
-      </div>
 
-      <div className="relative z-10 mx-auto max-w-6xl px-6">
+      <div className="relative z-10 mx-auto max-w-[88rem] px-6">
         <div className="mx-auto max-w-2xl text-center">
           <motion.p
             initial={{ opacity: 0, y: 12 }}
@@ -165,13 +115,12 @@ export default function FeaturedTalent() {
           </motion.p>
         </div>
 
-        <div className="mt-14 grid gap-5 sm:grid-cols-3">
-          <TalentCard item={first} index={0} />
-          <TalentCard item={second} index={1} />
-          <TalentCard item={third} index={2} />
-        </div>
-        <div className="mt-5">
-          <TalentCard item={fourth} index={3} wide />
+        <div className="mt-16 grid grid-cols-2 gap-6 sm:gap-8 lg:mt-20 lg:flex lg:items-start lg:gap-8">
+          {list.map((item, i) => (
+            <div key={`${item.caption}-${i}`} className="lg:flex-1">
+              <Portrait item={item} index={i} />
+            </div>
+          ))}
         </div>
 
         <motion.div
@@ -179,7 +128,7 @@ export default function FeaturedTalent() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.1 }}
-          className="mt-14 flex flex-wrap items-center justify-center gap-4"
+          className="mt-20 flex flex-wrap items-center justify-center gap-4"
         >
           <Magnetic strength={14}>
             <PremiumButton href="/talent">{featuredTalent.showTalentCta}</PremiumButton>
