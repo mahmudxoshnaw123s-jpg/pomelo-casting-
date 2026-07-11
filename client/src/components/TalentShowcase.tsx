@@ -7,13 +7,31 @@ import PremiumButton from './PremiumButton'
 import SplitText from './SplitText'
 import { talentPage } from '../data/content'
 import { images } from '../data/images'
+import { fetchModels } from '../lib/models'
 
 const glowConic =
   'conic-gradient(from 0deg, transparent 0%, #00b2e2 12%, transparent 28%, #895193 50%, transparent 68%, #00b2e2 86%, transparent 100%)'
 
-type GalleryItem = (typeof talentPage.gallery)[number]
+interface DisplayItem {
+  id: string
+  cover: string
+  images: string[]
+  eyebrow: string
+  title: string
+  description: string
+}
 
-function GalleryCard({ item, onOpen }: { item: GalleryItem; onOpen: () => void }) {
+// Placeholder roster shown before any real talent is uploaded.
+const fallbackItems: DisplayItem[] = talentPage.gallery.map((item) => ({
+  id: item.id,
+  cover: images[item.image],
+  images: [images[item.image]],
+  eyebrow: item.category,
+  title: item.title,
+  description: item.description,
+}))
+
+function GalleryCard({ item, onOpen }: { item: DisplayItem; onOpen: () => void }) {
   return (
     <motion.div
       layout
@@ -37,7 +55,7 @@ function GalleryCard({ item, onOpen }: { item: GalleryItem; onOpen: () => void }
       />
       <div className="relative aspect-[3/4] w-full">
         <motion.div variants={{ hover: { scale: 1.08 } }} transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }} className="absolute inset-0">
-          <BrandPhoto src={images[item.image]} alt={item.title} className="h-full w-full" />
+          <BrandPhoto src={item.cover} alt={item.title} className="h-full w-full" />
         </motion.div>
 
         <motion.div
@@ -60,12 +78,17 @@ function GalleryCard({ item, onOpen }: { item: GalleryItem; onOpen: () => void }
           transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
           className="absolute inset-x-0 bottom-0 p-5 sm:p-6"
         >
-          <span className="text-[0.65rem] font-semibold uppercase tracking-[0.25em] text-pomelo-blue">{item.category}</span>
+          <span className="text-[0.65rem] font-semibold uppercase tracking-[0.25em] text-pomelo-blue">{item.eyebrow}</span>
           <h3 className="mt-1 font-display text-lg italic text-white sm:text-xl">{item.title}</h3>
           <p className="mt-2 max-w-xs text-sm text-white/60 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
             {item.description}
           </p>
         </motion.div>
+        {item.images.length > 1 && (
+          <span className="absolute left-4 top-4 rounded-full border border-white/20 bg-black/40 px-2.5 py-1 text-[0.6rem] font-semibold uppercase tracking-wider text-white/80 backdrop-blur-sm">
+            {item.images.length} photos
+          </span>
+        )}
         <motion.span
           initial={{ opacity: 0, scale: 0.7 }}
           variants={{ hover: { opacity: 1, scale: 1 } }}
@@ -81,14 +104,17 @@ function GalleryCard({ item, onOpen }: { item: GalleryItem; onOpen: () => void }
   )
 }
 
-function Lightbox({ items, index, onClose, onNav }: { items: GalleryItem[]; index: number; onClose: () => void; onNav: (dir: 1 | -1) => void }) {
-  const item = items[index]
+function Lightbox({ item, onClose }: { item: DisplayItem; onClose: () => void }) {
+  const [imageIndex, setImageIndex] = useState(0)
+  const total = item.images.length
+
+  const nav = (dir: 1 | -1) => setImageIndex((prev) => (prev + dir + total) % total)
 
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose()
-      if (e.key === 'ArrowRight') onNav(1)
-      if (e.key === 'ArrowLeft') onNav(-1)
+      if (e.key === 'ArrowRight') setImageIndex((prev) => (prev + 1) % total)
+      if (e.key === 'ArrowLeft') setImageIndex((prev) => (prev - 1 + total) % total)
     }
     window.addEventListener('keydown', handleKey)
     document.body.style.overflow = 'hidden'
@@ -96,7 +122,7 @@ function Lightbox({ items, index, onClose, onNav }: { items: GalleryItem[]; inde
       window.removeEventListener('keydown', handleKey)
       document.body.style.overflow = ''
     }
-  }, [onClose, onNav])
+  }, [onClose, total])
 
   return (
     <motion.div
@@ -118,36 +144,40 @@ function Lightbox({ items, index, onClose, onNav }: { items: GalleryItem[]; inde
         </svg>
       </button>
 
-      <button
-        type="button"
-        onClick={(e) => {
-          e.stopPropagation()
-          onNav(-1)
-        }}
-        aria-label="Previous"
-        className="absolute left-4 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-white/5 text-white transition-colors hover:border-pomelo-blue/50 hover:text-pomelo-blue sm:left-8"
-      >
-        <svg viewBox="0 0 24 24" className="h-4 w-4 rotate-180" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M5 12h14M13 6l6 6-6 6" />
-        </svg>
-      </button>
-      <button
-        type="button"
-        onClick={(e) => {
-          e.stopPropagation()
-          onNav(1)
-        }}
-        aria-label="Next"
-        className="absolute right-4 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-white/5 text-white transition-colors hover:border-pomelo-blue/50 hover:text-pomelo-blue sm:right-8"
-      >
-        <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M5 12h14M13 6l6 6-6 6" />
-        </svg>
-      </button>
+      {total > 1 && (
+        <>
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation()
+              nav(-1)
+            }}
+            aria-label="Previous photo"
+            className="absolute left-4 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-white/5 text-white transition-colors hover:border-pomelo-blue/50 hover:text-pomelo-blue sm:left-8"
+          >
+            <svg viewBox="0 0 24 24" className="h-4 w-4 rotate-180" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M5 12h14M13 6l6 6-6 6" />
+            </svg>
+          </button>
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation()
+              nav(1)
+            }}
+            aria-label="Next photo"
+            className="absolute right-4 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-white/5 text-white transition-colors hover:border-pomelo-blue/50 hover:text-pomelo-blue sm:right-8"
+          >
+            <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M5 12h14M13 6l6 6-6 6" />
+            </svg>
+          </button>
+        </>
+      )}
 
       <AnimatePresence mode="wait">
         <motion.div
-          key={item.id}
+          key={`${item.id}-${imageIndex}`}
           initial={{ opacity: 0, scale: 0.92 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.96 }}
@@ -155,11 +185,16 @@ function Lightbox({ items, index, onClose, onNav }: { items: GalleryItem[]; inde
           onClick={(e) => e.stopPropagation()}
           className="relative mx-auto max-h-[85vh] w-[90vw] max-w-xl overflow-hidden rounded-2xl border border-white/10 shadow-2xl shadow-black/60"
         >
-          <img src={images[item.image]} alt={item.title} className="max-h-[85vh] w-full object-contain" />
+          <img src={item.images[imageIndex]} alt={item.title} className="max-h-[85vh] w-full object-contain" />
           <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent p-6 sm:p-8">
-            <span className="text-[0.65rem] font-semibold uppercase tracking-[0.25em] text-pomelo-blue">{item.category}</span>
+            <span className="text-[0.65rem] font-semibold uppercase tracking-[0.25em] text-pomelo-blue">{item.eyebrow}</span>
             <p className="mt-1 font-display text-2xl italic text-white">{item.title}</p>
             <p className="mt-2 max-w-md text-sm text-white/60">{item.description}</p>
+            {total > 1 && (
+              <p className="mt-3 text-xs font-semibold uppercase tracking-widest text-white/40">
+                {imageIndex + 1} / {total}
+              </p>
+            )}
           </div>
         </motion.div>
       </AnimatePresence>
@@ -168,34 +203,47 @@ function Lightbox({ items, index, onClose, onNav }: { items: GalleryItem[]; inde
 }
 
 export default function TalentShowcase() {
-  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
+  const [models, setModels] = useState<DisplayItem[] | null>(null)
+  const [openId, setOpenId] = useState<string | null>(null)
   const heroRef = useRef<HTMLDivElement>(null)
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ['start start', 'end start'] })
   const heroScale = useTransform(scrollYProgress, [0, 1], [1, 1.15])
   const heroOpacity = useTransform(scrollYProgress, [0, 1], [1, 0])
 
-  const galleryItems = talentPage.gallery
+  useEffect(() => {
+    let active = true
+    fetchModels(false)
+      .then((data) => {
+        if (!active) return
+        const mapped: DisplayItem[] = data
+          .filter((m) => m.images.length > 0)
+          .map((m) => ({
+            id: m.id,
+            cover: m.images[0].url,
+            images: m.images.map((img) => img.url),
+            eyebrow: 'Pomelo Talent',
+            title: m.firstName,
+            description: `${m.height} · ${m.hairColor} hair · ${m.eyeColor} eyes`,
+          }))
+        setModels(mapped)
+      })
+      .catch(() => {
+        if (active) setModels([])
+      })
+    return () => {
+      active = false
+    }
+  }, [])
 
-  const openLightbox = (item: GalleryItem) => {
-    setLightboxIndex(galleryItems.findIndex((g) => g.id === item.id))
-  }
-  const navLightbox = (dir: 1 | -1) => {
-    setLightboxIndex((prev) => {
-      if (prev === null) return prev
-      return (prev + dir + galleryItems.length) % galleryItems.length
-    })
-  }
+  const galleryItems = models && models.length > 0 ? models : fallbackItems
+  const heroImage = galleryItems[0]?.cover ?? images[talentPage.gallery[0].image]
+  const openItem = galleryItems.find((item) => item.id === openId) ?? null
 
   return (
     <div className="relative bg-gradient-to-b from-[#0b0713] via-[#130b21] to-[#0a0f1a]">
       <div ref={heroRef} className="relative isolate flex min-h-[90svh] items-center justify-center overflow-hidden">
         <motion.div style={{ scale: heroScale, opacity: heroOpacity }} className="absolute inset-0 -z-10">
-          <img
-            src={images[talentPage.gallery[0].image]}
-            alt=""
-            className="h-full w-full object-cover opacity-50"
-            style={{ objectPosition: 'center 8%' }}
-          />
+          <img src={heroImage} alt="" className="h-full w-full object-cover opacity-50" style={{ objectPosition: 'center 8%' }} />
           <div className="absolute inset-0 bg-gradient-to-b from-[#0a0f1a]/95 via-black/70 to-[#0a0f1a]" />
         </motion.div>
         <div
@@ -253,7 +301,7 @@ export default function TalentShowcase() {
         <div className="relative z-10 mx-auto max-w-6xl px-6">
           <motion.div layout className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {galleryItems.map((item) => (
-              <GalleryCard key={item.id} item={item} onOpen={() => openLightbox(item)} />
+              <GalleryCard key={item.id} item={item} onOpen={() => setOpenId(item.id)} />
             ))}
           </motion.div>
         </div>
@@ -322,11 +370,7 @@ export default function TalentShowcase() {
         </motion.div>
       </section>
 
-      <AnimatePresence>
-        {lightboxIndex !== null && (
-          <Lightbox items={galleryItems} index={lightboxIndex} onClose={() => setLightboxIndex(null)} onNav={navLightbox} />
-        )}
-      </AnimatePresence>
+      <AnimatePresence>{openItem && <Lightbox item={openItem} onClose={() => setOpenId(null)} />}</AnimatePresence>
     </div>
   )
 }

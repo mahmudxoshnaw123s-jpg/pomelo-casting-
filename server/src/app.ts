@@ -4,8 +4,11 @@ import helmet from 'helmet'
 import morgan from 'morgan'
 import { env, isProduction } from './config/env'
 import { errorHandler, notFoundHandler } from './middleware/errorHandler'
+import adminsRouter from './routes/admins'
 import applyRouter from './routes/apply'
 import contactRouter from './routes/contact'
+import modelsRouter from './routes/models'
+import submissionsRouter from './routes/submissions'
 
 export function createApp() {
   const app = express()
@@ -15,7 +18,8 @@ export function createApp() {
   app.use(
     cors({
       origin: env.clientOrigin,
-      methods: ['GET', 'POST'],
+      methods: ['GET', 'POST', 'PATCH', 'DELETE'],
+      allowedHeaders: ['Content-Type', 'Authorization'],
     }),
   )
   app.use(express.json({ limit: '10kb' }))
@@ -27,6 +31,9 @@ export function createApp() {
 
   app.use('/api/contact', contactRouter)
   app.use('/api/apply', applyRouter)
+  app.use('/api/models', modelsRouter)
+  app.use('/api/admins', adminsRouter)
+  app.use('/api/submissions', submissionsRouter)
 
   app.use(notFoundHandler)
   app.use(errorHandler)

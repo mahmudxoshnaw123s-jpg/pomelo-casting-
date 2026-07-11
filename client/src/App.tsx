@@ -8,6 +8,7 @@ import Preloader from './components/Preloader'
 import ScrollProgress from './components/ScrollProgress'
 import WhatsappFab from './components/WhatsappFab'
 import Footer from './sections/Footer'
+import AdminPage from './pages/AdminPage'
 import ApplyPage from './pages/ApplyPage'
 import Home from './pages/Home'
 import ServiceDetailPage from './pages/ServiceDetailPage'
@@ -15,6 +16,7 @@ import TalentPage from './pages/TalentPage'
 
 function App() {
   const location = useLocation()
+  const isAdmin = location.pathname.startsWith('/admin')
   const [showPreloader, setShowPreloader] = useState(
     () => typeof window !== 'undefined' && !sessionStorage.getItem('pomelo-visited'),
   )
@@ -32,6 +34,14 @@ function App() {
       document.body.style.overflow = ''
     }
   }, [showPreloader])
+
+  if (isAdmin) {
+    return (
+      <Routes location={location} key={location.pathname}>
+        <Route path="/admin" element={<AdminPage />} />
+      </Routes>
+    )
+  }
 
   return (
     <>

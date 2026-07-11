@@ -2,7 +2,8 @@ import { Router } from 'express'
 import type { Request, Response } from 'express'
 import rateLimit from 'express-rate-limit'
 import { body, validationResult } from 'express-validator'
-import { sendContactNotification } from '../services/mailer'
+import { isFirebaseConfigured, firebaseConfigError } from '../config/firebase'
+import { saveContact } from '../services/submissions'
 
 const router = Router()
 
@@ -29,6 +30,12 @@ router.post('/', contactLimiter, validators, async (req: Request, res: Response)
     return
   }
 
+  if (!isFirebaseConfigured()) {
+    console.error('[contact]', firebaseConfigError())
+    res.status(503).json({ success: false, message: 'Messaging is temporarily unavailable. Please try again later.' })
+    return
+  }
+
   const { name, email, phone, subject, message } = req.body as {
     name: string
     email: string
@@ -38,11 +45,11 @@ router.post('/', contactLimiter, validators, async (req: Request, res: Response)
   }
 
   try {
-    await sendContactNotification({ name, email, phone, subject, message })
+    await saveContact({ name, email, phone, subject, message })
     res.status(200).json({ success: true, message: 'Message sent successfully.' })
   } catch (err) {
-    console.error('[contact] failed to send notification', err)
-    res.status(502).json({ success: false, message: 'Failed to send message. Please try again later.' })
+    console.error('[contact] failed to save submission', err)
+    res.status(500).json({ success: false, message: 'Failed to send message. Please try again later.' })
   }
 })
 

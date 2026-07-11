@@ -3,7 +3,8 @@ import type { Request, Response } from 'express'
 import multer from 'multer'
 import rateLimit from 'express-rate-limit'
 import { body, validationResult } from 'express-validator'
-import { sendApplicationNotification } from '../services/mailer'
+import { isFirebaseConfigured, firebaseConfigError } from '../config/firebase'
+import { saveApplication } from '../services/submissions'
 
 const router = Router()
 
@@ -55,6 +56,12 @@ router.post('/', applyLimiter, photoFields, validators, async (req: Request, res
     return
   }
 
+  if (!isFirebaseConfigured()) {
+    console.error('[apply]', firebaseConfigError())
+    res.status(503).json({ success: false, message: 'Applications are temporarily unavailable. Please try again later.' })
+    return
+  }
+
   const files = req.files as Record<string, Express.Multer.File[]> | undefined
   const fullBody = files?.fullBody?.[0]
   const mediumShot = files?.mediumShot?.[0]
@@ -80,26 +87,25 @@ router.post('/', applyLimiter, photoFields, validators, async (req: Request, res
     languages,
   } = req.body as Record<string, string>
 
-  const photos = [
+  const photoGroups = [
     { file: fullBody, label: 'full-body' },
     { file: mediumShot, label: 'medium-shot' },
     { file: closeUp, label: 'close-up' },
     ...additional.map((file, i) => ({ file, label: `additional-${i + 1}` })),
   ].map(({ file, label }) => ({
-    filename: `${label}-${file.originalname}`,
-    content: file.buffer,
-    contentType: file.mimetype,
+    file: { buffer: file.buffer, mimetype: file.mimetype, originalname: file.originalname },
+    label,
   }))
 
   try {
-    await sendApplicationNotification(
+    await saveApplication(
       { fullName, age, phone, email, height, weight, hairColor, eyeColor, shoeSize, shirtSize, languages },
-      photos,
+      photoGroups,
     )
     res.status(200).json({ success: true, message: 'Application submitted successfully.' })
   } catch (err) {
-    console.error('[apply] failed to send notification', err)
-    res.status(502).json({ success: false, message: 'Failed to submit application. Please try again later.' })
+    console.error('[apply] failed to save application', err)
+    res.status(500).json({ success: false, message: 'Failed to submit application. Please try again later.' })
   }
 })
 

@@ -1,4 +1,5 @@
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion'
+import { useEffect, useState } from 'react'
 import type { MouseEvent } from 'react'
 import BrandPhoto from './BrandPhoto'
 import Magnetic from './Magnetic'
@@ -6,6 +7,20 @@ import PremiumButton from './PremiumButton'
 import SplitText from './SplitText'
 import { featuredTalent } from '../data/content'
 import { images } from '../data/images'
+import { fetchModels } from '../lib/models'
+
+interface TalentCardData {
+  src: string
+  caption: string
+  tag: string
+}
+
+// Placeholder cards used before any featured talent is uploaded (keeps the section full).
+const fallbackCards: TalentCardData[] = featuredTalent.images.map((item) => ({
+  src: images[item.image],
+  caption: item.caption,
+  tag: item.tag,
+}))
 
 const particles = Array.from({ length: 14 }).map((_, i) => ({
   left: (i * 31 + 9) % 100,
@@ -15,7 +30,7 @@ const particles = Array.from({ length: 14 }).map((_, i) => ({
   delay: (i % 6) * 0.7,
 }))
 
-function TalentCard({ item, index, wide }: { item: (typeof featuredTalent.images)[number]; index: number; wide?: boolean }) {
+function TalentCard({ item, index, wide }: { item: TalentCardData; index: number; wide?: boolean }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 28 }}
@@ -36,7 +51,7 @@ function TalentCard({ item, index, wide }: { item: (typeof featuredTalent.images
         }}
       />
       <motion.div variants={{ hover: { scale: 1.06 } }} transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }} className="absolute inset-0">
-        <BrandPhoto src={images[item.image]} alt={item.caption} className="h-full w-full" />
+        <BrandPhoto src={item.src} alt={item.caption} className="h-full w-full" />
       </motion.div>
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" />
       <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-3 p-5 sm:p-6">
@@ -63,7 +78,29 @@ export default function FeaturedTalent() {
     my.set((e.clientY - rect.top) / rect.height - 0.5)
   }
 
-  const [first, second, third, fourth] = featuredTalent.images
+  const [cards, setCards] = useState<TalentCardData[]>(fallbackCards)
+
+  useEffect(() => {
+    let active = true
+    fetchModels(true)
+      .then((models) => {
+        if (!active) return
+        const modelCards: TalentCardData[] = models
+          .filter((m) => m.images.length > 0)
+          .map((m) => ({ src: m.images[0].url, caption: m.firstName, tag: 'Pomelo Talent' }))
+        if (modelCards.length === 0) return
+        // Featured models first; backfill any empty slots with placeholders so it stays full.
+        setCards([...modelCards, ...fallbackCards].slice(0, 4))
+      })
+      .catch(() => {
+        /* keep placeholders on error / before Firebase is configured */
+      })
+    return () => {
+      active = false
+    }
+  }, [])
+
+  const [first, second, third, fourth] = cards
 
   return (
     <section
