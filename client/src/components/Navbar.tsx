@@ -1,11 +1,8 @@
 import { useEffect, useState } from 'react'
 import { AnimatePresence, motion, useMotionValueEvent, useScroll } from 'framer-motion'
 import { Link } from 'react-router-dom'
-import { useTheme } from '../context/ThemeContext'
-import logoLight from '../assets/pomelo-logo.png'
 import logoDark from '../assets/pomelo-logo-dark.png'
 import Magnetic from './Magnetic'
-import ThemeToggle from './ThemeToggle'
 import { nav } from '../data/content'
 
 export default function Navbar() {
@@ -13,7 +10,6 @@ export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [hoveredHref, setHoveredHref] = useState<string | null>(null)
   const { scrollY } = useScroll()
-  const { theme } = useTheme()
 
   useMotionValueEvent(scrollY, 'change', (latest) => {
     setScrolled(latest > 24)
@@ -29,12 +25,12 @@ export default function Navbar() {
   return (
     <header
       className={`fixed inset-x-0 top-0 z-50 transition-colors duration-300 ${
-        scrolled ? 'bg-base/85 backdrop-blur-md shadow-lg shadow-black/10' : 'bg-transparent'
+        scrolled ? 'bg-[#0a0f1a]/85 backdrop-blur-md shadow-lg shadow-black/30' : 'bg-transparent'
       }`}
     >
       <nav className="mx-auto flex max-w-6xl items-center justify-between px-6 py-3">
         <Link to="/#top" className="flex items-center" aria-label="Pomelo Casting home">
-          <img src={theme === 'dark' || !scrolled ? logoDark : logoLight} alt="Pomelo Casting" className="h-11 w-auto sm:h-14" />
+          <img src={logoDark} alt="Pomelo Casting" className="h-11 w-auto sm:h-14" />
         </Link>
 
         <ul className="hidden items-center gap-1 md:flex" onMouseLeave={() => setHoveredHref(null)}>
@@ -43,16 +39,14 @@ export default function Navbar() {
               <Link
                 to={`/${item.href}`}
                 onMouseEnter={() => setHoveredHref(item.href)}
-                className={`relative z-10 block rounded-full px-4 py-2 text-sm font-medium tracking-wide transition-colors ${
-                  scrolled ? 'text-ink-soft hover:text-ink' : 'text-white/75 hover:text-white'
-                }`}
+                className="relative z-10 block rounded-full px-4 py-2 text-sm font-medium tracking-wide text-white/75 transition-colors hover:text-white"
               >
                 {item.label}
               </Link>
               {hoveredHref === item.href && (
                 <motion.span
                   layoutId="nav-hover-pill"
-                  className={`absolute inset-0 rounded-full ${scrolled ? 'bg-pomelo-blue/10' : 'bg-white/10'}`}
+                  className="absolute inset-0 rounded-full bg-white/10"
                   transition={{ type: 'spring', stiffness: 380, damping: 32 }}
                 />
               )}
@@ -61,7 +55,6 @@ export default function Navbar() {
         </ul>
 
         <div className="hidden items-center gap-3 md:flex">
-          <ThemeToggle />
           <Magnetic strength={10}>
             <Link
               to="/#contact"
@@ -73,7 +66,6 @@ export default function Navbar() {
         </div>
 
         <div className="flex items-center gap-2 md:hidden">
-          <ThemeToggle />
           <button
             type="button"
             className="flex flex-col gap-1.5 p-2"
@@ -81,18 +73,9 @@ export default function Navbar() {
             aria-expanded={menuOpen}
             onClick={() => setMenuOpen((v) => !v)}
           >
-            <motion.span
-              className={`h-0.5 w-6 ${scrolled || menuOpen ? 'bg-ink' : 'bg-white'}`}
-              animate={menuOpen ? { rotate: 45, y: 6 } : { rotate: 0, y: 0 }}
-            />
-            <motion.span
-              className={`h-0.5 w-6 ${scrolled || menuOpen ? 'bg-ink' : 'bg-white'}`}
-              animate={menuOpen ? { opacity: 0 } : { opacity: 1 }}
-            />
-            <motion.span
-              className={`h-0.5 w-6 ${scrolled || menuOpen ? 'bg-ink' : 'bg-white'}`}
-              animate={menuOpen ? { rotate: -45, y: -6 } : { rotate: 0, y: 0 }}
-            />
+            <motion.span className="h-0.5 w-6 bg-white" animate={menuOpen ? { rotate: 45, y: 6 } : { rotate: 0, y: 0 }} />
+            <motion.span className="h-0.5 w-6 bg-white" animate={menuOpen ? { opacity: 0 } : { opacity: 1 }} />
+            <motion.span className="h-0.5 w-6 bg-white" animate={menuOpen ? { rotate: -45, y: -6 } : { rotate: 0, y: 0 }} />
           </button>
         </div>
       </nav>
@@ -104,7 +87,7 @@ export default function Navbar() {
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.3, ease: 'easeInOut' }}
-            className="overflow-hidden bg-base/95 backdrop-blur-md md:hidden"
+            className="overflow-hidden bg-[#0a0f1a]/95 backdrop-blur-md md:hidden"
           >
             <ul className="flex flex-col gap-1 px-6 pb-6">
               {nav.map((item) => (
@@ -112,7 +95,7 @@ export default function Navbar() {
                   <Link
                     to={`/${item.href}`}
                     onClick={() => setMenuOpen(false)}
-                    className="block py-3 text-lg font-medium text-ink"
+                    className="block py-3 text-lg font-medium text-white/85 transition-colors hover:text-white"
                   >
                     {item.label}
                   </Link>

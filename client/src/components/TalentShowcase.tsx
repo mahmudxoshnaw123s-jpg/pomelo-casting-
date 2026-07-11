@@ -1,7 +1,6 @@
-import { AnimatePresence, motion, useMotionValue, useScroll, useSpring, useTransform } from 'framer-motion'
-import { useEffect, useState } from 'react'
-import type { MouseEvent } from 'react'
-import { useRef } from 'react'
+import { AnimatePresence, motion, useScroll, useTransform } from 'framer-motion'
+import { useEffect, useRef, useState } from 'react'
+import AmbientField from './AmbientField'
 import BrandPhoto from './BrandPhoto'
 import Magnetic from './Magnetic'
 import PremiumButton from './PremiumButton'
@@ -12,62 +11,7 @@ import { images } from '../data/images'
 const glowConic =
   'conic-gradient(from 0deg, transparent 0%, #00b2e2 12%, transparent 28%, #895193 50%, transparent 68%, #00b2e2 86%, transparent 100%)'
 
-const particles = Array.from({ length: 16 }).map((_, i) => ({
-  left: (i * 37 + 11) % 100,
-  top: (i * 23 + 7) % 100,
-  size: 2 + (i % 3),
-  duration: 10 + (i % 5) * 2,
-  delay: (i % 6) * 0.8,
-}))
-
 type GalleryItem = (typeof talentPage.gallery)[number]
-
-function AmbientField() {
-  const mx = useMotionValue(0)
-  const my = useMotionValue(0)
-  const sx = useSpring(mx, { stiffness: 40, damping: 20 })
-  const sy = useSpring(my, { stiffness: 40, damping: 20 })
-  const blobX = useTransform(sx, [-0.5, 0.5], [-24, 24])
-  const blobY = useTransform(sy, [-0.5, 0.5], [-18, 18])
-
-  const handleMove = (e: MouseEvent<HTMLDivElement>) => {
-    const rect = e.currentTarget.getBoundingClientRect()
-    mx.set((e.clientX - rect.left) / rect.width - 0.5)
-    my.set((e.clientY - rect.top) / rect.height - 0.5)
-  }
-
-  return (
-    <div onMouseMove={handleMove} className="pointer-events-auto absolute inset-0 -z-10">
-      <div
-        className="pointer-events-none absolute inset-0 opacity-[0.06]"
-        style={{
-          backgroundImage:
-            'linear-gradient(rgba(255,255,255,0.7) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.7) 1px, transparent 1px)',
-          backgroundSize: '64px 64px',
-        }}
-      />
-      <motion.div
-        style={{ x: blobX, y: blobY }}
-        className="pointer-events-none absolute -left-40 top-1/4 h-[30rem] w-[30rem] rounded-full bg-pomelo-purple/25 blur-[130px]"
-      />
-      <motion.div
-        style={{ x: useTransform(blobX, (v) => -v), y: useTransform(blobY, (v) => -v) }}
-        className="pointer-events-none absolute -right-40 bottom-1/4 h-[32rem] w-[32rem] rounded-full bg-pomelo-blue/15 blur-[130px]"
-      />
-      <div className="pointer-events-none absolute inset-0">
-        {particles.map((p, i) => (
-          <motion.span
-            key={i}
-            className="absolute rounded-full bg-white/50"
-            style={{ left: `${p.left}%`, top: `${p.top}%`, width: p.size, height: p.size }}
-            animate={{ y: [0, -30, 0], opacity: [0.15, 0.6, 0.15] }}
-            transition={{ duration: p.duration, repeat: Infinity, ease: 'easeInOut', delay: p.delay }}
-          />
-        ))}
-      </div>
-    </div>
-  )
-}
 
 function GalleryCard({ item, onOpen }: { item: GalleryItem; onOpen: () => void }) {
   return (
@@ -92,22 +36,41 @@ function GalleryCard({ item, onOpen }: { item: GalleryItem; onOpen: () => void }
         }}
       />
       <div className="relative aspect-[3/4] w-full">
-        <motion.div variants={{ hover: { scale: 1.07 } }} transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }} className="absolute inset-0">
+        <motion.div variants={{ hover: { scale: 1.08 } }} transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }} className="absolute inset-0">
           <BrandPhoto src={images[item.image]} alt={item.title} className="h-full w-full" />
         </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0 }}
+          variants={{ hover: { opacity: 1 } }}
+          transition={{ duration: 0.4 }}
+          className="pointer-events-none absolute inset-0 bg-white/[0.04] backdrop-blur-[2px]"
+        />
+        <motion.div
+          className="pointer-events-none absolute inset-0 z-10"
+          style={{ background: 'linear-gradient(115deg, transparent 35%, rgba(255,255,255,0.16) 50%, transparent 65%)' }}
+          initial={{ x: '-120%' }}
+          variants={{ hover: { x: '120%' } }}
+          transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+        />
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/85 via-black/10 to-transparent" />
-        <div className="absolute inset-x-0 bottom-0 p-6">
+
+        <motion.div
+          variants={{ hover: { y: -4 } }}
+          transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+          className="absolute inset-x-0 bottom-0 p-5 sm:p-6"
+        >
           <span className="text-[0.65rem] font-semibold uppercase tracking-[0.25em] text-pomelo-blue">{item.category}</span>
-          <h3 className="mt-1 font-display text-xl italic text-white">{item.title}</h3>
+          <h3 className="mt-1 font-display text-lg italic text-white sm:text-xl">{item.title}</h3>
           <p className="mt-2 max-w-xs text-sm text-white/60 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
             {item.description}
           </p>
-        </div>
+        </motion.div>
         <motion.span
           initial={{ opacity: 0, scale: 0.7 }}
           variants={{ hover: { opacity: 1, scale: 1 } }}
           transition={{ duration: 0.3 }}
-          className="absolute right-5 top-5 flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-black/40 text-white backdrop-blur-sm"
+          className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full border border-white/20 bg-black/40 text-white backdrop-blur-sm sm:right-5 sm:top-5 sm:h-10 sm:w-10"
         >
           <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
@@ -184,18 +147,19 @@ function Lightbox({ items, index, onClose, onNav }: { items: GalleryItem[]; inde
 
       <AnimatePresence mode="wait">
         <motion.div
-          key={item.image}
+          key={item.id}
           initial={{ opacity: 0, scale: 0.92 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.96 }}
           transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
           onClick={(e) => e.stopPropagation()}
-          className="relative mx-auto max-h-[85vh] max-w-[90vw] overflow-hidden rounded-2xl border border-white/10 shadow-2xl shadow-black/60"
+          className="relative mx-auto max-h-[85vh] w-[90vw] max-w-xl overflow-hidden rounded-2xl border border-white/10 shadow-2xl shadow-black/60"
         >
-          <img src={images[item.image]} alt={item.title} className="max-h-[85vh] w-auto object-contain" />
-          <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 to-transparent p-6">
+          <img src={images[item.image]} alt={item.title} className="max-h-[85vh] w-full object-contain" />
+          <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent p-6 sm:p-8">
             <span className="text-[0.65rem] font-semibold uppercase tracking-[0.25em] text-pomelo-blue">{item.category}</span>
-            <p className="mt-1 font-display text-xl italic text-white">{item.title}</p>
+            <p className="mt-1 font-display text-2xl italic text-white">{item.title}</p>
+            <p className="mt-2 max-w-md text-sm text-white/60">{item.description}</p>
           </div>
         </motion.div>
       </AnimatePresence>
@@ -204,23 +168,21 @@ function Lightbox({ items, index, onClose, onNav }: { items: GalleryItem[]; inde
 }
 
 export default function TalentShowcase() {
-  const [activeCategory, setActiveCategory] = useState('All')
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
   const heroRef = useRef<HTMLDivElement>(null)
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ['start start', 'end start'] })
   const heroScale = useTransform(scrollYProgress, [0, 1], [1, 1.15])
   const heroOpacity = useTransform(scrollYProgress, [0, 1], [1, 0])
 
-  const filtered =
-    activeCategory === 'All' ? talentPage.gallery : talentPage.gallery.filter((item) => item.category === activeCategory)
+  const galleryItems = talentPage.gallery
 
   const openLightbox = (item: GalleryItem) => {
-    setLightboxIndex(filtered.findIndex((g) => g.image === item.image))
+    setLightboxIndex(galleryItems.findIndex((g) => g.id === item.id))
   }
   const navLightbox = (dir: 1 | -1) => {
     setLightboxIndex((prev) => {
       if (prev === null) return prev
-      return (prev + dir + filtered.length) % filtered.length
+      return (prev + dir + galleryItems.length) % galleryItems.length
     })
   }
 
@@ -289,35 +251,10 @@ export default function TalentShowcase() {
       <section className="relative isolate overflow-hidden py-24 sm:py-32">
         <AmbientField />
         <div className="relative z-10 mx-auto max-w-6xl px-6">
-          <div className="mb-12 flex flex-wrap items-center justify-center gap-3">
-            {talentPage.categories.map((cat) => {
-              const active = activeCategory === cat
-              return (
-                <button
-                  key={cat}
-                  type="button"
-                  onClick={() => setActiveCategory(cat)}
-                  className="relative rounded-full px-5 py-2.5 text-sm font-semibold uppercase tracking-widest text-white/70 transition-colors hover:text-white"
-                >
-                  {active && (
-                    <motion.span
-                      layoutId="talent-filter-pill"
-                      className="absolute inset-0 rounded-full bg-gradient-to-r from-pomelo-blue to-pomelo-purple"
-                      transition={{ type: 'spring', stiffness: 380, damping: 32 }}
-                    />
-                  )}
-                  <span className={`relative z-10 ${active ? 'text-white' : ''}`}>{cat}</span>
-                </button>
-              )
-            })}
-          </div>
-
-          <motion.div layout className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            <AnimatePresence mode="popLayout">
-              {filtered.map((item) => (
-                <GalleryCard key={item.image} item={item} onOpen={() => openLightbox(item)} />
-              ))}
-            </AnimatePresence>
+          <motion.div layout className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {galleryItems.map((item) => (
+              <GalleryCard key={item.id} item={item} onOpen={() => openLightbox(item)} />
+            ))}
           </motion.div>
         </div>
       </section>
@@ -387,7 +324,7 @@ export default function TalentShowcase() {
 
       <AnimatePresence>
         {lightboxIndex !== null && (
-          <Lightbox items={filtered} index={lightboxIndex} onClose={() => setLightboxIndex(null)} onNav={navLightbox} />
+          <Lightbox items={galleryItems} index={lightboxIndex} onClose={() => setLightboxIndex(null)} onNav={navLightbox} />
         )}
       </AnimatePresence>
     </div>

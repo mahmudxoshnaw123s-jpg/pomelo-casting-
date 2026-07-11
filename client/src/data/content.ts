@@ -329,27 +329,30 @@ export const talentPage = {
   label: 'Talent',
   heading: 'The faces behind every campaign.',
   subhead: 'A curated look at the talent, editorial work, and studio energy Pomelo Casting brings to every brief.',
-  categories: ['All', 'Editorial', 'Campaign', 'Commercial', 'Studio'],
   gallery: [
     {
+      id: 'campaign-press',
       image: 'talent-feature-press.png',
       title: 'Press Day',
       category: 'Campaign',
       description: 'On-brand press coverage, styled and cast for a national campaign push.',
     },
     {
+      id: 'editorial-cover',
       image: 'talent-feature-cover.png',
       title: 'Cover Story',
       category: 'Editorial',
       description: 'Editorial styling for a cover feature, cast for tone and presence.',
     },
     {
+      id: 'commercial-walk',
       image: 'talent-feature-walk.png',
       title: 'Studio Walk',
       category: 'Commercial',
       description: 'Commercial lookbook talent, cast for movement and confidence on camera.',
     },
     {
+      id: 'studio-bts',
       image: 'talent-feature-bts.png',
       title: 'Behind the Scenes',
       category: 'Studio',
