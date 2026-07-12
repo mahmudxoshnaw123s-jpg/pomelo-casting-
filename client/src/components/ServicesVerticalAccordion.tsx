@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { services } from '../data/content'
 import { serviceVisuals } from '../data/serviceVisuals'
 
-const grade = 'grayscale(0.85) contrast(1.08) brightness(0.92)'
+const grade = 'grayscale(0.35) contrast(1.04) brightness(1.03)'
 const ease = [0.16, 1, 0.3, 1] as const
 
 export default function ServicesVerticalAccordion() {
