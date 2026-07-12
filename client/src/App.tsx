@@ -11,7 +11,6 @@ import Footer from './sections/Footer'
 import AdminPage from './pages/AdminPage'
 import ApplyPage from './pages/ApplyPage'
 import Home from './pages/Home'
-import ServiceDetailPage from './pages/ServiceDetailPage'
 import TalentPage from './pages/TalentPage'
 
 function App() {
@@ -59,14 +58,6 @@ function App() {
               element={
                 <PageTransition>
                   <Home />
-                </PageTransition>
-              }
-            />
-            <Route
-              path="/services/:slug"
-              element={
-                <PageTransition>
-                  <ServiceDetailPage />
                 </PageTransition>
               }
             />

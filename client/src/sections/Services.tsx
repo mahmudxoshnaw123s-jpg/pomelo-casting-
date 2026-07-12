@@ -1,5 +1,5 @@
-import ServicesConstellation from '../components/ServicesConstellation'
+import ServicesAccordion from '../components/ServicesAccordion'
 
 export default function Services() {
-  return <ServicesConstellation />
+  return <ServicesAccordion />
 }
