@@ -3,6 +3,7 @@ import type { FormEvent } from 'react'
 import { useAuth } from '../context/AuthContext'
 import AdminsSection from '../components/admin/AdminsSection'
 import InboxSection from '../components/admin/InboxSection'
+import InsightsSection from '../components/admin/InsightsSection'
 import RosterSection from '../components/admin/RosterSection'
 import { cardClass, fieldClass, sectionClass } from '../components/admin/adminStyles'
 
@@ -69,7 +70,7 @@ function LoginScreen() {
   )
 }
 
-type Tab = 'roster' | 'inbox' | 'admins'
+type Tab = 'roster' | 'insights' | 'inbox' | 'admins'
 
 function Dashboard() {
   const { user, signOut } = useAuth()
@@ -102,11 +103,13 @@ function Dashboard() {
 
         <div className="mb-10 flex flex-wrap gap-2 rounded-full border border-white/10 bg-white/[0.03] p-1.5">
           {tabButton('roster', 'Talent roster')}
+          {tabButton('insights', 'Insights')}
           {tabButton('inbox', 'Inbox')}
           {tabButton('admins', 'Admins')}
         </div>
 
         {tab === 'roster' && <RosterSection />}
+        {tab === 'insights' && <InsightsSection />}
         {tab === 'inbox' && <InboxSection />}
         {tab === 'admins' && <AdminsSection />}
       </div>
