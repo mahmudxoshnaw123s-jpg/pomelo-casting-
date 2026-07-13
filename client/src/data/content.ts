@@ -24,9 +24,8 @@ export const about = {
   heading: 'Casting with an eye for the right fit, not just the right face.',
   body: 'Pomelo Casting is a talent agency built around one idea: the right person makes the campaign. We work with brands, agencies, and production teams to source, vet, and place models, actors, and creators for shoots, campaigns, and productions of every scale.',
   stats: [
-    { value: 250, suffix: '+', label: 'Talent placed' },
-    { value: 8, suffix: '', label: 'Years casting' },
-    { value: 60, suffix: '+', label: 'Brands served' },
+    { value: 30, suffix: '+', label: 'Talent placed' },
+    { value: 20, suffix: '+', label: 'Brands served' },
   ],
 }
 

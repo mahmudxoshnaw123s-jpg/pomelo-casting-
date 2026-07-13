@@ -1,5 +1,5 @@
-import AboutStory from '../components/AboutStory'
+import AboutStatement from '../components/AboutStatement'
 
 export default function About() {
-  return <AboutStory />
+  return <AboutStatement />
 }

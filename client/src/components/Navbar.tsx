@@ -3,7 +3,10 @@ import { AnimatePresence, motion, useMotionValueEvent, useScroll } from 'framer-
 import { Link } from 'react-router-dom'
 import logoDark from '../assets/pomelo-logo-dark.png'
 import Magnetic from './Magnetic'
+import PomeloMark from './PomeloMark'
 import { nav } from '../data/content'
+
+const ease = [0.16, 1, 0.3, 1] as const
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false)
@@ -25,7 +28,11 @@ export default function Navbar() {
   return (
     <header
       className={`fixed inset-x-0 top-0 z-50 transition-colors duration-300 ${
-        scrolled ? 'bg-[#0a0f1a]/85 backdrop-blur-md shadow-lg shadow-black/30' : 'bg-transparent'
+        menuOpen
+          ? 'bg-[#0a0f1a]'
+          : scrolled
+            ? 'bg-[#0a0f1a]/85 backdrop-blur-md shadow-lg shadow-black/30'
+            : 'bg-transparent'
       }`}
     >
       <nav className="mx-auto flex max-w-6xl items-center justify-between px-6 py-3">
@@ -65,7 +72,7 @@ export default function Navbar() {
           </Magnetic>
         </div>
 
-        <div className="flex items-center gap-2 md:hidden">
+        <div className="relative z-50 flex items-center gap-2 md:hidden">
           <button
             type="button"
             className="flex flex-col gap-1.5 p-2"
@@ -83,34 +90,76 @@ export default function Navbar() {
       <AnimatePresence>
         {menuOpen && (
           <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.3, ease: 'easeInOut' }}
-            className="overflow-hidden bg-[#0a0f1a]/95 backdrop-blur-md md:hidden"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.4, ease }}
+            className="fixed inset-0 z-40 flex flex-col overflow-hidden bg-gradient-to-br from-[#1a0a24] via-pomelo-purple to-pomelo-blue md:hidden"
           >
-            <ul className="flex flex-col gap-1 px-6 pb-6">
-              {nav.map((item) => (
-                <li key={item.href}>
-                  <Link
-                    to={`/${item.href}`}
-                    onClick={() => setMenuOpen(false)}
-                    className="block py-3 text-lg font-medium text-white/85 transition-colors hover:text-white"
+            <motion.div
+              className="pointer-events-none absolute -right-16 -top-16 h-72 w-72 opacity-[0.14]"
+              animate={{ rotate: 360 }}
+              transition={{ duration: 70, repeat: Infinity, ease: 'linear' }}
+              aria-hidden="true"
+            >
+              <PomeloMark className="h-full w-full" />
+            </motion.div>
+
+            <div className="relative z-10 flex flex-1 flex-col items-center justify-center gap-1 overflow-y-auto px-6 pt-20">
+              <nav className="flex flex-col items-center gap-0.5">
+                {nav.map((item, i) => (
+                  <motion.div
+                    key={item.href}
+                    initial={{ opacity: 0, y: 24 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 12 }}
+                    transition={{ duration: 0.5, delay: 0.1 + i * 0.06, ease }}
                   >
-                    {item.label}
+                    <Link
+                      to={`/${item.href}`}
+                      onClick={() => setMenuOpen(false)}
+                      className="block px-4 py-1 text-center font-display text-3xl italic text-white transition-colors duration-200 hover:text-[#0a0f1a] sm:text-4xl"
+                    >
+                      {item.label}
+                    </Link>
+                  </motion.div>
+                ))}
+              </nav>
+
+              <motion.div
+                initial={{ opacity: 0, y: 24 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 12 }}
+                transition={{ duration: 0.5, delay: 0.1 + nav.length * 0.06, ease }}
+                className="mt-6"
+              >
+                <Magnetic strength={10}>
+                  <Link
+                    to="/#contact"
+                    onClick={() => setMenuOpen(false)}
+                    className="inline-block rounded-full border border-white/50 bg-white/10 px-7 py-3 text-sm font-semibold uppercase tracking-widest text-white backdrop-blur-sm transition-colors hover:bg-white hover:text-[#1a0a24]"
+                  >
+                    Get in touch
                   </Link>
-                </li>
-              ))}
-              <li>
-                <Link
-                  to="/#contact"
-                  onClick={() => setMenuOpen(false)}
-                  className="mt-2 inline-block rounded-full bg-pomelo-blue px-5 py-2 text-sm font-semibold text-[var(--color-on-accent)]"
-                >
-                  Get in touch
-                </Link>
-              </li>
-            </ul>
+                </Magnetic>
+              </motion.div>
+            </div>
+
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.4, delay: 0.35 }}
+              className="relative z-10 flex shrink-0 justify-center pb-8 pt-4"
+            >
+              <button
+                type="button"
+                onClick={() => setMenuOpen(false)}
+                className="text-sm font-semibold uppercase tracking-[0.35em] text-white/60 transition-colors hover:text-white"
+              >
+                Close
+              </button>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
