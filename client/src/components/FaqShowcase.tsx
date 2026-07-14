@@ -1,7 +1,8 @@
 import { AnimatePresence, motion, useMotionValue, useSpring, useTransform } from 'framer-motion'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import type { MouseEvent } from 'react'
 import { faqSection } from '../data/content'
+import { fetchFaqs } from '../lib/faqs'
 import Magnetic from './Magnetic'
 import PremiumButton from './PremiumButton'
 import SplitText from './SplitText'
@@ -97,6 +98,23 @@ function FaqCard({ item, isOpen, onToggle, index }: { item: FaqItem; isOpen: boo
 
 export default function FaqShowcase() {
   const [openIndex, setOpenIndex] = useState<number | null>(0)
+  const [items, setItems] = useState<FaqItem[]>(faqSection.items)
+
+  useEffect(() => {
+    let active = true
+    fetchFaqs()
+      .then((faqs) => {
+        if (!active || faqs.length === 0) return
+        setItems(faqs.map((f) => ({ question: f.question, answer: f.answer, category: f.category || undefined })))
+      })
+      .catch(() => {
+        /* keep the fallback questions before Firebase is configured */
+      })
+    return () => {
+      active = false
+    }
+  }, [])
+
   const mx = useMotionValue(0)
   const my = useMotionValue(0)
   const sx = useSpring(mx, { stiffness: 40, damping: 20 })
@@ -189,9 +207,9 @@ export default function FaqShowcase() {
         </div>
 
         <div className="mt-16 grid gap-5 sm:grid-cols-2">
-          {faqSection.items.map((item, i) => (
+          {items.map((item, i) => (
             <FaqCard
-              key={item.question}
+              key={`${item.question}-${i}`}
               item={item}
               index={i}
               isOpen={openIndex === i}

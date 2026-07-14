@@ -7,6 +7,7 @@ import { errorHandler, notFoundHandler } from './middleware/errorHandler'
 import adminsRouter from './routes/admins'
 import applyRouter from './routes/apply'
 import contactRouter from './routes/contact'
+import faqsRouter from './routes/faqs'
 import modelsRouter from './routes/models'
 import postsRouter from './routes/posts'
 import submissionsRouter from './routes/submissions'
@@ -34,6 +35,7 @@ export function createApp() {
   app.use('/api/apply', applyRouter)
   app.use('/api/models', modelsRouter)
   app.use('/api/posts', postsRouter)
+  app.use('/api/faqs', faqsRouter)
   app.use('/api/admins', adminsRouter)
   app.use('/api/submissions', submissionsRouter)
 
