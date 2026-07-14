@@ -107,18 +107,6 @@ export default function WorkExhibition() {
 
       <div className="relative z-10 mx-auto max-w-6xl px-6">
         <div className="mx-auto max-w-2xl text-center">
-          <motion.p
-            initial={{ opacity: 0, y: 12 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="mb-5 flex items-center justify-center gap-3 text-sm font-semibold uppercase tracking-[0.3em] text-pomelo-blue"
-          >
-            <span className="h-px w-8 bg-pomelo-blue" />
-            {work.label}
-            <span className="h-px w-8 bg-pomelo-blue" />
-          </motion.p>
-
           <h2 className="text-balance font-display text-4xl italic leading-tight text-white sm:text-5xl lg:text-6xl">
             <SplitText text={work.heading} />
           </h2>

@@ -127,17 +127,6 @@ export default function StudioMap() {
       </div>
 
       <div className="relative z-10 mx-auto max-w-5xl px-6 text-center">
-        <motion.p
-          initial={{ opacity: 0, y: 12 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="mb-5 flex items-center justify-center gap-3 text-sm font-semibold uppercase tracking-[0.3em] text-pomelo-blue"
-        >
-          <span className="h-px w-8 bg-pomelo-blue" />
-          Visit the studio
-          <span className="h-px w-8 bg-pomelo-blue" />
-        </motion.p>
         <motion.h3
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}

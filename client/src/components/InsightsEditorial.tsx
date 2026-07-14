@@ -285,15 +285,6 @@ export default function InsightsEditorial() {
         </motion.div>
 
         <motion.div style={{ opacity: coverTextOpacity }} className="relative mx-auto w-full max-w-6xl px-6 pb-20">
-          <motion.p
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="mb-5 flex items-center gap-3 text-sm font-semibold uppercase tracking-[0.3em] text-pomelo-blue"
-          >
-            <span className="h-px w-8 bg-pomelo-blue" />
-            {insights.label}
-          </motion.p>
 
           <h2 className="max-w-3xl text-balance font-display text-4xl italic leading-[1.05] text-white sm:text-6xl lg:text-7xl">
             <SplitText key={cover.id} text={cover.title} delay={0.35} />
@@ -329,16 +320,6 @@ export default function InsightsEditorial() {
       </div>
 
       <div className="relative z-10 mx-auto max-w-5xl px-6 py-28 sm:py-36">
-        <motion.p
-          initial={{ opacity: 0, y: 12 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="mb-4 flex items-center gap-3 text-sm font-semibold uppercase tracking-[0.3em] text-pomelo-blue"
-        >
-          <span className="h-px w-8 bg-pomelo-blue" />
-          Contents
-        </motion.p>
         <motion.h2
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}

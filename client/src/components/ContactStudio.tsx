@@ -140,11 +140,6 @@ export default function ContactStudio() {
           transition={{ duration: 0.6 }}
           className="mx-auto mb-16 max-w-2xl text-center"
         >
-          <p className="mb-5 flex items-center justify-center gap-3 text-sm font-semibold uppercase tracking-[0.3em] text-pomelo-blue">
-            <span className="h-px w-8 bg-pomelo-blue" />
-            {contact.label}
-            <span className="h-px w-8 bg-pomelo-blue" />
-          </p>
           <h2 className="text-balance font-display text-4xl italic leading-tight text-white sm:text-5xl lg:text-6xl">
             <SplitText text={contact.heading} />
           </h2>

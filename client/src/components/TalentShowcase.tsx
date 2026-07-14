@@ -266,16 +266,6 @@ export default function TalentShowcase() {
         />
 
         <motion.div style={{ opacity: heroOpacity }} className="relative z-10 mx-auto max-w-3xl px-6 text-center">
-          <motion.p
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="mb-6 flex items-center justify-center gap-3 text-sm font-semibold uppercase tracking-[0.3em] text-pomelo-blue"
-          >
-            <span className="h-px w-8 bg-pomelo-blue" />
-            {talentPage.label}
-            <span className="h-px w-8 bg-pomelo-blue" />
-          </motion.p>
           <h1 className="text-balance font-display text-5xl italic leading-[1.05] text-white sm:text-6xl lg:text-7xl">
             <SplitText text={talentPage.heading} delay={0.4} />
           </h1>
@@ -338,10 +328,6 @@ export default function TalentShowcase() {
             transition={{ duration: 0.7, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
             className="lg:order-1"
           >
-            <p className="mb-4 flex items-center gap-3 text-sm font-semibold uppercase tracking-[0.3em] text-pomelo-blue">
-              <span className="h-px w-8 bg-pomelo-blue" />
-              {talentPage.spotlight.label}
-            </p>
             <h2 className="text-balance font-display text-3xl italic leading-tight text-white sm:text-4xl">
               {talentPage.spotlight.heading}
             </h2>

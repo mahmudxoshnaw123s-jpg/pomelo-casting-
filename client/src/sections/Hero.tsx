@@ -138,17 +138,6 @@ export default function Hero() {
         style={{ opacity: contentOpacity, y: contentY }}
         className="relative z-10 mx-auto flex min-h-[100svh] max-w-3xl flex-col items-center justify-center px-6 text-center"
       >
-        <motion.p
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 1.3 }}
-          className="mb-6 flex items-center gap-3 text-sm font-semibold uppercase tracking-[0.3em] text-pomelo-blue"
-        >
-          <span className="h-px w-8 bg-pomelo-blue" />
-          {hero.eyebrow}
-          <span className="h-px w-8 bg-pomelo-blue" />
-        </motion.p>
-
         <h1 className="text-balance font-display text-5xl italic leading-[1.05] text-white sm:text-6xl lg:text-7xl">
           <SplitText text={hero.headlineLead} delay={1.5} />{' '}
           <WordRotator words={hero.rotatingWords} className="text-gradient not-italic" /> <br />
