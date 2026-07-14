@@ -138,6 +138,7 @@ export default function ModelApplicationForm() {
 
   return (
     <section
+      aria-label="Application form"
       onMouseMove={handleAmbientMove}
       className="relative isolate overflow-hidden bg-gradient-to-b from-[#0b0713] via-[#130b21] to-[#0a0f1a] py-28 sm:py-36"
     >
@@ -217,7 +218,7 @@ export default function ModelApplicationForm() {
                 >
                   <IconCheck className="h-7 w-7" />
                 </motion.span>
-                <h3 className="mt-6 font-display text-2xl italic text-white">{application.success.heading}</h3>
+                <h2 className="mt-6 font-display text-2xl italic text-white">{application.success.heading}</h2>
                 <p className="mt-2 max-w-sm text-white/60">{application.success.body}</p>
                 <button
                   type="button"

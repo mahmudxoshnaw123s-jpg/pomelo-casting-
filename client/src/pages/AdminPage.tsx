@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react'
-import type { FormEvent } from 'react'
-import { useAuth } from '../context/AuthContext'
+import type { FormEvent, ReactNode } from 'react'
+import { AuthProvider, useAuth } from '../context/AuthContext'
 import AdminsSection from '../components/admin/AdminsSection'
 import InboxSection from '../components/admin/InboxSection'
 import InsightsSection from '../components/admin/InsightsSection'
 import RosterSection from '../components/admin/RosterSection'
+import Seo from '../components/Seo'
 import { cardClass, fieldClass, sectionClass } from '../components/admin/adminStyles'
 
 function friendlyAuthError(err: unknown): string {
@@ -118,14 +119,23 @@ function Dashboard() {
 }
 
 export default function AdminPage() {
+  return (
+    <AuthProvider>
+      <AdminPageContent />
+    </AuthProvider>
+  )
+}
+
+function AdminPageContent() {
   const { configured, loading, user } = useAuth()
 
   useEffect(() => {
     window.scrollTo(0, 0)
   }, [])
 
+  let content: ReactNode
   if (!configured) {
-    return (
+    content = (
       <div className={`${sectionClass} flex items-center justify-center`}>
         <div className={`${cardClass} max-w-md text-center`}>
           <h1 className="font-display text-2xl italic text-white">Admin not configured</h1>
@@ -136,15 +146,20 @@ export default function AdminPage() {
         </div>
       </div>
     )
-  }
-
-  if (loading) {
-    return (
+  } else if (loading) {
+    content = (
       <div className={`${sectionClass} flex items-center justify-center`}>
         <p className="text-white/50">Loading…</p>
       </div>
     )
+  } else {
+    content = user ? <Dashboard /> : <LoginScreen />
   }
 
-  return user ? <Dashboard /> : <LoginScreen />
+  return (
+    <>
+      <Seo title="Admin | Pomelo Casting" description="Internal admin dashboard for Pomelo Casting." path="/admin" noindex />
+      {content}
+    </>
+  )
 }

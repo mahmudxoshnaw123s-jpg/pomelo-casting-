@@ -80,7 +80,7 @@ export default function FeaturedTalent() {
   const list = cards.slice(0, 4)
 
   return (
-    <section className="relative isolate overflow-hidden bg-[#0a0f1a] py-28 sm:py-36">
+    <section aria-label="Featured talent" className="relative isolate overflow-hidden bg-[#0a0f1a] py-28 sm:py-36">
       {/* one soft, calm glow for depth — no grid or particles, so the photos lead */}
       <div
         className="pointer-events-none absolute left-1/2 top-1/2 h-[36rem] w-[60rem] max-w-[92vw] -translate-x-1/2 -translate-y-1/2 rounded-[50%] opacity-40 blur-[130px]"

@@ -1,6 +1,6 @@
 import { AnimatePresence, motion } from 'framer-motion'
-import { useEffect, useRef, useState } from 'react'
-import type { DragEvent } from 'react'
+import { useEffect, useId, useRef, useState } from 'react'
+import type { DragEvent, KeyboardEvent } from 'react'
 
 interface PhotoDropzoneProps {
   label: string
@@ -66,12 +66,24 @@ export default function PhotoDropzone({ label, hint, required, files, max, onCha
   const [dragOver, setDragOver] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
   const canAddMore = files.length < max
+  const inputId = useId()
+  const errorId = `${inputId}-error`
+  const hintId = `${inputId}-hint`
 
   const addFiles = (incoming: FileList | File[]) => {
     const imagesOnly = Array.from(incoming).filter((f) => f.type.startsWith('image/'))
     const room = max - files.length
     if (room <= 0) return
     onChange([...files, ...imagesOnly.slice(0, room)])
+  }
+
+  const openPicker = () => inputRef.current?.click()
+
+  const handleTriggerKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault()
+      openPicker()
+    }
   }
 
   const handleDrop = (e: DragEvent<HTMLDivElement>) => {
@@ -85,15 +97,18 @@ export default function PhotoDropzone({ label, hint, required, files, max, onCha
     onChange(files.filter((_, i) => i !== index))
   }
 
+  const describedBy = [hint ? hintId : null, error ? errorId : null].filter(Boolean).join(' ') || undefined
+
   return (
     <div>
       <div className="mb-1.5 flex items-baseline justify-between">
-        <label className="text-xs font-semibold uppercase tracking-widest text-white/60">
-          {label} {!required && <span className="normal-case text-white/35">(optional)</span>}
+        <label htmlFor={inputId} className="text-xs font-semibold uppercase tracking-widest text-white/60">
+          {label} {!required && <span className="normal-case text-white/55">(optional)</span>}
         </label>
         <AnimatePresence>
           {error && (
             <motion.span
+              id={errorId}
               initial={{ opacity: 0, y: -4 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0 }}
@@ -115,7 +130,12 @@ export default function PhotoDropzone({ label, hint, required, files, max, onCha
 
         {canAddMore && (
           <motion.div
-            onClick={() => inputRef.current?.click()}
+            role="button"
+            tabIndex={0}
+            aria-label={`Upload ${label.toLowerCase()}`}
+            aria-describedby={describedBy}
+            onClick={openPicker}
+            onKeyDown={handleTriggerKeyDown}
             onDragOver={(e) => {
               e.preventDefault()
               setDragOver(true)
@@ -124,7 +144,7 @@ export default function PhotoDropzone({ label, hint, required, files, max, onCha
             onDrop={handleDrop}
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            className={`flex h-24 w-24 shrink-0 cursor-pointer flex-col items-center justify-center gap-1 rounded-xl border-2 border-dashed text-white/50 transition-colors duration-300 ${
+            className={`flex h-24 w-24 shrink-0 cursor-pointer flex-col items-center justify-center gap-1 rounded-xl border-2 border-dashed text-white/50 outline-none transition-colors duration-300 focus-visible:border-pomelo-blue focus-visible:text-pomelo-blue ${
               dragOver ? 'border-pomelo-blue bg-pomelo-blue/10 text-pomelo-blue' : 'border-white/15 hover:border-white/30 hover:text-white/70'
             }`}
           >
@@ -134,13 +154,20 @@ export default function PhotoDropzone({ label, hint, required, files, max, onCha
         )}
       </div>
 
-      {hint && <p className="mt-2 text-xs text-white/40">{hint}</p>}
+      {hint && (
+        <p id={hintId} className="mt-2 text-xs text-white/40">
+          {hint}
+        </p>
+      )}
 
       <input
         ref={inputRef}
+        id={inputId}
         type="file"
         accept="image/*"
         multiple={max > 1}
+        required={required}
+        aria-invalid={Boolean(error)}
         className="hidden"
         onChange={(e) => {
           if (e.target.files) addFiles(e.target.files)

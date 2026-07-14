@@ -82,16 +82,22 @@ export default function PremiumButton({ children, onClick, href, variant = 'soli
   }
 
   if (href) {
-    const isInternal = href.startsWith('/') && !href.startsWith('//')
+    const isInternal = resolvedHref!.startsWith('/') && !resolvedHref!.startsWith('//')
     if (isInternal) {
       return (
-        <MotionLink to={href} className={baseClass} {...motionProps}>
+        <MotionLink to={resolvedHref!} className={baseClass} {...motionProps}>
           {content}
         </MotionLink>
       )
     }
+    const isExternalUrl = /^https?:\/\//.test(resolvedHref!)
     return (
-      <motion.a href={resolvedHref} className={baseClass} {...motionProps}>
+      <motion.a
+        href={resolvedHref}
+        {...(isExternalUrl ? { target: '_blank', rel: 'noreferrer' } : {})}
+        className={baseClass}
+        {...motionProps}
+      >
         {content}
       </motion.a>
     )

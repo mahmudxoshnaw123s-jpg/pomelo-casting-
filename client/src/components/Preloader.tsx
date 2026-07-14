@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import logoDark from '../assets/pomelo-logo-dark.png'
+import logoDark from '../assets/pomelo-logo-dark-optimized.png'
 
 export default function Preloader() {
   return (
@@ -27,6 +27,8 @@ export default function Preloader() {
           <motion.img
             src={logoDark}
             alt="Pomelo Casting"
+            width={641}
+            height={256}
             className="h-12 w-auto sm:h-14"
             initial={{ opacity: 0, scale: 0.85 }}
             animate={{ opacity: 1, scale: 1 }}

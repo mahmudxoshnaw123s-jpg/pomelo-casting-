@@ -64,6 +64,7 @@ export default function WorkExhibition() {
   return (
     <section
       id="work"
+      aria-label="Selected work"
       onMouseMove={handleMouseMove}
       className="relative isolate overflow-hidden bg-gradient-to-b from-[#0b0713] via-[#130b21] to-[#0a0f1a] py-28 sm:py-36"
     >

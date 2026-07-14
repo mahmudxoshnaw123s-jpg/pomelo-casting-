@@ -1,10 +1,12 @@
-import { motion, useAnimationFrame, useMotionValue, useScroll, useTransform } from 'framer-motion'
+import { AnimatePresence, motion, useAnimationFrame, useMotionValue, useScroll, useTransform } from 'framer-motion'
 import { useEffect, useRef, useState } from 'react'
 import type { MouseEvent } from 'react'
 import AuthorAvatar from './AuthorAvatar'
 import BrandPhoto from './BrandPhoto'
 import PremiumButton from './PremiumButton'
 import SplitText from './SplitText'
+import { IconArrowRight } from './icons'
+import { useModalFocus } from '../hooks/useModalFocus'
 import { insights } from '../data/content'
 import { images } from '../data/images'
 import { fetchPosts } from '../lib/posts'
@@ -45,9 +47,140 @@ const particles = Array.from({ length: 16 }).map((_, i) => ({
   delay: (i % 6) * 0.75,
 }))
 
+const ease = [0.16, 1, 0.3, 1] as const
+
+function ArticleModal({
+  posts,
+  index,
+  onClose,
+  onNav,
+}: {
+  posts: DisplayPost[]
+  index: number
+  onClose: () => void
+  onNav: (dir: 1 | -1) => void
+}) {
+  const post = posts[index]
+  const total = posts.length
+  const containerRef = useRef<HTMLDivElement>(null)
+  useModalFocus(containerRef)
+
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose()
+      if (e.key === 'ArrowRight') onNav(1)
+      if (e.key === 'ArrowLeft') onNav(-1)
+    }
+    window.addEventListener('keydown', handleKey)
+    document.body.style.overflow = 'hidden'
+    return () => {
+      window.removeEventListener('keydown', handleKey)
+      document.body.style.overflow = ''
+    }
+  }, [onClose, onNav])
+
+  return (
+    <motion.div
+      ref={containerRef}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="article-modal-title"
+      tabIndex={-1}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.3 }}
+      className="fixed inset-0 z-[90] flex items-center justify-center bg-black/90 p-4 backdrop-blur-xl outline-none sm:p-6"
+      onClick={onClose}
+    >
+      <button
+        type="button"
+        onClick={onClose}
+        aria-label="Close article"
+        className="absolute right-4 top-4 flex h-11 w-11 items-center justify-center rounded-full border border-white/15 bg-white/5 text-white transition-colors hover:border-pomelo-blue/50 hover:text-pomelo-blue sm:right-6 sm:top-6"
+      >
+        <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M18 6 6 18M6 6l12 12" />
+        </svg>
+      </button>
+
+      {total > 1 && (
+        <>
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation()
+              onNav(-1)
+            }}
+            aria-label="Previous story"
+            className="absolute left-2 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-white/5 text-white transition-colors hover:border-pomelo-blue/50 hover:text-pomelo-blue sm:left-6"
+          >
+            <IconArrowRight className="h-4 w-4 rotate-180" />
+          </button>
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation()
+              onNav(1)
+            }}
+            aria-label="Next story"
+            className="absolute right-2 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-white/5 text-white transition-colors hover:border-pomelo-blue/50 hover:text-pomelo-blue sm:right-6"
+          >
+            <IconArrowRight className="h-4 w-4" />
+          </button>
+        </>
+      )}
+
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={post.id}
+          initial={{ opacity: 0, y: 16, scale: 0.98 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: -16, scale: 0.98 }}
+          transition={{ duration: 0.35, ease }}
+          onClick={(e) => e.stopPropagation()}
+          className="relative mx-auto max-h-[88vh] w-[92vw] max-w-2xl overflow-y-auto rounded-3xl border border-white/10 bg-[#0d0a15] shadow-2xl shadow-black/60"
+        >
+          <div className="relative aspect-[16/9] w-full shrink-0">
+            <BrandPhoto src={post.image} alt={post.title} className="h-full w-full" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0d0a15] via-transparent to-black/10" />
+          </div>
+
+          <div className="px-6 py-8 sm:px-10 sm:py-10">
+            <span className="text-xs font-semibold uppercase tracking-[0.25em] text-pomelo-blue">{post.category}</span>
+            <h2 id="article-modal-title" className="mt-3 text-balance font-display text-3xl italic leading-tight text-white sm:text-4xl">
+              {post.title}
+            </h2>
+
+            <div className="mt-6 flex items-center gap-3 border-b border-white/10 pb-6">
+              <AuthorAvatar name={post.author} className="h-10 w-10 text-sm" />
+              <div>
+                <p className="text-sm font-semibold text-white">{post.author}</p>
+                <p className="text-xs text-white/50">
+                  {post.date} · {post.readTime}
+                </p>
+              </div>
+            </div>
+
+            <p className="mt-6 text-lg leading-relaxed text-white/75">{post.excerpt}</p>
+
+            {total > 1 && (
+              <p className="mt-8 text-xs font-semibold uppercase tracking-widest text-white/40">
+                {index + 1} / {total}
+              </p>
+            )}
+          </div>
+        </motion.div>
+      </AnimatePresence>
+    </motion.div>
+  )
+}
+
 export default function InsightsEditorial() {
   const [cover, setCover] = useState<DisplayPost>(fallbackCover)
   const [list, setList] = useState<DisplayPost[]>(fallbackList)
+  const [openIndex, setOpenIndex] = useState<number | null>(null)
+  const allPosts = [cover, ...list]
 
   useEffect(() => {
     let active = true
@@ -107,8 +240,10 @@ export default function InsightsEditorial() {
   })
 
   return (
+    <>
     <section
       id="insights"
+      aria-label="Insights"
       onMouseMove={handleAmbientMove}
       className="relative isolate overflow-hidden bg-gradient-to-b from-[#0b0713] via-[#130b21] to-[#0a0f1a]"
     >
@@ -145,7 +280,7 @@ export default function InsightsEditorial() {
 
       <div ref={coverRef} className="relative z-10 flex min-h-[100svh] items-end overflow-hidden pt-32">
         <motion.div style={{ scale: coverImageScale, y: coverImageY }} className="absolute inset-0 -z-10">
-          <BrandPhoto src={cover.image} alt="" className="h-full w-full" priority />
+          <BrandPhoto src={cover.image} alt={cover.title} className="h-full w-full" priority />
           <div className="absolute inset-0 bg-gradient-to-t from-[#0a0f1a] via-black/50 to-black/20" />
         </motion.div>
 
@@ -160,9 +295,9 @@ export default function InsightsEditorial() {
             {insights.label}
           </motion.p>
 
-          <h1 className="max-w-3xl text-balance font-display text-4xl italic leading-[1.05] text-white sm:text-6xl lg:text-7xl">
+          <h2 className="max-w-3xl text-balance font-display text-4xl italic leading-[1.05] text-white sm:text-6xl lg:text-7xl">
             <SplitText key={cover.id} text={cover.title} delay={0.35} />
-          </h1>
+          </h2>
 
           <motion.p
             initial={{ opacity: 0, y: 16 }}
@@ -188,7 +323,7 @@ export default function InsightsEditorial() {
                 </p>
               </div>
             </div>
-            <PremiumButton>Read the story</PremiumButton>
+            <PremiumButton onClick={() => setOpenIndex(0)}>Read the story</PremiumButton>
           </motion.div>
         </motion.div>
       </div>
@@ -216,15 +351,15 @@ export default function InsightsEditorial() {
 
         <div className="relative divide-y divide-white/10 border-y border-white/10">
           {list.map((post, i) => (
-            <motion.a
+            <motion.button
               key={post.id}
-              href="#insights"
-              onClick={(e) => e.preventDefault()}
+              type="button"
+              onClick={() => setOpenIndex(i + 1)}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.4 }}
               transition={{ duration: 0.5, delay: (i % 3) * 0.06, ease: [0.16, 1, 0.3, 1] }}
-              className="group relative flex items-center gap-5 py-6 sm:gap-8 sm:py-8"
+              className="group relative flex w-full items-center gap-5 py-6 text-left sm:gap-8 sm:py-8"
             >
               <span className="relative h-7 w-9 shrink-0 font-display text-lg italic text-white/40 transition-colors duration-300 group-hover:text-pomelo-blue sm:text-xl">
                 <span className="absolute inset-0 transition-all duration-300 group-hover:-translate-y-2 group-hover:opacity-0">
@@ -263,10 +398,22 @@ export default function InsightsEditorial() {
               </div>
 
               <span className="pointer-events-none absolute inset-x-0 bottom-0 h-px origin-left scale-x-0 bg-gradient-to-r from-pomelo-blue to-pomelo-purple transition-transform duration-500 group-hover:scale-x-100" />
-            </motion.a>
+            </motion.button>
           ))}
         </div>
       </div>
     </section>
+
+    <AnimatePresence>
+      {openIndex !== null && (
+        <ArticleModal
+          posts={allPosts}
+          index={openIndex}
+          onClose={() => setOpenIndex(null)}
+          onNav={(dir) => setOpenIndex((i) => (i === null ? null : (i + dir + allPosts.length) % allPosts.length))}
+        />
+      )}
+    </AnimatePresence>
+    </>
   )
 }

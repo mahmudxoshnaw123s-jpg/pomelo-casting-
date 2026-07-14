@@ -8,7 +8,7 @@ import { services } from '../data/content'
 
 export default function ServicesAccordion() {
   return (
-    <section id="services" className="relative isolate overflow-hidden bg-[#0b0b0d] py-28 sm:py-36">
+    <section id="services" aria-label="Services" className="relative isolate overflow-hidden bg-[#0b0b0d] py-28 sm:py-36">
       <div className="mx-auto max-w-2xl px-6 text-center">
         <motion.p
           initial={{ opacity: 0, y: 12 }}

@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion'
 import Counter from './Counter'
-import aboutPageOne from '../assets/about page.png'
-import aboutPageTwo from '../assets/about page 2.png'
+import aboutPageOne from '../assets/about page-optimized.png'
+import aboutPageTwo from '../assets/about page 2-optimized.png'
 import { about } from '../data/content'
 
 const ease = [0.16, 1, 0.3, 1] as const
@@ -50,7 +50,7 @@ function PhoneMockup({ src, alt, tilt, delay, floatDelay, className = '' }: Phon
 
 export default function AboutStatement() {
   return (
-    <section id="about" className="relative isolate overflow-hidden bg-[#0a0f1a] py-24 sm:py-32">
+    <section id="about" aria-label="About" className="relative isolate overflow-hidden bg-[#0a0f1a] py-24 sm:py-32">
       <div
         className="pointer-events-none absolute left-1/2 top-[10%] h-[38rem] w-[38rem] -translate-x-1/2 rounded-full bg-gradient-to-br from-pomelo-purple/25 to-pomelo-blue/20 blur-[140px]"
         aria-hidden="true"

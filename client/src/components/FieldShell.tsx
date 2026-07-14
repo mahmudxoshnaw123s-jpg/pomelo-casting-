@@ -1,5 +1,6 @@
 import { AnimatePresence, motion } from 'framer-motion'
-import type { ReactNode } from 'react'
+import { cloneElement, isValidElement } from 'react'
+import type { ReactElement, ReactNode } from 'react'
 import { IconAlert, IconCheck } from './icons'
 
 interface FieldShellProps {
@@ -12,15 +13,24 @@ interface FieldShellProps {
 }
 
 export default function FieldShell({ label, htmlFor, error, showValid, optional, children }: FieldShellProps) {
+  const errorId = `${htmlFor}-error`
+  const field = isValidElement(children)
+    ? cloneElement(children as ReactElement<{ 'aria-invalid'?: boolean; 'aria-describedby'?: string }>, {
+        'aria-invalid': Boolean(error),
+        'aria-describedby': error ? errorId : undefined,
+      })
+    : children
+
   return (
     <div>
       <div className="mb-1.5 flex items-baseline justify-between">
         <label htmlFor={htmlFor} className="text-xs font-semibold uppercase tracking-widest text-white/60">
-          {label} {optional && <span className="normal-case text-white/35">(optional)</span>}
+          {label} {optional && <span className="normal-case text-white/55">(optional)</span>}
         </label>
         <AnimatePresence>
           {error && (
             <motion.span
+              id={errorId}
               initial={{ opacity: 0, y: -4 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0 }}
@@ -34,18 +44,7 @@ export default function FieldShell({ label, htmlFor, error, showValid, optional,
         </AnimatePresence>
       </div>
       <div className="group relative isolate rounded-xl">
-        <div
-          className="pointer-events-none absolute -inset-px -z-10 animate-spin rounded-xl opacity-0 transition-opacity duration-300 group-focus-within:opacity-100"
-          style={{
-            background: 'conic-gradient(from 0deg, #00b2e2, transparent 30%, transparent 60%, #895193, transparent 90%)',
-            padding: 1,
-            WebkitMask: 'linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)',
-            WebkitMaskComposite: 'xor',
-            maskComposite: 'exclude',
-          }}
-          aria-hidden="true"
-        />
-        {children}
+        {field}
         <AnimatePresence>
           {showValid && !error && (
             <motion.span

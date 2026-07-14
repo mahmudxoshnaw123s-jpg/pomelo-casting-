@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { AnimatePresence, motion, useMotionValueEvent, useScroll } from 'framer-motion'
 import { Link } from 'react-router-dom'
-import logoDark from '../assets/pomelo-logo-dark.png'
+import logoDark from '../assets/pomelo-logo-dark-optimized.png'
 import Magnetic from './Magnetic'
 import PomeloMark from './PomeloMark'
 import { nav } from '../data/content'
@@ -37,7 +37,7 @@ export default function Navbar() {
     >
       <nav className="mx-auto flex max-w-6xl items-center justify-between px-6 py-3">
         <Link to="/#top" className="flex items-center" aria-label="Pomelo Casting home">
-          <img src={logoDark} alt="Pomelo Casting" className="h-11 w-auto sm:h-14" />
+          <img src={logoDark} alt="Pomelo Casting" width={641} height={256} className="h-11 w-auto sm:h-14" />
         </Link>
 
         <ul className="hidden items-center gap-1 md:flex" onMouseLeave={() => setHoveredHref(null)}>

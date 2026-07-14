@@ -25,14 +25,16 @@ export default function ServicesVerticalAccordion() {
                 aria-expanded={isActive}
                 className="group flex w-full items-center gap-6 py-8 text-left transition-colors duration-300 hover:bg-white/[0.02] sm:py-10"
               >
-                <span className="font-display text-base italic text-white/30 sm:text-lg">{String(i + 1).padStart(2, '0')}</span>
-                <span
+                <span className="font-display text-base italic text-white/30 sm:text-lg" aria-hidden="true">
+                  {String(i + 1).padStart(2, '0')}
+                </span>
+                <h3
                   className={`text-balance font-display text-2xl italic leading-tight transition-colors duration-300 sm:text-4xl ${
                     isActive ? 'text-white' : 'text-white/50 group-hover:text-white/75'
                   }`}
                 >
                   {item.title}
-                </span>
+                </h3>
                 <motion.span
                   animate={{ rotate: isActive ? 45 : 0 }}
                   transition={{ duration: 0.4, ease }}
@@ -82,13 +84,21 @@ export default function ServicesVerticalAccordion() {
                         <p className="mt-5 max-w-md text-lg text-white/75">{item.description}</p>
                         <p className="mt-4 max-w-md text-white/50">{item.overview}</p>
 
-                        <ul className="mt-6 space-y-1.5 text-sm text-white/35">
+                        <ul className="mt-6 space-y-1.5 text-sm text-white/60">
                           {item.workflow.slice(0, 4).map((step) => (
                             <li key={step}>{step}</li>
                           ))}
                         </ul>
 
-                        <p className="mt-6 text-xs uppercase tracking-[0.3em] text-white/30">Typical timeline — {item.timeline}</p>
+                        <p className="mt-6 text-xs uppercase tracking-[0.3em] text-white/60">Typical timeline — {item.timeline}</p>
+
+                        <a
+                          href="#contact"
+                          className="mt-5 inline-flex w-fit items-center gap-2 text-sm text-white/70 underline decoration-white/30 underline-offset-4 transition-colors duration-300 hover:text-white hover:decoration-white/70"
+                        >
+                          Enquire about this service
+                          <span aria-hidden="true">→</span>
+                        </a>
                       </motion.div>
                     </div>
                   </motion.div>

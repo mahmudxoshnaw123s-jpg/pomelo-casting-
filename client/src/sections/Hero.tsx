@@ -69,6 +69,7 @@ export default function Hero() {
   return (
     <section
       id="top"
+      aria-label="Introduction"
       ref={ref}
       onMouseMove={handleMove}
       className="relative isolate min-h-[100svh] overflow-hidden bg-[#0a0f1a]"

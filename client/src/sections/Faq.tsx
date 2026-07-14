@@ -1,5 +1,5 @@
-import FaqShowcase from '../components/FaqShowcase'
+import FaqHub from '../components/FaqHub'
 
 export default function Faq() {
-  return <FaqShowcase />
+  return <FaqHub />
 }

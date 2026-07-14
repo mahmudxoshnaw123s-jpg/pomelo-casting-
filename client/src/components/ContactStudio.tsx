@@ -91,6 +91,7 @@ export default function ContactStudio() {
   return (
     <section
       id="contact"
+      aria-label="Contact"
       onMouseMove={handleAmbientMove}
       className="relative isolate overflow-hidden bg-gradient-to-b from-[#0b0713] via-[#130b21] to-[#0a0f1a] py-28 sm:py-36"
     >

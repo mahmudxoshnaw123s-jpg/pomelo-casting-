@@ -152,28 +152,29 @@ export const contact = {
   subjects: ['Casting inquiry', 'Talent submission', 'Brand partnership', 'Press', 'Other'],
   faq: [
     {
-      question: 'How do I apply as a model or actor?',
+      question: 'How do I apply to join Pomelo Casting?',
       answer:
-        'Send us your details and a few recent photos through the contact form, or reach out on Instagram. Our team reviews every submission and follows up if there’s a fit for an upcoming project.',
+        'Submit your application through our online form with your contact details, measurements, and recent natural photographs. Our team carefully reviews every submission.',
     },
     {
-      question: 'Do you charge talent to join your roster?',
-      answer: 'No. Pomelo Casting never charges talent for representation, submissions, or castings.',
+      question: 'Do I need professional photos to apply?',
+      answer:
+        'No. Clear, natural photos taken in good lighting are enough for your initial application. Professional portfolio images are not required during the first stage.',
     },
     {
-      question: 'How long does a typical casting take?',
+      question: 'Do I need previous modeling experience?',
       answer:
-        'It depends on scope, but most campaign castings are completed within 1–2 weeks from brief to shortlist, faster for smaller productions.',
+        'Not necessarily. We welcome both experienced professionals and promising new faces. We look for potential, professionalism, and suitability for our clients’ projects.',
     },
     {
-      question: 'Can brands request specific talent types?',
+      question: 'What happens after I submit my application?',
       answer:
-        'Yes — tell us the look, age range, and vibe you need in your brief and we’ll put together a tailored shortlist from our roster and network.',
+        'If your profile matches our current scouting needs, a member of our team will contact you regarding the next steps, which may include an interview or additional photos.',
     },
     {
-      question: 'Do you work outside Erbil?',
+      question: 'Is there a fee to apply or join Pomelo Casting?',
       answer:
-        'Yes, we cast for productions and campaigns across the region and can coordinate travel for the right project.',
+        'No. Applying to Pomelo Casting is completely free. Reputable modeling agencies generally do not charge application or registration fees simply to be considered for representation.',
     },
   ],
 }
@@ -256,52 +257,29 @@ export const faqSection = {
   subhead: 'Everything brands typically ask before starting a project with us.',
   items: [
     {
-      category: 'Services',
-      question: 'What services does Pomelo Casting offer?',
+      question: 'How do I book talent with Pomelo Casting?',
       answer:
-        'We handle talent casting, campaign and editorial casting, production casting for film/TV/video, and ongoing talent management — see the Services section above for the full breakdown.',
+        'Simply send us your project brief through our contact or booking form. Include your campaign details, dates, location, and talent requirements, and our team will curate the most suitable talent for your project.',
     },
     {
-      category: 'Getting started',
-      question: 'How do we get started on a project?',
+      question: 'What types of projects do you cast for?',
       answer:
-        'Send us your brief through the contact form or WhatsApp. We’ll usually schedule a short call to understand the look, budget, and timeline before starting the search.',
+        'We provide casting for fashion campaigns, editorial shoots, commercial productions, e-commerce, beauty campaigns, social media content, events, and creative productions.',
     },
     {
-      category: 'Pricing',
-      question: 'How does pricing work?',
+      question: 'How quickly can you provide casting options?',
       answer:
-        'Pricing depends on project scope — number of talent needed, usage rights, and production complexity. We provide a custom quote after reviewing your brief, with no hidden fees.',
+        'Depending on the complexity of your brief, we typically present a curated shortlist within a few business days, ensuring quality rather than quantity.',
     },
     {
-      category: 'Timeline',
-      question: 'How long does a typical project take?',
+      question: 'Can you source talent for international productions?',
       answer:
-        'Most campaign castings go from brief to shortlist within 1–2 weeks. Smaller productions can move faster, and we also support rush timelines when needed.',
+        'Yes. We support both local and international productions and work closely with clients to coordinate talent for campaigns across different markets.',
     },
     {
-      category: 'Timeline',
-      question: 'Do you offer rush or expedited casting?',
+      question: 'Do you manage the casting process from start to finish?',
       answer:
-        'Yes. Tell us your deadline up front and we’ll let you know honestly whether it’s achievable and what a rushed timeline looks like for your brief.',
-    },
-    {
-      category: 'Revisions',
-      question: 'What if the shortlist isn’t quite right?',
-      answer:
-        'We’ll revise it based on your feedback at no extra cost. Tell us what’s missing — look, energy, experience level — and we’ll refine the options.',
-    },
-    {
-      category: 'Support',
-      question: 'What support do you provide after casting is finalized?',
-      answer:
-        'We stay involved through the shoot — handling scheduling, contracts, and any last-minute swaps — so you have one point of contact from brief to wrap.',
-    },
-    {
-      category: 'Getting started',
-      question: 'What should we include in our casting brief?',
-      answer:
-        'The more detail the better: project type, target look and age range, number of talent needed, shoot dates and location, and usage/budget expectations.',
+        'Yes. From understanding your creative vision to talent selection, scheduling, coordination, and final bookings, we manage the entire casting process to ensure a seamless experience.',
     },
   ],
 }
@@ -315,10 +293,10 @@ export const featuredTalent = {
   heading: 'Faces ready for your next campaign.',
   subhead: 'A glimpse of the talent, editorial work, and studio energy behind every Pomelo casting.',
   images: [
-    { image: 'talent-feature-press.png', caption: 'Press Day', tag: 'Campaign' },
-    { image: 'talent-feature-cover.png', caption: 'Cover Story', tag: 'Editorial' },
-    { image: 'talent-feature-walk.png', caption: 'Studio Walk', tag: 'Commercial' },
-    { image: 'talent-feature-bts.png', caption: 'Behind the Scenes', tag: 'Studio' },
+    { image: 'talent-feature-press.jpg', caption: 'Press Day', tag: 'Campaign' },
+    { image: 'talent-feature-cover.jpg', caption: 'Cover Story', tag: 'Editorial' },
+    { image: 'talent-feature-walk.jpg', caption: 'Studio Walk', tag: 'Commercial' },
+    { image: 'talent-feature-bts.jpg', caption: 'Behind the Scenes', tag: 'Studio' },
   ],
   showTalentCta: 'Show Talent',
   applyCta: 'Apply Now',
@@ -331,28 +309,28 @@ export const talentPage = {
   gallery: [
     {
       id: 'campaign-press',
-      image: 'talent-feature-press.png',
+      image: 'talent-feature-press.jpg',
       title: 'Press Day',
       category: 'Campaign',
       description: 'On-brand press coverage, styled and cast for a national campaign push.',
     },
     {
       id: 'editorial-cover',
-      image: 'talent-feature-cover.png',
+      image: 'talent-feature-cover.jpg',
       title: 'Cover Story',
       category: 'Editorial',
       description: 'Editorial styling for a cover feature, cast for tone and presence.',
     },
     {
       id: 'commercial-walk',
-      image: 'talent-feature-walk.png',
+      image: 'talent-feature-walk.jpg',
       title: 'Studio Walk',
       category: 'Commercial',
       description: 'Commercial lookbook talent, cast for movement and confidence on camera.',
     },
     {
       id: 'studio-bts',
-      image: 'talent-feature-bts.png',
+      image: 'talent-feature-bts.jpg',
       title: 'Behind the Scenes',
       category: 'Studio',
       description: 'A look inside the studio — how we direct and light every casting test.',
@@ -362,7 +340,7 @@ export const talentPage = {
     label: 'Inside the studio',
     heading: 'Every casting starts with a real studio session.',
     body: 'Before talent ever reaches a client shortlist, we run them through real studio conditions — lighting, direction, and camera presence — so what you see is what you get on set.',
-    image: 'talent-feature-bts.png',
+    image: 'talent-feature-bts.jpg',
   },
   cta: {
     heading: 'See yourself here?',

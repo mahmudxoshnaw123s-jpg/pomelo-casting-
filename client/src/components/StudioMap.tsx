@@ -1,8 +1,54 @@
 import { motion, useMotionValue, useScroll, useSpring, useTransform } from 'framer-motion'
 import type { MouseEvent } from 'react'
-import { useRef } from 'react'
-import babylonBg from '../assets/babylon.jpg'
+import { useRef, useState } from 'react'
+import babylonBg from '../assets/babylon-optimized.jpg'
 import { contact } from '../data/content'
+
+const ease = [0.16, 1, 0.3, 1] as const
+
+function GlobeLauncher({ launching, onLaunch }: { launching: boolean; onLaunch: () => void }) {
+  return (
+    <motion.button
+      type="button"
+      onClick={onLaunch}
+      disabled={launching}
+      animate={launching ? { scale: 7, opacity: 0 } : { scale: 1, opacity: 1 }}
+      transition={{ duration: 1.1, ease: [0.76, 0, 0.24, 1] }}
+      className="group absolute inset-0 flex flex-col items-center justify-center gap-5 bg-[#0a0f1a]"
+    >
+      <motion.div
+        animate={{ rotate: 360 }}
+        transition={{ duration: 50, repeat: Infinity, ease: 'linear' }}
+        className="relative h-36 w-36 sm:h-44 sm:w-44"
+      >
+        <svg viewBox="0 0 200 200" className="h-full w-full">
+          <defs>
+            <linearGradient id="globeGrad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stopColor="#00b2e2" />
+              <stop offset="100%" stopColor="#895193" />
+            </linearGradient>
+          </defs>
+          <circle cx="100" cy="100" r="97" fill="none" stroke="url(#globeGrad)" strokeWidth="1.5" />
+          <ellipse cx="100" cy="100" rx="97" ry="34" fill="none" stroke="rgba(0,178,226,0.35)" strokeWidth="1" />
+          <ellipse cx="100" cy="100" rx="97" ry="66" fill="none" stroke="rgba(0,178,226,0.22)" strokeWidth="1" />
+          <ellipse cx="100" cy="100" rx="34" ry="97" fill="none" stroke="rgba(137,81,147,0.35)" strokeWidth="1" />
+          <ellipse cx="100" cy="100" rx="66" ry="97" fill="none" stroke="rgba(137,81,147,0.22)" strokeWidth="1" />
+          <line x1="3" y1="100" x2="197" y2="100" stroke="rgba(255,255,255,0.15)" strokeWidth="1" />
+        </svg>
+        <motion.span
+          animate={{ scale: [1, 1.5, 1], opacity: [0.6, 1, 0.6] }}
+          transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
+          className="absolute left-[63%] top-[36%] h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-pomelo-blue shadow-[0_0_14px_3px_rgba(0,178,226,0.75)]"
+          aria-hidden="true"
+        />
+      </motion.div>
+
+      <span className="text-sm font-semibold uppercase tracking-[0.3em] text-white/60 transition-colors group-hover:text-white">
+        Click to locate us
+      </span>
+    </motion.button>
+  )
+}
 
 const particles = Array.from({ length: 18 }).map((_, i) => ({
   left: (i * 43 + 7) % 100,
@@ -20,6 +66,13 @@ export default function StudioMap() {
   const { lat, lng } = contact.mapCoords
   const directionsHref = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`
   const mapEmbedSrc = `https://www.google.com/maps?q=${lat},${lng}(${encodeURIComponent(contact.mapPlaceName)})&z=16&output=embed`
+
+  const [stage, setStage] = useState<'cover' | 'zooming' | 'map'>('cover')
+  const [mapLoaded, setMapLoaded] = useState(false)
+  const handleLaunch = () => {
+    setStage('zooming')
+    window.setTimeout(() => setStage('map'), 1100)
+  }
 
   const mx = useMotionValue(0)
   const my = useMotionValue(0)
@@ -39,6 +92,7 @@ export default function StudioMap() {
   return (
     <section
       ref={sectionRef}
+      aria-label="Studio location"
       onMouseMove={handleMove}
       className="relative isolate overflow-hidden py-28 sm:py-36"
     >
@@ -102,14 +156,40 @@ export default function StudioMap() {
           style={{ rotateX: tiltX, rotateY: tiltY, transformPerspective: 1200 }}
           className="relative isolate mx-auto mt-14 max-w-3xl rounded-[2rem] p-px"
         >
-          <div className="overflow-hidden rounded-[calc(2rem-1px)] border border-white/15 bg-white/[0.04] shadow-2xl shadow-black/50 backdrop-blur-xl">
-            <iframe
-              title="Pomelo Casting location"
-              src={mapEmbedSrc}
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-              className="h-[360px] w-full grayscale-[0.15] contrast-[1.05] invert hue-rotate-180 sm:h-[420px]"
-            />
+          <div className="relative h-[360px] w-full overflow-hidden rounded-[calc(2rem-1px)] border border-white/15 bg-white/[0.04] shadow-2xl shadow-black/50 backdrop-blur-xl sm:h-[420px]">
+            {stage !== 'map' ? (
+              <GlobeLauncher launching={stage === 'zooming'} onLaunch={handleLaunch} />
+            ) : (
+              <>
+                {!mapLoaded && (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="absolute inset-0 z-10 flex items-center justify-center bg-[#0a0f1a]"
+                  >
+                    <motion.span
+                      animate={{ scale: [1, 1.4, 1], opacity: [0.5, 1, 0.5] }}
+                      transition={{ duration: 1.1, repeat: Infinity, ease: 'easeInOut' }}
+                      className="h-3 w-3 rounded-full bg-pomelo-blue shadow-[0_0_14px_3px_rgba(0,178,226,0.75)]"
+                      aria-hidden="true"
+                    />
+                  </motion.div>
+                )}
+                <motion.iframe
+                  title="Pomelo Casting location"
+                  src={mapEmbedSrc}
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  onLoad={() => setMapLoaded(true)}
+                  initial={{ opacity: 0, scale: 1.12 }}
+                  animate={{ opacity: mapLoaded ? 1 : 0, scale: mapLoaded ? 1 : 1.12 }}
+                  transition={{ duration: 0.7, ease }}
+                  className="h-full w-full grayscale-[0.15] contrast-[1.05] invert hue-rotate-180"
+                />
+              </>
+            )}
           </div>
         </motion.div>
 

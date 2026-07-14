@@ -16,28 +16,22 @@ export default function FaqAccordion({ items }: FaqAccordionProps) {
   const [openIndex, setOpenIndex] = useState<number | null>(0)
 
   return (
-    <div className="divide-y divide-white/10 border-t border-b border-white/10">
+    <div className="flex flex-col gap-1">
       {items.map((item, i) => {
         const isOpen = openIndex === i
         const panelId = `faq-panel-${i}`
         const buttonId = `faq-button-${i}`
 
         return (
-          <motion.div key={item.question} initial="rest" whileHover="hover" animate="rest" className="relative">
-            <motion.div
-              variants={{ rest: { x: '-100%' }, hover: { x: '0%' } }}
-              transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-              className="absolute inset-0 -z-10 bg-white/[0.03]"
-              aria-hidden="true"
-            />
-            <h3>
+          <div key={item.question} className="relative">
+            <h4>
               <button
                 id={buttonId}
                 type="button"
                 aria-expanded={isOpen}
                 aria-controls={panelId}
                 onClick={() => setOpenIndex(isOpen ? null : i)}
-                className="flex w-full items-center justify-between gap-6 px-1 py-5 text-left"
+                className="flex w-full items-center justify-between gap-6 px-1 py-5 text-left outline-none focus-visible:ring-2 focus-visible:ring-pomelo-blue/50 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0713]"
               >
                 <span>
                   {item.category && (
@@ -57,7 +51,7 @@ export default function FaqAccordion({ items }: FaqAccordionProps) {
                   <IconChevronDown className="h-4 w-4" />
                 </motion.span>
               </button>
-            </h3>
+            </h4>
             <AnimatePresence initial={false}>
               {isOpen && (
                 <motion.div
@@ -74,7 +68,7 @@ export default function FaqAccordion({ items }: FaqAccordionProps) {
                 </motion.div>
               )}
             </AnimatePresence>
-          </motion.div>
+          </div>
         )
       })}
     </div>
