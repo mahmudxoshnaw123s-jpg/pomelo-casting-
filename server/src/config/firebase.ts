@@ -40,21 +40,30 @@ function loadServiceAccount(): ServiceAccount | null {
 let cachedError: string | null = null
 let initialized = false
 
+// True when running on Google infrastructure (Cloud Functions / Cloud Run),
+// where Application Default Credentials are available without a key file.
+function onGoogleInfra(): boolean {
+  return Boolean(process.env.K_SERVICE || process.env.FUNCTION_TARGET || process.env.FUNCTION_SIGNATURE_TYPE)
+}
+
 function ensureApp() {
   if (getApps().length > 0) return
+  if (!env.firebase.storageBucket) {
+    throw new Error('Missing FIREBASE_STORAGE_BUCKET environment variable.')
+  }
+
   const serviceAccount = loadServiceAccount()
-  if (!serviceAccount) {
+  if (serviceAccount) {
+    // Local / self-hosted: explicit service account key.
+    initializeApp({ credential: cert(serviceAccount), storageBucket: env.firebase.storageBucket })
+  } else if (onGoogleInfra()) {
+    // Deployed to Cloud Functions/Run: use the runtime's built-in credentials.
+    initializeApp({ storageBucket: env.firebase.storageBucket })
+  } else {
     throw new Error(
       'Firebase is not configured. Add server/serviceAccountKey.json (or FIREBASE_* env vars) and set FIREBASE_STORAGE_BUCKET.',
     )
   }
-  if (!env.firebase.storageBucket) {
-    throw new Error('Missing FIREBASE_STORAGE_BUCKET environment variable.')
-  }
-  initializeApp({
-    credential: cert(serviceAccount),
-    storageBucket: env.firebase.storageBucket,
-  })
   initialized = true
 }
 

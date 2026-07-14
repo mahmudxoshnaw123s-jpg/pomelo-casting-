@@ -5,6 +5,7 @@ import Magnetic from './Magnetic'
 import PomeloMark from './PomeloMark'
 import { IconFilmCameraBadge, IconSparkle, IconSpotlightBadge, IconWhatsapp } from './icons'
 import { contact, faqSection } from '../data/content'
+import { fetchFaqs } from '../lib/faqs'
 
 const ease = [0.16, 1, 0.3, 1] as const
 
@@ -94,8 +95,28 @@ export default function FaqHub() {
   const [activeTopic, setActiveTopic] = useState<TopicKey>('brands')
   const [index, setIndex] = useState(0)
   const [paused, setPaused] = useState(false)
-  const active = topics.find((t) => t.key === activeTopic)!
-  const item = active.items[index]
+  const [brandItems, setBrandItems] = useState<{ question: string; answer: string; category?: string }[]>([...faqSection.items])
+
+  // The "For Brands" questions are managed from /admin; fall back to the static list.
+  useEffect(() => {
+    let alive = true
+    fetchFaqs()
+      .then((faqs) => {
+        if (!alive || faqs.length === 0) return
+        setBrandItems(faqs.map((f) => ({ question: f.question, answer: f.answer, category: f.category || undefined })))
+        setIndex(0)
+      })
+      .catch(() => {
+        /* keep static FAQs before Firebase is configured */
+      })
+    return () => {
+      alive = false
+    }
+  }, [])
+
+  const liveTopics = topics.map((t) => (t.key === 'brands' ? { ...t, items: brandItems } : t))
+  const active = liveTopics.find((t) => t.key === activeTopic)!
+  const item = active.items[index] ?? active.items[0]
 
   const mx = useMotionValue(0.5)
   const my = useMotionValue(0.5)
@@ -130,7 +151,7 @@ export default function FaqHub() {
     >
       {/* Full Q&A text for assistive tech and crawlers — the interactive panel below only ever shows one question at a time. */}
       <div className="sr-only">
-        {topics.flatMap((topic) => topic.items).map((q) => (
+        {liveTopics.flatMap((topic) => topic.items).map((q) => (
           <div key={q.question}>
             <p>{q.question}</p>
             <p>{q.answer}</p>
