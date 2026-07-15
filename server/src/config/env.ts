@@ -29,7 +29,8 @@ export const env = {
     clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
     privateKey: process.env.FIREBASE_PRIVATE_KEY,
     serviceAccountJson: process.env.FIREBASE_SERVICE_ACCOUNT,
-    storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
+    // Named STORAGE_BUCKET (not FIREBASE_*) because Cloud Functions reserves the FIREBASE_ prefix.
+    storageBucket: process.env.STORAGE_BUCKET,
   },
   // Comma-separated list of emails allowed to sign in to /admin.
   adminEmails: (process.env.ADMIN_EMAILS ?? '')

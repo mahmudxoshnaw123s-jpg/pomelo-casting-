@@ -69,8 +69,9 @@ the default locked-down Firestore/Storage security rules are correct as-is.
    Email/Password** (add one admin user).
 2. **Server** (`server/`): drop the service account key at `server/serviceAccountKey.json`
    (git-ignored) *or* set `FIREBASE_PROJECT_ID` / `FIREBASE_CLIENT_EMAIL` /
-   `FIREBASE_PRIVATE_KEY`. Also set `FIREBASE_STORAGE_BUCKET` and `ADMIN_EMAILS`
-   (comma-separated allowlist). See `server/.env.example`.
+   `FIREBASE_PRIVATE_KEY`. Also set `STORAGE_BUCKET` and `ADMIN_EMAILS`
+   (comma-separated allowlist). See `server/.env.example`. Note: env keys can't be named
+   `PORT` or start with `FIREBASE_` — Cloud Functions reserves those.
 3. **Client** (`client/`): copy the web app config into `client/.env` as the
    `VITE_FIREBASE_*` vars. See `client/.env.example`. Restart the dev server after editing.
 
@@ -83,3 +84,33 @@ the default locked-down Firestore/Storage security rules are correct as-is.
 cd client && npm run build   # outputs client/dist
 cd server && npm run build   # outputs server/dist, run with npm start
 ```
+
+## Deploy to Firebase (Hosting + Cloud Functions)
+
+The whole app deploys to your Firebase project: the website goes to **Firebase Hosting**,
+and the Express API runs as a single 2nd-gen **Cloud Function** (`api`). Hosting rewrites
+`/api/**` to that function (see `firebase.json`), so the client keeps calling relative
+`/api/...` paths — no client changes needed. Requires the **Blaze plan** (already enabled).
+
+**One time:**
+```bash
+firebase login
+```
+
+**Every deploy — from the project root:**
+```bash
+# 1. Build the website with Node 22 (Vite 8 needs it)
+cd client && fnm use 22 && npm run build && cd ..
+
+# 2. Deploy Hosting + the API function (builds the server automatically)
+firebase deploy
+```
+
+Notes:
+- The **first** `firebase deploy` may ask to enable Google APIs (Cloud Functions, Cloud
+  Build, Artifact Registry, Cloud Run) — approve them. It can take a few minutes.
+- The site goes live at `https://pomelocasting.web.app` (and `.firebaseapp.com`).
+- The function reads config from `server/.env` (`STORAGE_BUCKET`, `ADMIN_EMAILS`)
+  and authenticates to Firestore/Storage with `server/serviceAccountKey.json`, both of which
+  are uploaded with the function. Neither is in git, so deploy from a machine that has them.
+- Deploy just one part with `firebase deploy --only hosting` or `firebase deploy --only functions`.
