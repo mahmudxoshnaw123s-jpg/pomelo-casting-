@@ -1,6 +1,6 @@
 import editorialCastingImage from '../assets/editorial-casting-campaign.jpg'
 import productionCastingImage from '../assets/production-casting-set.jpg'
-import talentCastingImage from '../assets/talent-casting-stage.jpg'
+import talentCastingImage from '../assets/talent-casting-stage-updated.jpg'
 import talentManagementImage from '../assets/talent-management-studio.jpg'
 import { IconClapperBadge, IconFilmCameraBadge, IconNetworkBadge, IconSpotlightBadge } from '../components/icons'
 

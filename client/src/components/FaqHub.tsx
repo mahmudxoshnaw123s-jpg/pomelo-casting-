@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import type { MouseEvent } from 'react'
 import Magnetic from './Magnetic'
 import PomeloMark from './PomeloMark'
+import pomeloLogo from '../assets/pomelo-logo-dark-optimized.png'
 import { IconFilmCameraBadge, IconSparkle, IconSpotlightBadge, IconWhatsapp } from './icons'
 import { contact, faqSection } from '../data/content'
 
@@ -76,8 +77,12 @@ function CompCardStack({ onTap }: { onTap: () => void }) {
             <div className="noise-overlay h-full w-full">
               <PomeloMark className="absolute left-2.5 top-2.5 h-3.5 w-3.5 opacity-90 sm:left-3 sm:top-3 sm:h-4 sm:w-4" />
               <PomeloMark className="absolute bottom-2.5 right-2.5 h-3.5 w-3.5 rotate-180 opacity-90 sm:bottom-3 sm:right-3 sm:h-4 sm:w-4" />
-              <div className="flex h-full w-full items-center justify-center">
-                <PomeloMark className="h-11 w-11 drop-shadow-[0_0_20px_rgba(0,178,226,0.4)] sm:h-14 sm:w-14" />
+              <div className="flex h-full w-full items-center justify-center px-3">
+                <img
+                  src={pomeloLogo}
+                  alt="Pomelo Casting"
+                  className="w-full drop-shadow-[0_0_20px_rgba(0,178,226,0.4)]"
+                />
               </div>
             </div>
           </div>
