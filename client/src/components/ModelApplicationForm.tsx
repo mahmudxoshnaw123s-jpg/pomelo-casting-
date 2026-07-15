@@ -184,7 +184,7 @@ export default function ModelApplicationForm() {
           transition={{ duration: 0.6 }}
           className="mx-auto mb-16 max-w-2xl text-center"
         >
-          <h1 className="text-balance font-display text-4xl italic leading-tight text-white sm:text-5xl">
+          <h1 className="text-balance font-display text-4xl leading-tight text-white sm:text-5xl">
             <SplitText text={application.heading} />
           </h1>
           <p className="mx-auto mt-5 max-w-md text-lg text-white/60">{application.subhead}</p>
@@ -213,7 +213,7 @@ export default function ModelApplicationForm() {
                 >
                   <IconCheck className="h-7 w-7" />
                 </motion.span>
-                <h2 className="mt-6 font-display text-2xl italic text-white">{application.success.heading}</h2>
+                <h2 className="mt-6 font-display text-2xl text-white">{application.success.heading}</h2>
                 <p className="mt-2 max-w-sm text-white/60">{application.success.body}</p>
                 <button
                   type="button"

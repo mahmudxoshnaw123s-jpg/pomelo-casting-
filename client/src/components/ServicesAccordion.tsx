@@ -10,7 +10,7 @@ export default function ServicesAccordion() {
   return (
     <section id="services" aria-label="Services" className="relative isolate overflow-hidden bg-[#0b0b0d] py-28 sm:py-36">
       <div className="mx-auto max-w-2xl px-6 text-center">
-        <h2 className="text-balance font-display text-4xl italic leading-tight text-white sm:text-5xl">
+        <h2 className="text-balance font-display text-4xl leading-tight text-white sm:text-5xl">
           <SplitText text={services.heading} />
         </h2>
 

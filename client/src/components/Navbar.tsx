@@ -118,7 +118,7 @@ export default function Navbar() {
                     <Link
                       to={`/${item.href}`}
                       onClick={() => setMenuOpen(false)}
-                      className="block px-4 py-1 text-center font-display text-3xl italic text-white transition-colors duration-200 hover:text-[#0a0f1a] sm:text-4xl"
+                      className="block px-4 py-1 text-center font-display text-3xl text-white transition-colors duration-200 hover:text-[#0a0f1a] sm:text-4xl"
                     >
                       {item.label}
                     </Link>

@@ -58,7 +58,7 @@ function PostRow({
         </div>
         <div className="min-w-0 flex-1">
           <p className="text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-pomelo-blue/80">{post.category}</p>
-          <p className="mt-0.5 font-display text-lg italic leading-tight text-white">{post.title}</p>
+          <p className="mt-0.5 font-display text-lg leading-tight text-white">{post.title}</p>
           <p className="mt-1 text-sm text-white/50">
             {post.author} · {post.date} · {post.readTime}
           </p>
@@ -177,7 +177,7 @@ export default function InsightsSection() {
 
       {showAdd && (
         <div className={`${cardClass} mb-8`}>
-          <h2 className="mb-6 font-display text-2xl italic text-white">New post</h2>
+          <h2 className="mb-6 font-display text-2xl text-white">New post</h2>
           <PostForm mode="create" submitting={creating} error={createError} onSubmit={handleCreate} onCancel={() => setShowAdd(false)} />
         </div>
       )}

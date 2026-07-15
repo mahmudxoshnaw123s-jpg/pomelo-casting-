@@ -107,7 +107,7 @@ export default function WorkExhibition() {
 
       <div className="relative z-10 mx-auto max-w-6xl px-6">
         <div className="mx-auto max-w-2xl text-center">
-          <h2 className="text-balance font-display text-4xl italic leading-tight text-white sm:text-5xl lg:text-6xl">
+          <h2 className="text-balance font-display text-4xl leading-tight text-white sm:text-5xl lg:text-6xl">
             <SplitText text={work.heading} />
           </h2>
         </div>
@@ -152,15 +152,12 @@ export default function WorkExhibition() {
                     >
                       {project.tag}
                     </span>
-                    <h3 className="text-balance font-display text-2xl italic leading-tight text-white sm:text-3xl">
+                    <h3 className="text-balance font-display text-2xl leading-tight text-white sm:text-3xl">
                       <SplitText text={project.title} delay={0.15} />
                     </h3>
                     <p className="max-w-md text-sm leading-relaxed text-white/65 sm:text-base">{project.description}</p>
                   </div>
 
-                  <span className="absolute right-6 top-6 font-display text-sm italic text-white/50 sm:text-base">
-                    {String(index + 1).padStart(2, '0')} / {String(total).padStart(2, '0')}
-                  </span>
                 </motion.div>
               </AnimatePresence>
             </div>

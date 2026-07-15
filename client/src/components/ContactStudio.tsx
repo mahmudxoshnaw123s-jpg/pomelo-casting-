@@ -140,7 +140,7 @@ export default function ContactStudio() {
           transition={{ duration: 0.6 }}
           className="mx-auto mb-16 max-w-2xl text-center"
         >
-          <h2 className="text-balance font-display text-4xl italic leading-tight text-white sm:text-5xl lg:text-6xl">
+          <h2 className="text-balance font-display text-4xl leading-tight text-white sm:text-5xl lg:text-6xl">
             <SplitText text={contact.heading} />
           </h2>
           <p className="mx-auto mt-5 max-w-md text-lg text-white/60">{contact.subhead}</p>
@@ -264,7 +264,7 @@ export default function ContactStudio() {
                     >
                       <IconCheck className="h-7 w-7" />
                     </motion.span>
-                    <h3 className="mt-6 font-display text-2xl italic text-white">Message sent</h3>
+                    <h3 className="mt-6 font-display text-2xl text-white">Message sent</h3>
                     <p className="mt-2 max-w-sm text-white/60">
                       Thanks for reaching out — we'll be in touch within 1 business day.
                     </p>
@@ -401,7 +401,7 @@ export default function ContactStudio() {
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
           className="mx-auto mt-24 max-w-3xl"
         >
-          <h3 className="mb-8 text-center font-display text-2xl italic text-white sm:text-3xl">Questions from talent</h3>
+          <h3 className="mb-8 text-center font-display text-2xl text-white sm:text-3xl">Questions from talent</h3>
           <FaqAccordion items={contact.faq} />
         </motion.div>
       </div>

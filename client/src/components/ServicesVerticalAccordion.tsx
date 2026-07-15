@@ -25,11 +25,8 @@ export default function ServicesVerticalAccordion() {
                 aria-expanded={isActive}
                 className="group flex w-full items-center gap-6 py-8 text-left transition-colors duration-300 hover:bg-white/[0.02] sm:py-10"
               >
-                <span className="font-display text-base italic text-white/30 sm:text-lg" aria-hidden="true">
-                  {String(i + 1).padStart(2, '0')}
-                </span>
                 <h3
-                  className={`text-balance font-display text-2xl italic leading-tight transition-colors duration-300 sm:text-4xl ${
+                  className={`text-balance font-display text-2xl leading-tight transition-colors duration-300 sm:text-4xl ${
                     isActive ? 'text-white' : 'text-white/50 group-hover:text-white/75'
                   }`}
                 >

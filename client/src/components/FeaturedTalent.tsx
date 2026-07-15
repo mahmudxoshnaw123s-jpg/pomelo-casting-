@@ -48,7 +48,7 @@ function Portrait({ item, index }: { item: TalentCardData; index: number }) {
         />
       </div>
       <figcaption className="mt-4">
-        <p className="font-display text-xl italic leading-tight text-white">{item.caption}</p>
+        <p className="font-display text-xl leading-tight text-white">{item.caption}</p>
         <p className="mt-1 text-[0.65rem] font-semibold uppercase tracking-[0.3em] text-white/40">{item.tag}</p>
       </figcaption>
     </motion.figure>
@@ -90,7 +90,7 @@ export default function FeaturedTalent() {
 
       <div className="relative z-10 mx-auto max-w-[88rem] px-6">
         <div className="mx-auto max-w-2xl text-center">
-          <h2 className="text-balance font-display text-4xl italic leading-tight text-white sm:text-5xl lg:text-6xl">
+          <h2 className="text-balance font-display text-4xl leading-tight text-white sm:text-5xl lg:text-6xl">
             <SplitText text={featuredTalent.heading} />
           </h2>
           <motion.p

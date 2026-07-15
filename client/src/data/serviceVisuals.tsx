@@ -1,6 +1,6 @@
-import editorialCastingImage from '../assets/editorial-casting-campaign.jpg'
+import editorialCastingImage from '../assets/editorial-casting-newspaper.jpg'
 import productionCastingImage from '../assets/production-casting-set.jpg'
-import talentCastingImage from '../assets/talent-casting-stage-updated.jpg'
+import talentCastingImage from '../assets/talent-casting-studio-blue.jpg'
 import talentManagementImage from '../assets/talent-management-studio.jpg'
 import { IconClapperBadge, IconFilmCameraBadge, IconNetworkBadge, IconSpotlightBadge } from '../components/icons'
 
@@ -8,15 +8,15 @@ export const serviceVisuals = {
   spotlight: {
     Badge: IconSpotlightBadge,
     image: talentCastingImage,
-    imageAlt: 'The Pomelo Casting studio stage, lit with teal and magenta neon',
-    imageObjectPosition: 'center 40%',
+    imageAlt: 'Crew and talent preparing for a shoot under blue lantern lighting on the Pomelo Casting studio floor',
+    imageObjectPosition: 'center 68%',
     kicker: 'Casting',
   },
   hanger: {
     Badge: IconFilmCameraBadge,
     image: editorialCastingImage,
-    imageAlt: 'A model in a purple suit on an editorial campaign set',
-    imageObjectPosition: 'center 38%',
+    imageAlt: "A model reading a mock newspaper headlined 'Casting Anew: The Pomelo Journey' against a purple-to-blue gradient backdrop",
+    imageObjectPosition: 'center 45%',
     kicker: 'Editorial',
   },
   clapper: {

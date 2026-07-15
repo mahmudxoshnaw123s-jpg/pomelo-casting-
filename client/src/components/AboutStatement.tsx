@@ -94,7 +94,7 @@ export default function AboutStatement() {
         >
           {about.stats.map((stat, i) => (
             <div key={stat.label} className="text-center">
-              <p className="font-display text-4xl italic text-white sm:text-5xl">
+              <p className="font-display text-4xl text-white sm:text-5xl">
                 <Counter value={stat.value} suffix={stat.suffix} />
               </p>
               <p className="mt-2 text-xs uppercase tracking-[0.25em] text-white/50">{stat.label}</p>

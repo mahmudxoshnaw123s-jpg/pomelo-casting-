@@ -132,7 +132,7 @@ export default function StudioMap() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.1 }}
-          className="mx-auto max-w-xl text-balance font-display text-3xl italic leading-tight text-white sm:text-4xl"
+          className="mx-auto max-w-xl text-balance font-display text-3xl leading-tight text-white sm:text-4xl"
         >
           Find us in the heart of Ankawa.
         </motion.h3>

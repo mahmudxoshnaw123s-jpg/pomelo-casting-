@@ -138,9 +138,9 @@ export default function Hero() {
         style={{ opacity: contentOpacity, y: contentY }}
         className="relative z-10 mx-auto flex min-h-[100svh] max-w-3xl flex-col items-center justify-center px-6 text-center"
       >
-        <h1 className="text-balance font-display text-5xl italic leading-[1.05] text-white sm:text-6xl lg:text-7xl">
+        <h1 className="text-balance font-display text-5xl leading-[1.05] text-white sm:text-6xl lg:text-7xl">
           <SplitText text={hero.headlineLead} delay={1.5} />{' '}
-          <WordRotator words={hero.rotatingWords} className="text-gradient not-italic" /> <br />
+          <WordRotator words={hero.rotatingWords} className="text-gradient" /> <br />
           <SplitText text={hero.headlineTail} delay={1.65} />
         </h1>
 

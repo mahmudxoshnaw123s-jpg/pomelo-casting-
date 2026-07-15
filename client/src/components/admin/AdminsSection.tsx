@@ -87,7 +87,7 @@ export default function AdminsSection() {
 
       {showAdd && (
         <form onSubmit={handleCreate} className={`${cardClass} mb-8`}>
-          <h2 className="mb-6 font-display text-2xl italic text-white">New admin</h2>
+          <h2 className="mb-6 font-display text-2xl text-white">New admin</h2>
           <div className="grid gap-5 sm:grid-cols-2">
             <input value={email} onChange={(e) => setEmail(e.target.value)} type="email" placeholder="Email" autoComplete="off" className={fieldClass} />
             <input value={displayName} onChange={(e) => setDisplayName(e.target.value)} placeholder="Name (optional)" className={fieldClass} />

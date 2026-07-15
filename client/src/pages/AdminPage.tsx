@@ -41,7 +41,7 @@ function LoginScreen() {
   return (
     <div className={`${sectionClass} flex items-center justify-center`}>
       <form onSubmit={handleSubmit} className={`${cardClass} w-full max-w-sm`}>
-        <h1 className="font-display text-3xl italic text-white">Admin sign in</h1>
+        <h1 className="font-display text-3xl text-white">Admin sign in</h1>
         <p className="mt-2 mb-6 text-sm text-white/50">Manage the Pomelo talent roster and submissions.</p>
         <div className="space-y-4">
           <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className={fieldClass} placeholder="Email" autoComplete="email" />
@@ -94,7 +94,7 @@ function Dashboard() {
       <div className="mx-auto max-w-4xl">
         <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
           <div>
-            <h1 className="font-display text-4xl italic text-white">Pomelo admin</h1>
+            <h1 className="font-display text-4xl text-white">Pomelo admin</h1>
             <p className="mt-1 text-sm text-white/50">Signed in as {user?.email}</p>
           </div>
           <button type="button" onClick={() => void signOut()} className="text-sm font-semibold text-white/60 hover:text-white">
@@ -138,7 +138,7 @@ function AdminPageContent() {
     content = (
       <div className={`${sectionClass} flex items-center justify-center`}>
         <div className={`${cardClass} max-w-md text-center`}>
-          <h1 className="font-display text-2xl italic text-white">Admin not configured</h1>
+          <h1 className="font-display text-2xl text-white">Admin not configured</h1>
           <p className="mt-3 text-sm text-white/60">
             Firebase isn&rsquo;t set up on the client yet. Add the <code className="text-pomelo-blue">VITE_FIREBASE_*</code> values to{' '}
             <code className="text-pomelo-blue">client/.env</code> and restart the dev server.

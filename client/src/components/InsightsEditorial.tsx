@@ -148,7 +148,7 @@ function ArticleModal({
 
           <div className="px-6 py-8 sm:px-10 sm:py-10">
             <span className="text-xs font-semibold uppercase tracking-[0.25em] text-pomelo-blue">{post.category}</span>
-            <h2 id="article-modal-title" className="mt-3 text-balance font-display text-3xl italic leading-tight text-white sm:text-4xl">
+            <h2 id="article-modal-title" className="mt-3 text-balance font-display text-3xl leading-tight text-white sm:text-4xl">
               {post.title}
             </h2>
 
@@ -163,12 +163,6 @@ function ArticleModal({
             </div>
 
             <p className="mt-6 text-lg leading-relaxed text-white/75">{post.excerpt}</p>
-
-            {total > 1 && (
-              <p className="mt-8 text-xs font-semibold uppercase tracking-widest text-white/40">
-                {index + 1} / {total}
-              </p>
-            )}
           </div>
         </motion.div>
       </AnimatePresence>
@@ -286,7 +280,7 @@ export default function InsightsEditorial() {
 
         <motion.div style={{ opacity: coverTextOpacity }} className="relative mx-auto w-full max-w-6xl px-6 pb-20">
 
-          <h2 className="max-w-3xl text-balance font-display text-4xl italic leading-[1.05] text-white sm:text-6xl lg:text-7xl">
+          <h2 className="max-w-3xl text-balance font-display text-4xl leading-[1.05] text-white sm:text-6xl lg:text-7xl">
             <SplitText key={cover.id} text={cover.title} delay={0.35} />
           </h2>
 
@@ -325,7 +319,7 @@ export default function InsightsEditorial() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.1 }}
-          className="mb-12 max-w-xl text-balance font-display text-2xl italic text-white/80 sm:text-3xl"
+          className="mb-12 max-w-xl text-balance font-display text-2xl text-white/80 sm:text-3xl"
         >
           {insights.subhead}
         </motion.h2>
@@ -342,13 +336,10 @@ export default function InsightsEditorial() {
               transition={{ duration: 0.5, delay: (i % 3) * 0.06, ease: [0.16, 1, 0.3, 1] }}
               className="group relative flex w-full items-center gap-5 py-6 text-left sm:gap-8 sm:py-8"
             >
-              <span className="relative h-7 w-9 shrink-0 font-display text-lg italic text-white/40 transition-colors duration-300 group-hover:text-pomelo-blue sm:text-xl">
-                <span className="absolute inset-0 transition-all duration-300 group-hover:-translate-y-2 group-hover:opacity-0">
-                  {String(i + 1).padStart(2, '0')}
-                </span>
+              <span className="relative flex h-7 w-9 shrink-0 items-center text-white/40 transition-colors duration-300 group-hover:text-pomelo-blue">
                 <svg
                   viewBox="0 0 24 24"
-                  className="absolute inset-0 h-5 w-5 translate-y-2 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100"
+                  className="h-5 w-5 transition-transform duration-300 group-hover:translate-x-1"
                   fill="none"
                   stroke="currentColor"
                   strokeWidth="2"
@@ -361,7 +352,7 @@ export default function InsightsEditorial() {
 
               <div className="min-w-0 flex-1 transition-transform duration-300 group-hover:translate-x-2">
                 <p className="text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-pomelo-blue/80">{post.category}</p>
-                <h3 className="mt-1 text-balance font-display text-xl italic leading-snug text-white sm:text-2xl">
+                <h3 className="mt-1 text-balance font-display text-xl leading-snug text-white sm:text-2xl">
                   {post.title}
                 </h3>
                 <p className="mt-2 hidden max-w-xl text-sm text-white/55 sm:line-clamp-1 sm:block">{post.excerpt}</p>

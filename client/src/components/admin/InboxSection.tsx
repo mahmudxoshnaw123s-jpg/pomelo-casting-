@@ -182,7 +182,7 @@ export default function InboxSection() {
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2">
                       {!c.read && <UnreadDot />}
-                      <p className="font-display text-lg italic text-white">{c.subject}</p>
+                      <p className="font-display text-lg text-white">{c.subject}</p>
                     </div>
                     <p className="mt-1 text-sm text-white/70">
                       {c.name} ·{' '}
@@ -212,7 +212,7 @@ export default function InboxSection() {
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2">
                     {!a.read && <UnreadDot />}
-                    <p className="font-display text-xl italic text-white">{a.fullName}</p>
+                    <p className="font-display text-xl text-white">{a.fullName}</p>
                   </div>
                   <p className="mt-1 text-sm text-white/70">
                     {a.phone}

@@ -48,50 +48,56 @@ function GripHand({ side }: { side: 'left' | 'right' }) {
 
 function CompCardStack({ onTap }: { onTap: () => void }) {
   return (
-    <div className="flex flex-col items-center gap-2.5">
-      <motion.button
-        type="button"
-        onClick={onTap}
-        aria-label="Show next question"
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.92, rotate: -2 }}
-        className="relative h-32 w-24 shrink-0 cursor-pointer sm:h-40 sm:w-32"
-        style={{ perspective: 1000 }}
+    <motion.button
+      type="button"
+      onClick={onTap}
+      aria-label="Show next question"
+      whileHover={{ scale: 1.05 }}
+      whileTap={{ scale: 0.92, rotate: -2 }}
+      className="relative h-32 w-24 shrink-0 cursor-pointer sm:h-40 sm:w-32"
+      style={{ perspective: 1000 }}
+    >
+      <div className="absolute -bottom-3 left-1/2 h-5 w-16 -translate-x-1/2 rounded-full bg-black/50 blur-lg" aria-hidden="true" />
+      <motion.div
+        className="absolute inset-0"
+        style={{ transformStyle: 'preserve-3d' }}
+        animate={{ rotateY: [-10, 10, -10], rotateX: [3, -3, 3], y: [0, -6, 0] }}
+        transition={{ duration: 9, repeat: Infinity, ease: 'easeInOut' }}
       >
-        <div className="absolute -bottom-3 left-1/2 h-5 w-16 -translate-x-1/2 rounded-full bg-black/50 blur-lg" aria-hidden="true" />
-        <motion.div
-          className="absolute inset-0"
-          style={{ transformStyle: 'preserve-3d' }}
-          animate={{ rotateY: [-10, 10, -10], rotateX: [3, -3, 3], y: [0, -6, 0] }}
-          transition={{ duration: 9, repeat: Infinity, ease: 'easeInOut' }}
-        >
-          <div
-            className="absolute inset-0 translate-x-2.5 translate-y-3 rotate-[-8deg] rounded-2xl border border-white/10 bg-gradient-to-br from-pomelo-purple/30 to-[#0a0a0c]"
-            aria-hidden="true"
-          />
-          <div
-            className="absolute inset-0 translate-x-1 translate-y-1.5 rotate-[-3deg] rounded-2xl border border-white/15 bg-gradient-to-br from-pomelo-blue/25 to-[#0a0a0c]"
-            aria-hidden="true"
-          />
-          <div className="absolute inset-0 overflow-hidden rounded-2xl border border-white/20 bg-gradient-to-br from-[#1c1a1e] via-[#131215] to-[#08080a] shadow-[0_20px_50px_-15px_rgba(0,0,0,0.65)]">
-            <div className="noise-overlay h-full w-full">
-              <PomeloMark className="absolute left-2.5 top-2.5 h-3.5 w-3.5 opacity-90 sm:left-3 sm:top-3 sm:h-4 sm:w-4" />
-              <PomeloMark className="absolute bottom-2.5 right-2.5 h-3.5 w-3.5 rotate-180 opacity-90 sm:bottom-3 sm:right-3 sm:h-4 sm:w-4" />
-              <div className="flex h-full w-full items-center justify-center px-3">
-                <img
-                  src={pomeloLogo}
-                  alt="Pomelo Casting"
-                  className="w-full drop-shadow-[0_0_20px_rgba(0,178,226,0.4)]"
-                />
-              </div>
+        <div
+          className="absolute inset-0 translate-x-2.5 translate-y-3 rotate-[-8deg] rounded-2xl border border-white/10 bg-gradient-to-br from-pomelo-purple/30 to-[#0a0a0c]"
+          aria-hidden="true"
+        />
+        <div
+          className="absolute inset-0 translate-x-1 translate-y-1.5 rotate-[-3deg] rounded-2xl border border-white/15 bg-gradient-to-br from-pomelo-blue/25 to-[#0a0a0c]"
+          aria-hidden="true"
+        />
+        <div className="absolute inset-0 overflow-hidden rounded-2xl border border-white/20 bg-gradient-to-br from-[#1c1a1e] via-[#131215] to-[#08080a] shadow-[0_20px_50px_-15px_rgba(0,0,0,0.65)]">
+          <div className="noise-overlay h-full w-full">
+            <PomeloMark className="absolute left-2.5 top-2.5 h-3.5 w-3.5 opacity-90 sm:left-3 sm:top-3 sm:h-4 sm:w-4" />
+            <PomeloMark className="absolute bottom-2.5 right-2.5 h-3.5 w-3.5 rotate-180 opacity-90 sm:bottom-3 sm:right-3 sm:h-4 sm:w-4" />
+            <div className="flex h-full w-full items-center justify-center px-3">
+              <img
+                src={pomeloLogo}
+                alt="Pomelo Casting"
+                className="w-full drop-shadow-[0_0_20px_rgba(0,178,226,0.4)]"
+              />
             </div>
           </div>
-        </motion.div>
-      </motion.button>
-      <span className="flex items-center gap-1 text-[0.6rem] font-semibold uppercase tracking-widest text-white/50">
-        Continue <span aria-hidden="true">↓</span>
-      </span>
-    </div>
+        </div>
+      </motion.div>
+      <motion.span
+        className="absolute -right-2.5 -top-2.5 z-20 flex items-center gap-1 rounded-full border border-white/25 bg-black/85 py-1 pl-1.5 pr-2 text-[0.55rem] font-semibold uppercase tracking-widest text-white shadow-[0_6px_16px_rgba(0,0,0,0.55)] backdrop-blur-sm sm:-right-3 sm:-top-3 sm:py-1.5 sm:pl-2 sm:pr-2.5 sm:text-[0.6rem]"
+        animate={{ scale: [1, 1.1, 1] }}
+        transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
+      >
+        <span className="relative flex h-1.5 w-1.5" aria-hidden="true">
+          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-pomelo-blue opacity-75" />
+          <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-pomelo-blue" />
+        </span>
+        Press
+      </motion.span>
+    </motion.button>
   )
 }
 
@@ -191,19 +197,16 @@ export default function FaqHub() {
                 />
 
                 <div className="relative">
-                  <div className="flex items-center justify-between gap-4">
+                  <div className="flex items-center gap-4">
                     <span className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.35em] text-white/50">
                       <IconSparkle className="h-3 w-3 text-pomelo-blue" aria-hidden="true" />
                       {faqSection.label}
-                    </span>
-                    <span className="font-display text-sm italic text-white/40">
-                      {String(index + 1).padStart(2, '0')}/{String(active.items.length).padStart(2, '0')}
                     </span>
                   </div>
 
                   <div className="mt-6 grid grid-cols-1 gap-8 lg:grid-cols-[1.15fr_auto] lg:items-center lg:gap-10">
                     <div>
-                      <h2 className="text-balance text-left font-display text-3xl italic leading-[0.95] text-white sm:text-4xl lg:text-[2.75rem]">
+                      <h2 className="text-balance text-left font-display text-3xl leading-[0.95] text-white sm:text-4xl lg:text-[2.75rem]">
                         Your questions,
                         <br />
                         <span className="bg-gradient-to-r from-pomelo-blue to-pomelo-purple bg-clip-text text-transparent">

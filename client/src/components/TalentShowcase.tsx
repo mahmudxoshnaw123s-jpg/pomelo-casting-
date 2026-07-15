@@ -80,7 +80,7 @@ function GalleryCard({ item, onOpen }: { item: DisplayItem; onOpen: () => void }
           className="absolute inset-x-0 bottom-0 p-5 sm:p-6"
         >
           <span className="text-[0.65rem] font-semibold uppercase tracking-[0.25em] text-pomelo-blue">{item.eyebrow}</span>
-          <h3 className="mt-1 font-display text-lg italic text-white sm:text-xl">{item.title}</h3>
+          <h3 className="mt-1 font-display text-lg text-white sm:text-xl">{item.title}</h3>
           <p className="mt-2 max-w-xs text-sm text-white/60 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
             {item.description}
           </p>
@@ -196,7 +196,7 @@ function Lightbox({ item, onClose }: { item: DisplayItem; onClose: () => void })
           <img src={item.images[imageIndex]} alt={item.title} className="max-h-[85vh] w-full object-contain" />
           <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent p-6 sm:p-8">
             <span className="text-[0.65rem] font-semibold uppercase tracking-[0.25em] text-pomelo-blue">{item.eyebrow}</span>
-            <p id="lightbox-title" className="mt-1 font-display text-2xl italic text-white">
+            <p id="lightbox-title" className="mt-1 font-display text-2xl text-white">
               {item.title}
             </p>
             <p className="mt-2 max-w-md text-sm text-white/60">{item.description}</p>
@@ -266,7 +266,7 @@ export default function TalentShowcase() {
         />
 
         <motion.div style={{ opacity: heroOpacity }} className="relative z-10 mx-auto max-w-3xl px-6 text-center">
-          <h1 className="text-balance font-display text-5xl italic leading-[1.05] text-white sm:text-6xl lg:text-7xl">
+          <h1 className="text-balance font-display text-5xl leading-[1.05] text-white sm:text-6xl lg:text-7xl">
             <SplitText text={talentPage.heading} delay={0.4} />
           </h1>
           <motion.p
@@ -328,7 +328,7 @@ export default function TalentShowcase() {
             transition={{ duration: 0.7, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
             className="lg:order-1"
           >
-            <h2 className="text-balance font-display text-3xl italic leading-tight text-white sm:text-4xl">
+            <h2 className="text-balance font-display text-3xl leading-tight text-white sm:text-4xl">
               {talentPage.spotlight.heading}
             </h2>
             <p className="mt-5 text-lg leading-relaxed text-white/60">{talentPage.spotlight.body}</p>
@@ -356,7 +356,7 @@ export default function TalentShowcase() {
             transition={{ duration: 10, repeat: Infinity, ease: 'linear' }}
           />
           <div className="relative flex flex-col items-center gap-6 rounded-[calc(2rem-1px)] bg-[#0d0a18]/95 px-8 py-14 text-center backdrop-blur-xl">
-            <h3 className="text-balance font-display text-4xl italic leading-tight text-white sm:text-5xl">
+            <h3 className="text-balance font-display text-4xl leading-tight text-white sm:text-5xl">
               <SplitText text={talentPage.cta.heading} />
             </h3>
             <p className="max-w-md text-white/60">{talentPage.cta.body}</p>

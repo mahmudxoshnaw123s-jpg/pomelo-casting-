@@ -46,12 +46,9 @@ export default function ServicesHorizontalAccordion() {
 
               {/* collapsed state — vertical label + index, brightens on hover */}
               <div
-                className="absolute inset-0 flex flex-col items-start justify-between p-5 transition-opacity duration-300 sm:p-6"
+                className="absolute inset-0 flex flex-col items-start justify-end p-5 transition-opacity duration-300 sm:p-6"
                 style={{ opacity: isActive ? 0 : 1, pointerEvents: isActive ? 'none' : 'auto' }}
               >
-                <span className="font-display text-lg italic text-white/50 transition-colors duration-300 group-hover:text-white/90">
-                  {String(i + 1).padStart(2, '0')}
-                </span>
                 <span
                   className="whitespace-nowrap text-xs font-semibold uppercase tracking-[0.3em] text-white/80 transition-colors duration-300 group-hover:text-white"
                   style={{ writingMode: 'vertical-rl', transform: 'rotate(180deg)' }}
@@ -70,7 +67,7 @@ export default function ServicesHorizontalAccordion() {
                 }}
               >
                 <p className="text-xs font-semibold uppercase tracking-[0.3em] text-white/50">{meta.kicker}</p>
-                <h3 className="mt-3 max-w-md text-balance font-display text-2xl italic leading-tight text-white sm:text-3xl">
+                <h3 className="mt-3 max-w-md text-balance font-display text-2xl leading-tight text-white sm:text-3xl">
                   {item.title}
                 </h3>
                 <p className="mt-3 max-w-sm text-white/70">{item.description}</p>

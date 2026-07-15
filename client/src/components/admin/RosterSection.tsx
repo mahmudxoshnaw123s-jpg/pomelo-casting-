@@ -58,7 +58,7 @@ function ModelRow({
           {cover ? <img src={cover} alt="" className="h-full w-full object-cover" /> : null}
         </div>
         <div className="min-w-0 flex-1">
-          <p className="font-display text-xl italic text-white">{model.firstName}</p>
+          <p className="font-display text-xl text-white">{model.firstName}</p>
           <p className="mt-1 text-sm text-white/50">
             {model.height} · {model.hairColor} hair · {model.eyeColor} eyes · {model.images.length} photo
             {model.images.length === 1 ? '' : 's'}
@@ -178,7 +178,7 @@ export default function RosterSection() {
 
       {showAdd && (
         <div className={`${cardClass} mb-8`}>
-          <h2 className="mb-6 font-display text-2xl italic text-white">New talent</h2>
+          <h2 className="mb-6 font-display text-2xl text-white">New talent</h2>
           <ModelForm mode="create" submitting={creating} error={createError} onSubmit={handleCreate} onCancel={() => setShowAdd(false)} />
         </div>
       )}
