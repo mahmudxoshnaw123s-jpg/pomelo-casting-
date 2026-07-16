@@ -1,4 +1,4 @@
-import editorialCastingImage from '../assets/editorial-casting-newspaper.jpg'
+import editorialCastingImage from '../assets/editorial-casting-newspaper-v2.jpg'
 import productionCastingImage from '../assets/production-casting-set.jpg'
 import talentCastingImage from '../assets/talent-casting-studio-blue.jpg'
 import talentManagementImage from '../assets/talent-management-studio.jpg'

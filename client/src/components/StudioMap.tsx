@@ -1,4 +1,4 @@
-import { motion, useMotionValue, useScroll, useSpring, useTransform } from 'framer-motion'
+import { AnimatePresence, motion, useMotionValue, useScroll, useSpring, useTransform } from 'framer-motion'
 import type { MouseEvent } from 'react'
 import { useRef, useState } from 'react'
 import babylonBg from '../assets/babylon-optimized.jpg'
@@ -6,15 +6,14 @@ import { contact } from '../data/content'
 
 const ease = [0.16, 1, 0.3, 1] as const
 
-function GlobeLauncher({ launching, onLaunch }: { launching: boolean; onLaunch: () => void }) {
+function GlobeLauncher({ onLaunch }: { onLaunch: () => void }) {
   return (
     <motion.button
       type="button"
       onClick={onLaunch}
-      disabled={launching}
-      animate={launching ? { scale: 7, opacity: 0 } : { scale: 1, opacity: 1 }}
-      transition={{ duration: 1.1, ease: [0.76, 0, 0.24, 1] }}
-      className="group absolute inset-0 flex flex-col items-center justify-center gap-5 bg-[#0a0f1a]"
+      initial={false}
+      exit={{ scale: 6, opacity: 0, transition: { duration: 1, ease } }}
+      className="group absolute inset-0 z-10 flex flex-col items-center justify-center gap-5 bg-[#0a0f1a]"
     >
       <motion.div
         animate={{ rotate: 360 }}
@@ -67,12 +66,9 @@ export default function StudioMap() {
   const directionsHref = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`
   const mapEmbedSrc = `https://www.google.com/maps?q=${lat},${lng}(${encodeURIComponent(contact.mapPlaceName)})&z=16&output=embed`
 
-  const [stage, setStage] = useState<'cover' | 'zooming' | 'map'>('cover')
+  const [launched, setLaunched] = useState(false)
   const [mapLoaded, setMapLoaded] = useState(false)
-  const handleLaunch = () => {
-    setStage('zooming')
-    window.setTimeout(() => setStage('map'), 1100)
-  }
+  const handleLaunch = () => setLaunched(true)
 
   const mx = useMotionValue(0)
   const my = useMotionValue(0)
@@ -146,17 +142,14 @@ export default function StudioMap() {
           className="relative isolate mx-auto mt-14 max-w-3xl rounded-[2rem] p-px"
         >
           <div className="relative h-[360px] w-full overflow-hidden rounded-[calc(2rem-1px)] border border-white/15 bg-white/[0.04] shadow-2xl shadow-black/50 backdrop-blur-xl sm:h-[420px]">
-            {stage !== 'map' ? (
-              <GlobeLauncher launching={stage === 'zooming'} onLaunch={handleLaunch} />
-            ) : (
+            {launched && (
               <>
                 {!mapLoaded && (
                   <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.3 }}
-                    className="absolute inset-0 z-10 flex items-center justify-center bg-[#0a0f1a]"
+                    transition={{ duration: 0.5 }}
+                    className="absolute inset-0 z-0 flex items-center justify-center bg-[#0a0f1a]"
                   >
                     <motion.span
                       animate={{ scale: [1, 1.4, 1], opacity: [0.5, 1, 0.5] }}
@@ -172,13 +165,16 @@ export default function StudioMap() {
                   loading="lazy"
                   referrerPolicy="no-referrer-when-downgrade"
                   onLoad={() => setMapLoaded(true)}
-                  initial={{ opacity: 0, scale: 1.12 }}
-                  animate={{ opacity: mapLoaded ? 1 : 0, scale: mapLoaded ? 1 : 1.12 }}
-                  transition={{ duration: 0.7, ease }}
-                  className="h-full w-full grayscale-[0.15] contrast-[1.05] invert hue-rotate-180"
+                  initial={{ opacity: 0, scale: 1.1 }}
+                  animate={{ opacity: mapLoaded ? 1 : 0, scale: mapLoaded ? 1 : 1.1 }}
+                  transition={{ duration: 1, ease }}
+                  className="absolute inset-0 z-0 h-full w-full grayscale-[0.15] contrast-[1.05] invert hue-rotate-180"
                 />
               </>
             )}
+            <AnimatePresence>
+              {!launched && <GlobeLauncher key="launcher" onLaunch={handleLaunch} />}
+            </AnimatePresence>
           </div>
         </motion.div>
 
