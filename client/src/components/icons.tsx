@@ -144,3 +144,42 @@ export function IconSpinner(props: SVGProps<SVGSVGElement>) {
     </svg>
   )
 }
+
+export function IconSliders(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+      <line x1="4" y1="7" x2="20" y2="7" />
+      <circle cx="9" cy="7" r="2" fill="currentColor" stroke="none" />
+      <line x1="4" y1="12" x2="20" y2="12" />
+      <circle cx="15" cy="12" r="2" fill="currentColor" stroke="none" />
+      <line x1="4" y1="17" x2="20" y2="17" />
+      <circle cx="7" cy="17" r="2" fill="currentColor" stroke="none" />
+    </svg>
+  )
+}
+
+export function IconGenderFemale(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" {...props}>
+      <circle cx="12" cy="8" r="5" />
+      <path d="M12 13v6M9.5 16.5h5" />
+    </svg>
+  )
+}
+
+export function IconGenderMale(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" {...props}>
+      <circle cx="10" cy="14" r="5" />
+      <path d="M13.5 10.5 19 5M14.5 5h4.5v4.5" />
+    </svg>
+  )
+}
+
+export function IconRuler(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+      <path d="M12 3v18M8 7l4-4 4 4M8 17l4 4 4-4" />
+    </svg>
+  )
+}

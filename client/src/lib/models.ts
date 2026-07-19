@@ -6,6 +6,7 @@ export interface ModelImage {
 export interface TalentModel {
   id: string
   firstName: string
+  gender: string
   height: string
   hairColor: string
   eyeColor: string

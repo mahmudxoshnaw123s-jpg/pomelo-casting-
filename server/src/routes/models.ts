@@ -35,6 +35,7 @@ const fieldValidators = (optional: boolean) => {
   }
   return [
     chain('firstName', 'First name', 80),
+    chain('gender', 'Gender', 30),
     chain('height', 'Height', 40),
     chain('hairColor', 'Hair color', 60),
     chain('eyeColor', 'Eye color', 60),
@@ -78,6 +79,7 @@ router.post('/', requireAdmin, imagesUpload, fieldValidators(false), async (req:
 
   const input: ModelInput = {
     firstName: req.body.firstName,
+    gender: req.body.gender,
     height: req.body.height,
     hairColor: req.body.hairColor,
     eyeColor: req.body.eyeColor,
@@ -114,7 +116,7 @@ router.patch('/:id', requireAdmin, imagesUpload, fieldValidators(true), async (r
   }
 
   const fields: Partial<ModelInput> = {}
-  for (const key of ['firstName', 'height', 'hairColor', 'eyeColor'] as const) {
+  for (const key of ['firstName', 'gender', 'height', 'hairColor', 'eyeColor'] as const) {
     if (typeof req.body[key] === 'string') fields[key] = req.body[key]
   }
   if (req.body.featured !== undefined) fields.featured = parseFeatured(req.body.featured)

@@ -1,14 +1,17 @@
 import { AnimatePresence, motion, useScroll, useTransform } from 'framer-motion'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import AmbientField from './AmbientField'
 import BrandPhoto from './BrandPhoto'
 import Magnetic from './Magnetic'
 import PremiumButton from './PremiumButton'
 import SplitText from './SplitText'
+import TalentFilterBar, { EMPTY_FILTERS, hasActiveFilters, matchesFilters } from './TalentFilterBar'
+import type { TalentFilters } from './TalentFilterBar'
 import { useModalFocus } from '../hooks/useModalFocus'
 import { talentPage } from '../data/content'
 import { images } from '../data/images'
 import { fetchModels } from '../lib/models'
+import type { TalentModel } from '../lib/models'
 
 const glowConic =
   'conic-gradient(from 0deg, transparent 0%, #00b2e2 12%, transparent 28%, #895193 50%, transparent 68%, #00b2e2 86%, transparent 100%)'
@@ -212,8 +215,20 @@ function Lightbox({ item, onClose }: { item: DisplayItem; onClose: () => void })
   )
 }
 
+function mapModelToDisplay(m: TalentModel): DisplayItem {
+  return {
+    id: m.id,
+    cover: m.images[0].url,
+    images: m.images.map((img) => img.url),
+    eyebrow: 'Pomelo Talent',
+    title: m.firstName,
+    description: `${m.height} · ${m.hairColor} hair · ${m.eyeColor} eyes`,
+  }
+}
+
 export default function TalentShowcase() {
-  const [models, setModels] = useState<DisplayItem[] | null>(null)
+  const [rawModels, setRawModels] = useState<TalentModel[] | null>(null)
+  const [filters, setFilters] = useState<TalentFilters>(EMPTY_FILTERS)
   const [openId, setOpenId] = useState<string | null>(null)
   const heroRef = useRef<HTMLDivElement>(null)
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ['start start', 'end start'] })
@@ -225,29 +240,31 @@ export default function TalentShowcase() {
     fetchModels(false)
       .then((data) => {
         if (!active) return
-        const mapped: DisplayItem[] = data
-          .filter((m) => m.images.length > 0)
-          .map((m) => ({
-            id: m.id,
-            cover: m.images[0].url,
-            images: m.images.map((img) => img.url),
-            eyebrow: 'Pomelo Talent',
-            title: m.firstName,
-            description: `${m.height} · ${m.hairColor} hair · ${m.eyeColor} eyes`,
-          }))
-        setModels(mapped)
+        setRawModels(data.filter((m) => m.images.length > 0))
       })
       .catch(() => {
-        if (active) setModels([])
+        if (active) setRawModels([])
       })
     return () => {
       active = false
     }
   }, [])
 
-  const galleryItems = models && models.length > 0 ? models : fallbackItems
-  const heroImage = galleryItems[0]?.cover ?? images[talentPage.gallery[0].image]
-  const openItem = galleryItems.find((item) => item.id === openId) ?? null
+  const usingRealData = rawModels !== null && rawModels.length > 0
+
+  const allDisplayItems = useMemo<DisplayItem[]>(
+    () => (usingRealData ? rawModels!.map(mapModelToDisplay) : fallbackItems),
+    [usingRealData, rawModels],
+  )
+
+  const galleryItems = useMemo<DisplayItem[]>(() => {
+    if (!usingRealData) return fallbackItems
+    if (!hasActiveFilters(filters)) return allDisplayItems
+    return rawModels!.filter((m) => matchesFilters(m, filters)).map(mapModelToDisplay)
+  }, [usingRealData, rawModels, filters, allDisplayItems])
+
+  const heroImage = allDisplayItems[0]?.cover ?? images[talentPage.gallery[0].image]
+  const openItem = allDisplayItems.find((item) => item.id === openId) ?? null
 
   return (
     <div className="relative bg-gradient-to-b from-[#0b0713] via-[#130b21] to-[#0a0f1a]">
@@ -300,11 +317,30 @@ export default function TalentShowcase() {
         <AmbientField />
         <div className="relative z-10 mx-auto max-w-6xl px-6">
           <h2 className="sr-only">Talent roster</h2>
-          <motion.div layout className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {galleryItems.map((item) => (
-              <GalleryCard key={item.id} item={item} onOpen={() => setOpenId(item.id)} />
-            ))}
-          </motion.div>
+
+          {usingRealData && (
+            <TalentFilterBar filters={filters} onChange={setFilters} resultCount={galleryItems.length} />
+          )}
+
+          {galleryItems.length > 0 ? (
+            <motion.div layout className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+              <AnimatePresence mode="popLayout">
+                {galleryItems.map((item) => (
+                  <GalleryCard key={item.id} item={item} onOpen={() => setOpenId(item.id)} />
+                ))}
+              </AnimatePresence>
+            </motion.div>
+          ) : (
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4 }}
+              className="rounded-3xl border border-white/10 bg-white/[0.02] px-8 py-16 text-center"
+            >
+              <p className="font-display text-xl text-white">No talent matches these filters.</p>
+              <p className="mt-2 text-sm text-white/50">Try adjusting or clearing a filter to see more of the roster.</p>
+            </motion.div>
+          )}
         </div>
       </section>
 

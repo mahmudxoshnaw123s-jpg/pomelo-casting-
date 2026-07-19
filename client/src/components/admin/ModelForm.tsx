@@ -21,6 +21,7 @@ interface ModelFormProps {
 
 export default function ModelForm({ mode, initial, submitting, error, onSubmit, onCancel }: ModelFormProps) {
   const [firstName, setFirstName] = useState(initial?.firstName ?? '')
+  const [gender, setGender] = useState(initial?.gender ?? '')
   const [height, setHeight] = useState(initial?.height ?? '')
   const [hairColor, setHairColor] = useState(initial?.hairColor ?? '')
   const [eyeColor, setEyeColor] = useState(initial?.eyeColor ?? '')
@@ -40,8 +41,8 @@ export default function ModelForm({ mode, initial, submitting, error, onSubmit, 
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault()
-    if (!firstName.trim() || !height.trim() || !hairColor || !eyeColor) {
-      setLocalError('Please fill in name, height, hair color, and eye color.')
+    if (!firstName.trim() || !gender || !height.trim() || !hairColor || !eyeColor) {
+      setLocalError('Please fill in name, gender, height, hair color, and eye color.')
       return
     }
     if (totalImages === 0) {
@@ -52,6 +53,7 @@ export default function ModelForm({ mode, initial, submitting, error, onSubmit, 
 
     const formData = new FormData()
     formData.append('firstName', firstName.trim())
+    formData.append('gender', gender)
     formData.append('height', height.trim())
     formData.append('hairColor', hairColor)
     formData.append('eyeColor', eyeColor)
@@ -81,6 +83,21 @@ export default function ModelForm({ mode, initial, submitting, error, onSubmit, 
             placeholder="Lara"
             maxLength={80}
           />
+        </div>
+        <div>
+          <label className={labelClass} htmlFor="mf-gender">
+            Gender
+          </label>
+          <select id="mf-gender" value={gender} onChange={(e) => setGender(e.target.value)} className={fieldClass}>
+            <option value="" disabled className="bg-[#130b21]">
+              Select
+            </option>
+            {application.genders.map((g) => (
+              <option key={g} value={g} className="bg-[#130b21]">
+                {g}
+              </option>
+            ))}
+          </select>
         </div>
         <div>
           <label className={labelClass} htmlFor="mf-height">

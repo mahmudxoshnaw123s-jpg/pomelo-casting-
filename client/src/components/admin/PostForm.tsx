@@ -23,7 +23,7 @@ export default function PostForm({ mode, initial, submitting, error, onSubmit, o
   const [date, setDate] = useState(initial?.date ?? '')
   const [readTime, setReadTime] = useState(initial?.readTime ?? '')
   const [featured, setFeatured] = useState(initial?.featured ?? false)
-  const [existingImage, setExistingImage] = useState(initial?.image ?? null)
+  const existingImage = initial?.image ?? null
   const [removeImage, setRemoveImage] = useState(false)
   const [newFiles, setNewFiles] = useState<File[]>([])
   const [localError, setLocalError] = useState('')
@@ -118,10 +118,10 @@ export default function PostForm({ mode, initial, submitting, error, onSubmit, o
               type="button"
               onClick={() => {
                 setRemoveImage(true)
-                setExistingImage(null)
+                setNewFiles([])
               }}
               className="absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-full bg-black/60 text-white opacity-0 transition-opacity group-hover:opacity-100"
-              aria-label="Replace cover image"
+              aria-label="Remove cover image"
             >
               <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M18 6 6 18M6 6l12 12" />
@@ -130,7 +130,21 @@ export default function PostForm({ mode, initial, submitting, error, onSubmit, o
           </div>
         </div>
       ) : (
-        <PhotoDropzone label="Cover image" required files={newFiles} max={1} onChange={setNewFiles} />
+        <div>
+          <PhotoDropzone label="Cover image" required={!existingImage} files={newFiles} max={1} onChange={setNewFiles} />
+          {existingImage && (
+            <button
+              type="button"
+              onClick={() => {
+                setRemoveImage(false)
+                setNewFiles([])
+              }}
+              className="mt-2 text-sm font-semibold text-pomelo-blue hover:text-white"
+            >
+              Keep the original cover image
+            </button>
+          )}
+        </div>
       )}
 
       <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3">

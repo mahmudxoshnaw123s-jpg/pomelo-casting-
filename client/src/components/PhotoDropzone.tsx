@@ -133,6 +133,7 @@ export default function PhotoDropzone({ label, hint, required, files, max, onCha
             role="button"
             tabIndex={0}
             aria-label={`Upload ${label.toLowerCase()}`}
+            aria-required={required}
             aria-describedby={describedBy}
             onClick={openPicker}
             onKeyDown={handleTriggerKeyDown}
@@ -166,7 +167,6 @@ export default function PhotoDropzone({ label, hint, required, files, max, onCha
         type="file"
         accept="image/*"
         multiple={max > 1}
-        required={required}
         aria-invalid={Boolean(error)}
         className="hidden"
         onChange={(e) => {

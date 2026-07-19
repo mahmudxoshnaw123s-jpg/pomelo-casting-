@@ -7,6 +7,7 @@ export interface ModelImage {
 
 export interface ModelInput {
   firstName: string
+  gender: string
   height: string
   hairColor: string
   eyeColor: string

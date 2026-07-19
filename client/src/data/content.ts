@@ -352,6 +352,7 @@ export const application = {
   label: 'Apply',
   heading: 'Start your casting journey.',
   subhead: 'Tell us about yourself and share a few recent photos — our team reviews every submission personally.',
+  genders: ['Female', 'Male'],
   hairColors: ['Black', 'Brown', 'Blonde', 'Red', 'Gray / Silver', 'Other'],
   eyeColors: ['Brown', 'Blue', 'Green', 'Hazel', 'Gray', 'Other'],
   shirtSizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],

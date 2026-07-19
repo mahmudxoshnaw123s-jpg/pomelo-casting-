@@ -13,6 +13,7 @@ function toModel(doc: QueryDocumentSnapshot<DocumentData>): Model {
   return {
     id: doc.id,
     firstName: data.firstName ?? '',
+    gender: data.gender ?? '',
     height: data.height ?? '',
     hairColor: data.hairColor ?? '',
     eyeColor: data.eyeColor ?? '',
@@ -40,6 +41,7 @@ export async function createModel(input: ModelInput, files: UploadFile[]): Promi
 
   const payload = {
     firstName: input.firstName,
+    gender: input.gender,
     height: input.height,
     hairColor: input.hairColor,
     eyeColor: input.eyeColor,

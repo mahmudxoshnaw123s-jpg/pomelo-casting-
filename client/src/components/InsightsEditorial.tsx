@@ -324,7 +324,7 @@ export default function InsightsEditorial() {
           {insights.subhead}
         </motion.h2>
 
-        <div className="relative divide-y divide-white/10 border-y border-white/10">
+        <div className={list.length > 0 ? 'relative divide-y divide-white/10 border-y border-white/10' : ''}>
           {list.map((post, i) => (
             <motion.button
               key={post.id}
