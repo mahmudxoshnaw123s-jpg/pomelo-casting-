@@ -1,18 +1,84 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://www.pomeloagency.com/</loc>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.pomeloagency.com/" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://www.pomeloagency.com/ar/" />
+    <xhtml:link rel="alternate" hreflang="ku" href="https://www.pomeloagency.com/ku/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.pomeloagency.com/" />
+  </url>
+  <url>
+    <loc>https://www.pomeloagency.com/ar/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.pomeloagency.com/" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://www.pomeloagency.com/ar/" />
+    <xhtml:link rel="alternate" hreflang="ku" href="https://www.pomeloagency.com/ku/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.pomeloagency.com/" />
+  </url>
+  <url>
+    <loc>https://www.pomeloagency.com/ku/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.pomeloagency.com/" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://www.pomeloagency.com/ar/" />
+    <xhtml:link rel="alternate" hreflang="ku" href="https://www.pomeloagency.com/ku/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.pomeloagency.com/" />
   </url>
   <url>
     <loc>https://www.pomeloagency.com/talent</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.pomeloagency.com/talent" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://www.pomeloagency.com/ar/talent" />
+    <xhtml:link rel="alternate" hreflang="ku" href="https://www.pomeloagency.com/ku/talent" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.pomeloagency.com/talent" />
+  </url>
+  <url>
+    <loc>https://www.pomeloagency.com/ar/talent</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.pomeloagency.com/talent" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://www.pomeloagency.com/ar/talent" />
+    <xhtml:link rel="alternate" hreflang="ku" href="https://www.pomeloagency.com/ku/talent" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.pomeloagency.com/talent" />
+  </url>
+  <url>
+    <loc>https://www.pomeloagency.com/ku/talent</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.pomeloagency.com/talent" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://www.pomeloagency.com/ar/talent" />
+    <xhtml:link rel="alternate" hreflang="ku" href="https://www.pomeloagency.com/ku/talent" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.pomeloagency.com/talent" />
   </url>
   <url>
     <loc>https://www.pomeloagency.com/apply</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.pomeloagency.com/apply" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://www.pomeloagency.com/ar/apply" />
+    <xhtml:link rel="alternate" hreflang="ku" href="https://www.pomeloagency.com/ku/apply" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.pomeloagency.com/apply" />
+  </url>
+  <url>
+    <loc>https://www.pomeloagency.com/ar/apply</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.pomeloagency.com/apply" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://www.pomeloagency.com/ar/apply" />
+    <xhtml:link rel="alternate" hreflang="ku" href="https://www.pomeloagency.com/ku/apply" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.pomeloagency.com/apply" />
+  </url>
+  <url>
+    <loc>https://www.pomeloagency.com/ku/apply</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.pomeloagency.com/apply" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://www.pomeloagency.com/ar/apply" />
+    <xhtml:link rel="alternate" hreflang="ku" href="https://www.pomeloagency.com/ku/apply" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.pomeloagency.com/apply" />
   </url>
 </urlset>

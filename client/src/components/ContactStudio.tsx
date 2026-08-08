@@ -5,7 +5,7 @@ import FaqAccordion from './FaqAccordion'
 import FieldShell from './FieldShell'
 import SplitText from './SplitText'
 import { IconCheck, IconChevronDown, IconClock, IconInstagram, IconMail, IconPin, IconPhone, IconSpinner, IconWhatsapp } from './icons'
-import { contact } from '../data/content'
+import { useContent } from '../context/LanguageContext'
 import { submitContact } from '../lib/api'
 import { validateAll } from '../lib/validateContact'
 import type { ContactFormErrors, ContactFormValues } from '../lib/validateContact'
@@ -28,12 +28,13 @@ const particles = Array.from({ length: 14 }).map((_, i) => ({
 }))
 
 export default function ContactStudio() {
+  const { contact, ui } = useContent()
   const [values, setValues] = useState<ContactFormValues>(initialForm)
   const [touched, setTouched] = useState<Partial<Record<keyof ContactFormValues, boolean>>>({})
   const [status, setStatus] = useState<Status>('idle')
   const [serverError, setServerError] = useState('')
 
-  const errors: ContactFormErrors = validateAll(values)
+  const errors: ContactFormErrors = validateAll(values, ui.validateContact)
 
   const handleChange =
     (field: keyof ContactFormValues) =>
@@ -60,13 +61,13 @@ export default function ContactStudio() {
     setServerError('')
 
     try {
-      await submitContact(values)
+      await submitContact(values, ui.contact.genericError)
       setStatus('success')
       setValues(initialForm)
       setTouched({})
     } catch (err) {
       setStatus('error')
-      setServerError(err instanceof Error ? err.message : 'Something went wrong. Please try again.')
+      setServerError(err instanceof Error ? err.message : ui.contact.genericError)
     }
   }
 
@@ -91,7 +92,7 @@ export default function ContactStudio() {
   return (
     <section
       id="contact"
-      aria-label="Contact"
+      aria-label={ui.contact.sectionAria}
       onMouseMove={handleAmbientMove}
       className="relative isolate overflow-hidden bg-gradient-to-b from-[#0b0713] via-[#130b21] to-[#0a0f1a] py-28 sm:py-36"
     >
@@ -108,15 +109,11 @@ export default function ContactStudio() {
       <motion.div
         style={{ x: blobAX, y: blobAY }}
         className="pointer-events-none absolute -top-1/4 left-1/3 h-2/3 w-2/3 rounded-full bg-pomelo-blue/15 blur-[130px]"
-        animate={{ scale: [1, 1.08, 1] }}
-        transition={{ duration: 17, repeat: Infinity, ease: 'easeInOut' }}
         aria-hidden="true"
       />
       <motion.div
         style={{ x: blobBX, y: blobBY }}
         className="pointer-events-none absolute bottom-0 -left-1/4 h-2/3 w-2/3 rounded-full bg-pomelo-purple/20 blur-[130px]"
-        animate={{ scale: [1, 1.1, 1] }}
-        transition={{ duration: 19, repeat: Infinity, ease: 'easeInOut' }}
         aria-hidden="true"
       />
 
@@ -159,7 +156,7 @@ export default function ContactStudio() {
                   <IconPin className="h-5 w-5" />
                 </span>
                 <div>
-                  <p className="font-semibold text-white">Studio</p>
+                  <p className="font-semibold text-white">{ui.contact.studio}</p>
                   <address className="mt-0.5 text-sm not-italic text-white/55">{contact.address}</address>
                   <a
                     href={directionsHref}
@@ -167,7 +164,7 @@ export default function ContactStudio() {
                     rel="noreferrer"
                     className="mt-1 inline-block text-sm font-medium text-pomelo-blue hover:text-white"
                   >
-                    Get directions →
+                    {ui.contact.getDirections}
                   </a>
                 </div>
               </div>
@@ -177,7 +174,7 @@ export default function ContactStudio() {
                   <IconPhone className="h-5 w-5" />
                 </span>
                 <div>
-                  <p className="font-semibold text-white">Phone</p>
+                  <p className="font-semibold text-white">{ui.contact.phone}</p>
                   <a href={contact.phoneHref} className="mt-0.5 block text-sm text-white/55 hover:text-pomelo-blue">
                     {contact.phoneDisplay}
                   </a>
@@ -189,7 +186,7 @@ export default function ContactStudio() {
                   <IconMail className="h-5 w-5" />
                 </span>
                 <div>
-                  <p className="font-semibold text-white">Email</p>
+                  <p className="font-semibold text-white">{ui.contact.email}</p>
                   <a href={`mailto:${contact.email}`} className="mt-0.5 block text-sm text-white/55 hover:text-pomelo-blue">
                     {contact.email}
                   </a>
@@ -201,7 +198,7 @@ export default function ContactStudio() {
                   <IconClock className="h-5 w-5" />
                 </span>
                 <div className="w-full">
-                  <p className="font-semibold text-white">Business hours</p>
+                  <p className="font-semibold text-white">{ui.contact.businessHours}</p>
                   <dl className="mt-1 space-y-0.5 text-sm text-white/55">
                     {contact.hours.map((h) => (
                       <div key={h.day} className="flex justify-between gap-4">
@@ -218,7 +215,7 @@ export default function ContactStudio() {
                   href={contact.instagramHref}
                   target="_blank"
                   rel="noreferrer"
-                  aria-label="Pomelo Casting on Instagram"
+                  aria-label={ui.contact.instagramAria}
                   className="group flex items-center gap-3 text-sm font-medium text-white/55 transition-colors hover:text-pomelo-blue"
                 >
                   <span className="flex h-9 w-9 items-center justify-center rounded-full border border-white/10 transition-colors group-hover:border-pomelo-blue group-hover:text-pomelo-blue">
@@ -234,7 +231,7 @@ export default function ContactStudio() {
                   className="flex items-center justify-center gap-2 rounded-full bg-[#25D366] px-5 py-3 text-sm font-semibold text-white transition-transform hover:scale-[1.02]"
                 >
                   <IconWhatsapp className="h-4 w-4" />
-                  Chat on WhatsApp
+                  {ui.contact.chatOnWhatsapp}
                 </a>
               </div>
             </div>
@@ -264,16 +261,14 @@ export default function ContactStudio() {
                     >
                       <IconCheck className="h-7 w-7" />
                     </motion.span>
-                    <h3 className="mt-6 font-display text-2xl text-white">Message sent</h3>
-                    <p className="mt-2 max-w-sm text-white/60">
-                      Thanks for reaching out — we'll be in touch within 1 business day.
-                    </p>
+                    <h3 className="mt-6 font-display text-2xl text-white">{ui.contact.messageSentHeading}</h3>
+                    <p className="mt-2 max-w-sm text-white/60">{ui.contact.messageSentBody}</p>
                     <button
                       type="button"
                       onClick={() => setStatus('idle')}
                       className="mt-8 text-sm font-semibold text-pomelo-blue hover:text-white"
                     >
-                      Send another message
+                      {ui.contact.sendAnother}
                     </button>
                   </motion.div>
                 ) : (
@@ -287,19 +282,19 @@ export default function ContactStudio() {
                     className="space-y-6"
                   >
                     <div className="grid gap-6 sm:grid-cols-2">
-                      <FieldShell label="Name" htmlFor="name" error={touched.name ? errors.name : undefined} showValid={touched.name}>
+                      <FieldShell label={ui.contact.name} htmlFor="name" error={touched.name ? errors.name : undefined} showValid={touched.name}>
                         <input
                           id="name"
                           value={values.name}
                           onChange={handleChange('name')}
                           onBlur={handleBlur('name')}
                           className={`${fieldClass} ${borderClass('name')}`}
-                          placeholder="Jane Doe"
+                          placeholder={ui.contact.namePlaceholder}
                           autoComplete="name"
                         />
                       </FieldShell>
 
-                      <FieldShell label="Email" htmlFor="email" error={touched.email ? errors.email : undefined} showValid={touched.email}>
+                      <FieldShell label={ui.contact.email} htmlFor="email" error={touched.email ? errors.email : undefined} showValid={touched.email}>
                         <input
                           id="email"
                           type="email"
@@ -307,7 +302,7 @@ export default function ContactStudio() {
                           onChange={handleChange('email')}
                           onBlur={handleBlur('email')}
                           className={`${fieldClass} ${borderClass('email')}`}
-                          placeholder="jane@brand.com"
+                          placeholder={ui.contact.emailPlaceholder}
                           autoComplete="email"
                         />
                       </FieldShell>
@@ -315,7 +310,7 @@ export default function ContactStudio() {
 
                     <div className="grid gap-6 sm:grid-cols-2">
                       <FieldShell
-                        label="Phone"
+                        label={ui.contact.phone}
                         htmlFor="phone"
                         optional
                         error={touched.phone ? errors.phone : undefined}
@@ -328,22 +323,22 @@ export default function ContactStudio() {
                           onChange={handleChange('phone')}
                           onBlur={handleBlur('phone')}
                           className={`${fieldClass} ${borderClass('phone')}`}
-                          placeholder="+964 750 000 0000"
+                          placeholder={ui.contact.phonePlaceholder}
                           autoComplete="tel"
                         />
                       </FieldShell>
 
-                      <FieldShell label="Subject" htmlFor="subject" error={touched.subject ? errors.subject : undefined} showValid={touched.subject}>
+                      <FieldShell label={ui.contact.subject} htmlFor="subject" error={touched.subject ? errors.subject : undefined} showValid={touched.subject}>
                         <div className="relative">
                           <select
                             id="subject"
                             value={values.subject}
                             onChange={handleChange('subject')}
                             onBlur={handleBlur('subject')}
-                            className={`${fieldClass} ${borderClass('subject')} appearance-none pr-10`}
+                            className={`${fieldClass} ${borderClass('subject')} appearance-none pe-10`}
                           >
                             <option value="" disabled className="bg-[#130b21]">
-                              Select a subject
+                              {ui.contact.selectSubject}
                             </option>
                             {contact.subjects.map((s) => (
                               <option key={s} value={s} className="bg-[#130b21]">
@@ -351,12 +346,12 @@ export default function ContactStudio() {
                               </option>
                             ))}
                           </select>
-                          <IconChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-white/40" />
+                          <IconChevronDown className="pointer-events-none absolute end-3 top-1/2 h-4 w-4 -translate-y-1/2 text-white/40" />
                         </div>
                       </FieldShell>
                     </div>
 
-                    <FieldShell label="Message" htmlFor="message" error={touched.message ? errors.message : undefined} showValid={touched.message}>
+                    <FieldShell label={ui.contact.message} htmlFor="message" error={touched.message ? errors.message : undefined} showValid={touched.message}>
                       <textarea
                         id="message"
                         rows={5}
@@ -364,7 +359,7 @@ export default function ContactStudio() {
                         onChange={handleChange('message')}
                         onBlur={handleBlur('message')}
                         className={`${fieldClass} ${borderClass('message')} resize-none`}
-                        placeholder="Tell us about your project or brief..."
+                        placeholder={ui.contact.messagePlaceholder}
                       />
                     </FieldShell>
 
@@ -378,7 +373,7 @@ export default function ContactStudio() {
                       <span className="pointer-events-none absolute inset-y-0 left-[-40%] w-1/3 -skew-x-12 bg-white/25 transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-[220%]" />
                       <span className="relative flex items-center gap-2">
                         {status === 'submitting' && <IconSpinner className="h-4 w-4 animate-spin" />}
-                        {status === 'submitting' ? 'Sending...' : 'Send message →'}
+                        {status === 'submitting' ? ui.contact.sending : ui.contact.sendMessage}
                       </span>
                     </motion.button>
 
@@ -401,7 +396,7 @@ export default function ContactStudio() {
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
           className="mx-auto mt-24 max-w-3xl"
         >
-          <h3 className="mb-8 text-center font-display text-2xl text-white sm:text-3xl">Questions from talent</h3>
+          <h3 className="mb-8 text-center font-display text-2xl text-white sm:text-3xl">{ui.contact.questionsFromTalent}</h3>
           <FaqAccordion items={contact.faq} />
         </motion.div>
       </div>

@@ -3,6 +3,8 @@ import { useState } from 'react'
 import type { ReactNode, MouseEvent } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { IconArrowRight } from './icons'
+import { useLanguage } from '../context/LanguageContext'
+import { parseLanguageFromPath } from '../lib/language'
 
 const MotionLink = motion.create(Link)
 
@@ -25,8 +27,20 @@ let rippleId = 0
 
 export default function PremiumButton({ children, onClick, href, variant = 'solid', className = '', type = 'button' }: PremiumButtonProps) {
   const [ripples, setRipples] = useState<Ripple[]>([])
+  const { language, href: toLocalizedHref } = useLanguage()
+  const forwardX = language === 'ar' || language === 'ku' ? -3 : 3
   const location = useLocation()
-  const resolvedHref = href && href.startsWith('#') && location.pathname !== '/' ? `/${href}` : href
+
+  const resolvedHref = (() => {
+    if (!href) return href
+    if (/^https?:\/\//.test(href)) return href
+    if (href.startsWith('#')) {
+      const { path: pathWithoutLang } = parseLanguageFromPath(location.pathname)
+      // Already on this language's homepage — a plain in-page anchor jump is enough.
+      return pathWithoutLang === '/' ? href : toLocalizedHref(`/${href}`)
+    }
+    return toLocalizedHref(href)
+  })()
 
   const handlePointerDown = (e: MouseEvent<HTMLElement>) => {
     const rect = e.currentTarget.getBoundingClientRect()
@@ -47,9 +61,9 @@ export default function PremiumButton({ children, onClick, href, variant = 'soli
     <>
       <span className="relative z-10">{children}</span>
       <motion.span
-        className="relative z-10"
+        className="relative z-10 rtl:rotate-180"
         animate={{ x: 0 }}
-        whileHover={{ x: 3 }}
+        whileHover={{ x: forwardX }}
         transition={{ type: 'spring', stiffness: 400, damping: 20 }}
       >
         <IconArrowRight className="h-4 w-4" />

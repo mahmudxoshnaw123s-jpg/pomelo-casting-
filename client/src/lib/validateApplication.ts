@@ -14,59 +14,83 @@ export interface ApplicationFormValues {
 
 export type ApplicationFormErrors = Partial<Record<keyof ApplicationFormValues, string>>
 
+export interface ApplicationValidationMessages {
+  fullName: string
+  nameShort: string
+  age: string
+  ageInvalid: string
+  phone: string
+  phoneInvalid: string
+  email: string
+  height: string
+  weight: string
+  hairColor: string
+  eyeColor: string
+  shoeSize: string
+  shirtSize: string
+  languages: string
+}
+
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const PHONE_RE = /^[+\d][\d\s()-]{6,}$/
 
-export function validateApplicationField(field: keyof ApplicationFormValues, value: string): string {
+export function validateApplicationField(
+  field: keyof ApplicationFormValues,
+  value: string,
+  messages: ApplicationValidationMessages,
+): string {
   switch (field) {
     case 'fullName':
-      if (!value.trim()) return 'Please enter your full name.'
-      if (value.trim().length < 2) return 'Name looks too short.'
+      if (!value.trim()) return messages.fullName
+      if (value.trim().length < 2) return messages.nameShort
       return ''
     case 'age': {
-      if (!value.trim()) return 'Please enter your age.'
+      if (!value.trim()) return messages.age
       const age = Number(value)
-      if (!Number.isInteger(age) || age < 14 || age > 90) return 'Enter a valid age (14–90).'
+      if (!Number.isInteger(age) || age < 14 || age > 90) return messages.ageInvalid
       return ''
     }
     case 'phone':
-      if (!value.trim()) return 'Please enter your phone number.'
-      if (!PHONE_RE.test(value.trim())) return 'Enter a valid phone number.'
+      if (!value.trim()) return messages.phone
+      if (!PHONE_RE.test(value.trim())) return messages.phoneInvalid
       return ''
     case 'email':
       if (!value.trim()) return ''
-      if (!EMAIL_RE.test(value.trim())) return 'Enter a valid email address.'
+      if (!EMAIL_RE.test(value.trim())) return messages.email
       return ''
     case 'height':
-      if (!value.trim()) return 'Please enter your height.'
+      if (!value.trim()) return messages.height
       return ''
     case 'weight':
-      if (!value.trim()) return 'Please enter your weight.'
+      if (!value.trim()) return messages.weight
       return ''
     case 'hairColor':
-      if (!value.trim()) return 'Please choose a hair color.'
+      if (!value.trim()) return messages.hairColor
       return ''
     case 'eyeColor':
-      if (!value.trim()) return 'Please choose an eye color.'
+      if (!value.trim()) return messages.eyeColor
       return ''
     case 'shoeSize':
-      if (!value.trim()) return 'Please enter your shoe size.'
+      if (!value.trim()) return messages.shoeSize
       return ''
     case 'shirtSize':
-      if (!value.trim()) return 'Please choose a shirt size.'
+      if (!value.trim()) return messages.shirtSize
       return ''
     case 'languages':
-      if (!value.trim()) return 'Please list at least one language.'
+      if (!value.trim()) return messages.languages
       return ''
     default:
       return ''
   }
 }
 
-export function validateApplicationAll(values: ApplicationFormValues): ApplicationFormErrors {
+export function validateApplicationAll(
+  values: ApplicationFormValues,
+  messages: ApplicationValidationMessages,
+): ApplicationFormErrors {
   const errors: ApplicationFormErrors = {}
   ;(Object.keys(values) as (keyof ApplicationFormValues)[]).forEach((field) => {
-    const error = validateApplicationField(field, values[field])
+    const error = validateApplicationField(field, values[field], messages)
     if (error) errors[field] = error
   })
   return errors

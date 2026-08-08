@@ -1,9 +1,12 @@
 import { useEffect } from 'react'
 import ModelApplicationForm from '../components/ModelApplicationForm'
 import Seo from '../components/Seo'
+import { useContent, useLanguage } from '../context/LanguageContext'
 import { buildBreadcrumbLd } from '../data/seo'
 
 export default function ApplyPage() {
+  const { ui } = useContent()
+  const { href } = useLanguage()
   useEffect(() => {
     window.scrollTo(0, 0)
   }, [])
@@ -11,12 +14,12 @@ export default function ApplyPage() {
   return (
     <>
       <Seo
-        title="Apply to Join Our Talent Roster | Pomelo Casting"
-        description="Tell us about yourself and share a few recent photos — our team reviews every submission personally and follows up on strong fits."
+        title={ui.seo.applyTitle}
+        description={ui.seo.applyDescription}
         path="/apply"
         jsonLd={buildBreadcrumbLd([
-          { name: 'Home', path: '/' },
-          { name: 'Apply', path: '/apply' },
+          { name: ui.seo.breadcrumbHome, path: href('/') },
+          { name: ui.seo.breadcrumbApply, path: href('/apply') },
         ])}
       />
       <ModelApplicationForm />

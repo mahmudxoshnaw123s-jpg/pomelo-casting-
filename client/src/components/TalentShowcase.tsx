@@ -8,10 +8,11 @@ import SplitText from './SplitText'
 import TalentFilterBar, { EMPTY_FILTERS, hasActiveFilters, matchesFilters } from './TalentFilterBar'
 import type { TalentFilters } from './TalentFilterBar'
 import { useModalFocus } from '../hooks/useModalFocus'
-import { talentPage } from '../data/content'
+import { useContent } from '../context/LanguageContext'
 import { images } from '../data/images'
 import { fetchModels } from '../lib/models'
 import type { TalentModel } from '../lib/models'
+import type { talentPage as TalentPageEn } from '../data/content.en'
 
 const glowConic =
   'conic-gradient(from 0deg, transparent 0%, #00b2e2 12%, transparent 28%, #895193 50%, transparent 68%, #00b2e2 86%, transparent 100%)'
@@ -26,16 +27,28 @@ interface DisplayItem {
 }
 
 // Placeholder roster shown before any real talent is uploaded.
-const fallbackItems: DisplayItem[] = talentPage.gallery.map((item) => ({
-  id: item.id,
-  cover: images[item.image],
-  images: [images[item.image]],
-  eyebrow: item.category,
-  title: item.title,
-  description: item.description,
-}))
+function buildFallbackItems(talentPage: typeof TalentPageEn): DisplayItem[] {
+  return talentPage.gallery.map((item) => ({
+    id: item.id,
+    cover: images[item.image],
+    images: [images[item.image]],
+    eyebrow: item.category,
+    title: item.title,
+    description: item.description,
+  }))
+}
 
-function GalleryCard({ item, onOpen }: { item: DisplayItem; onOpen: () => void }) {
+function GalleryCard({
+  item,
+  onOpen,
+  viewLabel,
+  photosLabel,
+}: {
+  item: DisplayItem
+  onOpen: () => void
+  viewLabel: string
+  photosLabel: string
+}) {
   return (
     <motion.div
       layout
@@ -46,7 +59,7 @@ function GalleryCard({ item, onOpen }: { item: DisplayItem; onOpen: () => void }
       whileHover="hover"
       className="group relative isolate cursor-pointer overflow-hidden rounded-3xl border border-white/10"
     >
-      <button type="button" onClick={onOpen} className="absolute inset-0 z-30" aria-label={`View ${item.title}`} />
+      <button type="button" onClick={onOpen} className="absolute inset-0 z-30" aria-label={`${viewLabel}${item.title}`} />
       <motion.div
         className="pointer-events-none absolute -inset-px z-20 rounded-3xl opacity-0 transition-opacity duration-500 group-hover:opacity-100"
         style={{
@@ -90,7 +103,7 @@ function GalleryCard({ item, onOpen }: { item: DisplayItem; onOpen: () => void }
         </motion.div>
         {item.images.length > 1 && (
           <span className="absolute left-4 top-4 rounded-full border border-white/20 bg-black/40 px-2.5 py-1 text-[0.6rem] font-semibold uppercase tracking-wider text-white/80 backdrop-blur-sm">
-            {item.images.length} photos
+            {item.images.length} {photosLabel}
           </span>
         )}
         <motion.span
@@ -109,6 +122,7 @@ function GalleryCard({ item, onOpen }: { item: DisplayItem; onOpen: () => void }
 }
 
 function Lightbox({ item, onClose }: { item: DisplayItem; onClose: () => void }) {
+  const { ui } = useContent()
   const [imageIndex, setImageIndex] = useState(0)
   const total = item.images.length
   const containerRef = useRef<HTMLDivElement>(null)
@@ -147,7 +161,7 @@ function Lightbox({ item, onClose }: { item: DisplayItem; onClose: () => void })
       <button
         type="button"
         onClick={onClose}
-        aria-label="Close preview"
+        aria-label={ui.talentShowcase.closePreview}
         className="absolute right-6 top-6 flex h-11 w-11 items-center justify-center rounded-full border border-white/15 bg-white/5 text-white transition-colors hover:border-pomelo-blue/50 hover:text-pomelo-blue"
       >
         <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -163,7 +177,7 @@ function Lightbox({ item, onClose }: { item: DisplayItem; onClose: () => void })
               e.stopPropagation()
               nav(-1)
             }}
-            aria-label="Previous photo"
+            aria-label={ui.talentShowcase.previousPhoto}
             className="absolute left-4 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-white/5 text-white transition-colors hover:border-pomelo-blue/50 hover:text-pomelo-blue sm:left-8"
           >
             <svg viewBox="0 0 24 24" className="h-4 w-4 rotate-180" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -176,7 +190,7 @@ function Lightbox({ item, onClose }: { item: DisplayItem; onClose: () => void })
               e.stopPropagation()
               nav(1)
             }}
-            aria-label="Next photo"
+            aria-label={ui.talentShowcase.nextPhoto}
             className="absolute right-4 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-white/5 text-white transition-colors hover:border-pomelo-blue/50 hover:text-pomelo-blue sm:right-8"
           >
             <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -215,18 +229,19 @@ function Lightbox({ item, onClose }: { item: DisplayItem; onClose: () => void })
   )
 }
 
-function mapModelToDisplay(m: TalentModel): DisplayItem {
+function mapModelToDisplay(m: TalentModel, ui: ReturnType<typeof useContent>['ui']): DisplayItem {
   return {
     id: m.id,
     cover: m.images[0].url,
     images: m.images.map((img) => img.url),
-    eyebrow: 'Pomelo Talent',
+    eyebrow: ui.talentShowcase.pomeloTalentTag,
     title: m.firstName,
-    description: `${m.height} · ${m.hairColor} hair · ${m.eyeColor} eyes`,
+    description: ui.talentShowcase.modelDescription(m.height, m.hairColor, m.eyeColor),
   }
 }
 
 export default function TalentShowcase() {
+  const { talentPage, ui } = useContent()
   const [rawModels, setRawModels] = useState<TalentModel[] | null>(null)
   const [filters, setFilters] = useState<TalentFilters>(EMPTY_FILTERS)
   const [openId, setOpenId] = useState<string | null>(null)
@@ -251,17 +266,18 @@ export default function TalentShowcase() {
   }, [])
 
   const usingRealData = rawModels !== null && rawModels.length > 0
+  const fallbackItems = useMemo(() => buildFallbackItems(talentPage), [talentPage])
 
   const allDisplayItems = useMemo<DisplayItem[]>(
-    () => (usingRealData ? rawModels!.map(mapModelToDisplay) : fallbackItems),
-    [usingRealData, rawModels],
+    () => (usingRealData ? rawModels!.map((m) => mapModelToDisplay(m, ui)) : fallbackItems),
+    [usingRealData, rawModels, ui, fallbackItems],
   )
 
   const galleryItems = useMemo<DisplayItem[]>(() => {
     if (!usingRealData) return fallbackItems
     if (!hasActiveFilters(filters)) return allDisplayItems
-    return rawModels!.filter((m) => matchesFilters(m, filters)).map(mapModelToDisplay)
-  }, [usingRealData, rawModels, filters, allDisplayItems])
+    return rawModels!.filter((m) => matchesFilters(m, filters)).map((m) => mapModelToDisplay(m, ui))
+  }, [usingRealData, rawModels, filters, allDisplayItems, fallbackItems, ui])
 
   const heroImage = allDisplayItems[0]?.cover ?? images[talentPage.gallery[0].image]
   const openItem = allDisplayItems.find((item) => item.id === openId) ?? null
@@ -313,10 +329,10 @@ export default function TalentShowcase() {
         </motion.div>
       </div>
 
-      <section aria-label="Talent roster" className="relative isolate overflow-hidden py-24 sm:py-32">
+      <section aria-label={ui.talentShowcase.rosterAria} className="relative isolate overflow-hidden py-24 sm:py-32">
         <AmbientField />
         <div className="relative z-10 mx-auto max-w-6xl px-6">
-          <h2 className="sr-only">Talent roster</h2>
+          <h2 className="sr-only">{ui.talentShowcase.rosterHeading}</h2>
 
           {usingRealData && (
             <TalentFilterBar filters={filters} onChange={setFilters} resultCount={galleryItems.length} />
@@ -326,7 +342,13 @@ export default function TalentShowcase() {
             <motion.div layout className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
               <AnimatePresence mode="popLayout">
                 {galleryItems.map((item) => (
-                  <GalleryCard key={item.id} item={item} onOpen={() => setOpenId(item.id)} />
+                  <GalleryCard
+                    key={item.id}
+                    item={item}
+                    onOpen={() => setOpenId(item.id)}
+                    viewLabel={ui.talentShowcase.view}
+                    photosLabel={ui.talentShowcase.photos}
+                  />
                 ))}
               </AnimatePresence>
             </motion.div>
@@ -337,14 +359,14 @@ export default function TalentShowcase() {
               transition={{ duration: 0.4 }}
               className="rounded-3xl border border-white/10 bg-white/[0.02] px-8 py-16 text-center"
             >
-              <p className="font-display text-xl text-white">No talent matches these filters.</p>
-              <p className="mt-2 text-sm text-white/50">Try adjusting or clearing a filter to see more of the roster.</p>
+              <p className="font-display text-xl text-white">{ui.talentShowcase.noMatches}</p>
+              <p className="mt-2 text-sm text-white/50">{ui.talentShowcase.tryAdjusting}</p>
             </motion.div>
           )}
         </div>
       </section>
 
-      <section aria-label="Inside the studio" className="relative isolate overflow-hidden py-24 sm:py-32">
+      <section aria-label={ui.talentShowcase.insideStudioAria} className="relative isolate overflow-hidden py-24 sm:py-32">
         <div className="mx-auto grid max-w-6xl items-center gap-12 px-6 lg:grid-cols-2">
           <motion.div
             initial={{ opacity: 0, y: 24 }}
@@ -372,7 +394,7 @@ export default function TalentShowcase() {
         </div>
       </section>
 
-      <section aria-label="Apply call to action" className="relative isolate overflow-hidden py-24 sm:py-32">
+      <section aria-label={ui.talentShowcase.applyCtaAria} className="relative isolate overflow-hidden py-24 sm:py-32">
         <motion.div
           className="pointer-events-none absolute left-1/2 top-1/2 h-[36rem] w-[36rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-pomelo-purple/15 blur-[130px]"
           animate={{ scale: [1, 1.1, 1] }}
@@ -397,7 +419,7 @@ export default function TalentShowcase() {
             </h3>
             <p className="max-w-md text-white/60">{talentPage.cta.body}</p>
             <Magnetic strength={16}>
-              <PremiumButton href="/apply">Apply Now</PremiumButton>
+              <PremiumButton href="/apply">{ui.talentShowcase.applyNow}</PremiumButton>
             </Magnetic>
           </div>
         </motion.div>

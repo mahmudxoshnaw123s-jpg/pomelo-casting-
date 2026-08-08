@@ -4,11 +4,40 @@ import { Link } from 'react-router-dom'
 import logoDark from '../assets/pomelo-logo-dark-optimized.png'
 import Magnetic from './Magnetic'
 import PomeloMark from './PomeloMark'
-import { nav } from '../data/content'
+import { useContent, useLanguage } from '../context/LanguageContext'
 
 const ease = [0.16, 1, 0.3, 1] as const
 
+const LANGUAGE_OPTIONS: { code: 'en' | 'ar' | 'ku'; label: string }[] = [
+  { code: 'en', label: 'EN' },
+  { code: 'ar', label: 'عربي' },
+  { code: 'ku', label: 'کوردی' },
+]
+
+function LanguageToggle({ className = '' }: { className?: string }) {
+  const { language, setLanguage } = useLanguage()
+  return (
+    <div className={`flex items-center gap-1 rounded-full border border-white/20 p-1 ${className}`}>
+      {LANGUAGE_OPTIONS.map((opt) => (
+        <button
+          key={opt.code}
+          type="button"
+          onClick={() => setLanguage(opt.code)}
+          aria-current={language === opt.code}
+          className={`rounded-full px-2.5 py-1 text-xs font-semibold transition-colors ${
+            language === opt.code ? 'bg-pomelo-blue text-[var(--color-on-accent)]' : 'text-white/70 hover:text-white'
+          }`}
+        >
+          {opt.label}
+        </button>
+      ))}
+    </div>
+  )
+}
+
 export default function Navbar() {
+  const { nav, ui } = useContent()
+  const { href } = useLanguage()
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const [hoveredHref, setHoveredHref] = useState<string | null>(null)
@@ -36,15 +65,15 @@ export default function Navbar() {
       }`}
     >
       <nav className="mx-auto flex max-w-6xl items-center justify-between px-6 py-3">
-        <Link to="/#top" className="flex items-center" aria-label="Pomelo Casting home">
-          <img src={logoDark} alt="Pomelo Casting" width={641} height={256} className="h-11 w-auto sm:h-14" />
+        <Link to={href('/#top')} className="flex items-center" aria-label={ui.navbar.homeAria}>
+          <img src={logoDark} alt={ui.navbar.logoAlt} width={641} height={256} className="h-11 w-auto sm:h-14" />
         </Link>
 
         <ul className="hidden items-center gap-1 md:flex" onMouseLeave={() => setHoveredHref(null)}>
           {nav.map((item) => (
             <li key={item.href} className="relative">
               <Link
-                to={`/${item.href}`}
+                to={href(`/${item.href}`)}
                 onMouseEnter={() => setHoveredHref(item.href)}
                 className="relative z-10 block rounded-full px-4 py-2 text-sm font-medium tracking-wide text-white/75 transition-colors hover:text-white"
               >
@@ -62,12 +91,13 @@ export default function Navbar() {
         </ul>
 
         <div className="hidden items-center gap-3 md:flex">
+          <LanguageToggle />
           <Magnetic strength={10}>
             <Link
-              to="/#contact"
+              to={href('/#contact')}
               className="inline-block rounded-full bg-pomelo-blue px-5 py-2 text-sm font-semibold text-[var(--color-on-accent)] transition-transform hover:scale-105"
             >
-              Get in touch
+              {ui.navbar.getInTouch}
             </Link>
           </Magnetic>
         </div>
@@ -76,7 +106,7 @@ export default function Navbar() {
           <button
             type="button"
             className="flex flex-col gap-1.5 p-2"
-            aria-label="Toggle menu"
+            aria-label={ui.navbar.toggleMenu}
             aria-expanded={menuOpen}
             onClick={() => setMenuOpen((v) => !v)}
           >
@@ -116,7 +146,7 @@ export default function Navbar() {
                     transition={{ duration: 0.5, delay: 0.1 + i * 0.06, ease }}
                   >
                     <Link
-                      to={`/${item.href}`}
+                      to={href(`/${item.href}`)}
                       onClick={() => setMenuOpen(false)}
                       className="block px-4 py-1 text-center font-display text-3xl text-white transition-colors duration-200 hover:text-[#0a0f1a] sm:text-4xl"
                     >
@@ -131,17 +161,18 @@ export default function Navbar() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 12 }}
                 transition={{ duration: 0.5, delay: 0.1 + nav.length * 0.06, ease }}
-                className="mt-6"
+                className="mt-6 flex flex-col items-center gap-4"
               >
                 <Magnetic strength={10}>
                   <Link
-                    to="/#contact"
+                    to={href('/#contact')}
                     onClick={() => setMenuOpen(false)}
                     className="inline-block rounded-full border border-white/50 bg-white/10 px-7 py-3 text-sm font-semibold uppercase tracking-widest text-white backdrop-blur-sm transition-colors hover:bg-white hover:text-[#1a0a24]"
                   >
-                    Get in touch
+                    {ui.navbar.getInTouch}
                   </Link>
                 </Magnetic>
+                <LanguageToggle className="border-white/40 text-white/85 hover:border-white hover:text-white" />
               </motion.div>
             </div>
 
@@ -157,7 +188,7 @@ export default function Navbar() {
                 onClick={() => setMenuOpen(false)}
                 className="text-sm font-semibold uppercase tracking-[0.35em] text-white/60 transition-colors hover:text-white"
               >
-                Close
+                {ui.navbar.close}
               </button>
             </motion.div>
           </motion.div>

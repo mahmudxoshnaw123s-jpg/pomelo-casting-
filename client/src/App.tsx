@@ -15,6 +15,10 @@ const AdminPage = lazy(() => import('./pages/AdminPage'))
 const ApplyPage = lazy(() => import('./pages/ApplyPage'))
 const TalentPage = lazy(() => import('./pages/TalentPage'))
 
+// One real URL per language ("/", "/ar", "/ku") so each can be crawled and
+// indexed independently — see LANGUAGE_PREFIXES in lib/language.ts.
+const LANG_PREFIXES = ['', '/ar', '/ku']
+
 function RouteFallback() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-[#0a0f1a]">
@@ -73,30 +77,39 @@ function App() {
         <AnimatePresence mode="wait">
           <Suspense fallback={<RouteFallback />}>
             <Routes location={location} key={location.pathname}>
-              <Route
-                path="/"
-                element={
-                  <PageTransition>
-                    <Home />
-                  </PageTransition>
-                }
-              />
-              <Route
-                path="/talent"
-                element={
-                  <PageTransition>
-                    <TalentPage />
-                  </PageTransition>
-                }
-              />
-              <Route
-                path="/apply"
-                element={
-                  <PageTransition>
-                    <ApplyPage />
-                  </PageTransition>
-                }
-              />
+              {LANG_PREFIXES.map((prefix) => (
+                <Route
+                  key={`${prefix}-home`}
+                  path={prefix === '' ? '/' : prefix}
+                  element={
+                    <PageTransition>
+                      <Home />
+                    </PageTransition>
+                  }
+                />
+              ))}
+              {LANG_PREFIXES.map((prefix) => (
+                <Route
+                  key={`${prefix}-talent`}
+                  path={`${prefix}/talent`}
+                  element={
+                    <PageTransition>
+                      <TalentPage />
+                    </PageTransition>
+                  }
+                />
+              ))}
+              {LANG_PREFIXES.map((prefix) => (
+                <Route
+                  key={`${prefix}-apply`}
+                  path={`${prefix}/apply`}
+                  element={
+                    <PageTransition>
+                      <ApplyPage />
+                    </PageTransition>
+                  }
+                />
+              ))}
             </Routes>
           </Suspense>
         </AnimatePresence>

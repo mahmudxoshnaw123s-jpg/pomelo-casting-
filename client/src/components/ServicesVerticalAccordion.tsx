@@ -1,12 +1,13 @@
 import { AnimatePresence, motion } from 'framer-motion'
 import { useState } from 'react'
-import { services } from '../data/content'
+import { useContent } from '../context/LanguageContext'
 import { serviceVisuals } from '../data/serviceVisuals'
 
 const grade = 'grayscale(0.35) contrast(1.04) brightness(1.03)'
 const ease = [0.16, 1, 0.3, 1] as const
 
 export default function ServicesVerticalAccordion() {
+  const { services, ui } = useContent()
   const [active, setActive] = useState<number | null>(0)
   const items = services.items
 
@@ -35,7 +36,7 @@ export default function ServicesVerticalAccordion() {
                 <motion.span
                   animate={{ rotate: isActive ? 45 : 0 }}
                   transition={{ duration: 0.4, ease }}
-                  className="ml-auto flex h-8 w-8 shrink-0 items-center justify-center text-2xl font-extralight leading-none text-white/40 sm:h-9 sm:w-9"
+                  className="ms-auto flex h-8 w-8 shrink-0 items-center justify-center text-2xl font-extralight leading-none text-white/40 sm:h-9 sm:w-9"
                   aria-hidden="true"
                 >
                   +
@@ -87,14 +88,17 @@ export default function ServicesVerticalAccordion() {
                           ))}
                         </ul>
 
-                        <p className="mt-6 text-xs uppercase tracking-[0.3em] text-white/60">Typical timeline — {item.timeline}</p>
+                        <p className="mt-6 text-xs uppercase tracking-[0.3em] text-white/60">
+                          {ui.services.typicalTimeline}
+                          {item.timeline}
+                        </p>
 
                         <a
                           href="#contact"
                           className="mt-5 inline-flex w-fit items-center gap-2 text-sm text-white/70 underline decoration-white/30 underline-offset-4 transition-colors duration-300 hover:text-white hover:decoration-white/70"
                         >
-                          Enquire about this service
-                          <span aria-hidden="true">→</span>
+                          {ui.services.enquire}
+                          <span aria-hidden="true">{ui.arrow}</span>
                         </a>
                       </motion.div>
                     </div>

@@ -1,9 +1,12 @@
 import { useEffect } from 'react'
 import Seo from '../components/Seo'
 import TalentShowcase from '../components/TalentShowcase'
+import { useContent, useLanguage } from '../context/LanguageContext'
 import { buildBreadcrumbLd } from '../data/seo'
 
 export default function TalentPage() {
+  const { ui } = useContent()
+  const { href } = useLanguage()
   useEffect(() => {
     window.scrollTo(0, 0)
   }, [])
@@ -11,12 +14,12 @@ export default function TalentPage() {
   return (
     <>
       <Seo
-        title="Our Talent Roster | Pomelo Casting"
-        description="A curated look at the talent, editorial work, and studio energy Pomelo Casting brings to every brief — browse our full roster and past campaigns."
+        title={ui.seo.talentTitle}
+        description={ui.seo.talentDescription}
         path="/talent"
         jsonLd={buildBreadcrumbLd([
-          { name: 'Home', path: '/' },
-          { name: 'Talent', path: '/talent' },
+          { name: ui.seo.breadcrumbHome, path: href('/') },
+          { name: ui.seo.breadcrumbTalent, path: href('/talent') },
         ])}
       />
       <TalentShowcase />

@@ -5,7 +5,7 @@ import Magnetic from './Magnetic'
 import PomeloMark from './PomeloMark'
 import pomeloLogo from '../assets/pomelo-logo-dark-optimized.png'
 import { IconFilmCameraBadge, IconSparkle, IconSpotlightBadge, IconWhatsapp } from './icons'
-import { contact, faqSection } from '../data/content'
+import { useContent, useLanguage } from '../context/LanguageContext'
 import { fetchFaqs } from '../lib/faqs'
 
 const ease = [0.16, 1, 0.3, 1] as const
@@ -13,12 +13,12 @@ const ease = [0.16, 1, 0.3, 1] as const
 const glowConic =
   'conic-gradient(from 0deg, transparent 0%, #00b2e2 12%, transparent 28%, #895193 50%, transparent 68%, #00b2e2 86%, transparent 100%)'
 
-const topics = [
-  { key: 'brands', label: 'For Brands', Icon: IconFilmCameraBadge, items: faqSection.items },
-  { key: 'talent', label: 'For Talent', Icon: IconSpotlightBadge, items: contact.faq },
-] as const
+const TOPIC_META = [
+  { key: 'brands' as const, Icon: IconFilmCameraBadge },
+  { key: 'talent' as const, Icon: IconSpotlightBadge },
+]
 
-type TopicKey = (typeof topics)[number]['key']
+type TopicKey = (typeof TOPIC_META)[number]['key']
 
 const AUTO_ADVANCE_MS = 7000
 
@@ -48,23 +48,19 @@ function GripHand({ side }: { side: 'left' | 'right' }) {
 }
 
 function CompCardStack({ onTap }: { onTap: () => void }) {
+  const { ui } = useContent()
   return (
     <motion.button
       type="button"
       onClick={onTap}
-      aria-label="Show next question"
+      aria-label={ui.faq.showNext}
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.92, rotate: -2 }}
       className="relative h-32 w-24 shrink-0 cursor-pointer sm:h-40 sm:w-32"
       style={{ perspective: 1000 }}
     >
       <div className="absolute -bottom-3 left-1/2 h-5 w-16 -translate-x-1/2 rounded-full bg-black/50 blur-lg" aria-hidden="true" />
-      <motion.div
-        className="absolute inset-0"
-        style={{ transformStyle: 'preserve-3d' }}
-        animate={{ rotateY: [-10, 10, -10], rotateX: [3, -3, 3], y: [0, -6, 0] }}
-        transition={{ duration: 9, repeat: Infinity, ease: 'easeInOut' }}
-      >
+      <div className="absolute inset-0" style={{ transformStyle: 'preserve-3d' }}>
         <div
           className="absolute inset-0 translate-x-2.5 translate-y-3 rotate-[-8deg] rounded-2xl border border-white/10 bg-gradient-to-br from-pomelo-purple/30 to-[#0a0a0c]"
           aria-hidden="true"
@@ -80,36 +76,44 @@ function CompCardStack({ onTap }: { onTap: () => void }) {
             <div className="flex h-full w-full items-center justify-center px-3">
               <img
                 src={pomeloLogo}
-                alt="Pomelo Casting"
+                alt={ui.navbar.logoAlt}
                 className="w-full drop-shadow-[0_0_20px_rgba(0,178,226,0.4)]"
               />
             </div>
           </div>
         </div>
-      </motion.div>
-      <motion.span
+      </div>
+      <span
         className="absolute -right-2.5 -top-2.5 z-20 flex items-center gap-1 rounded-full border border-white/25 bg-black/85 py-1 pl-1.5 pr-2 text-[0.55rem] font-semibold uppercase tracking-widest text-white shadow-[0_6px_16px_rgba(0,0,0,0.55)] backdrop-blur-sm sm:-right-3 sm:-top-3 sm:py-1.5 sm:pl-2 sm:pr-2.5 sm:text-[0.6rem]"
-        animate={{ scale: [1, 1.1, 1] }}
-        transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
       >
         <span className="relative flex h-1.5 w-1.5" aria-hidden="true">
           <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-pomelo-blue opacity-75" />
           <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-pomelo-blue" />
         </span>
-        Press
-      </motion.span>
+        {ui.faq.press}
+      </span>
     </motion.button>
   )
 }
 
 export default function FaqHub() {
+  const { contact, faqSection, ui } = useContent()
+  const { language } = useLanguage()
   const [activeTopic, setActiveTopic] = useState<TopicKey>('brands')
   const [index, setIndex] = useState(0)
   const [paused, setPaused] = useState(false)
   const [brandItems, setBrandItems] = useState<{ question: string; answer: string; category?: string }[]>([...faqSection.items])
 
-  // The "For Brands" questions are managed from /admin; fall back to the static list.
+  // Language switches reset "For Brands" back to the translated static list...
   useEffect(() => {
+    setBrandItems([...faqSection.items])
+    setIndex(0)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [faqSection])
+
+  // ...then, in English only, the live /admin-managed questions (English-only) override it.
+  useEffect(() => {
+    if (language !== 'en') return
     let alive = true
     fetchFaqs()
       .then((faqs) => {
@@ -123,10 +127,14 @@ export default function FaqHub() {
     return () => {
       alive = false
     }
-  }, [])
+  }, [language])
 
-  const liveTopics = topics.map((t) => (t.key === 'brands' ? { ...t, items: brandItems } : t))
-  const active = liveTopics.find((t) => t.key === activeTopic)!
+  const topics = TOPIC_META.map((t) => ({
+    ...t,
+    label: t.key === 'brands' ? ui.faq.forBrands : ui.faq.forTalent,
+    items: t.key === 'brands' ? brandItems : contact.faq,
+  }))
+  const active = topics.find((t) => t.key === activeTopic)!
   const item = active.items[index] ?? active.items[0]
 
   const mx = useMotionValue(0.5)
@@ -157,12 +165,12 @@ export default function FaqHub() {
   return (
     <section
       id="faq"
-      aria-label="Frequently asked questions"
+      aria-label={ui.faq.sectionAria}
       className="relative isolate overflow-hidden bg-gradient-to-b from-[#0b0713] via-[#130b21] to-[#0a0f1a] py-16 sm:py-24"
     >
       {/* Full Q&A text for assistive tech and crawlers — the interactive panel below only ever shows one question at a time. */}
       <div className="sr-only">
-        {liveTopics.flatMap((topic) => topic.items).map((q) => (
+        {topics.flatMap((topic) => topic.items).map((q) => (
           <div key={q.question}>
             <p>{q.question}</p>
             <p>{q.answer}</p>
@@ -227,11 +235,11 @@ export default function FaqHub() {
 
                   <div className="mt-6 grid grid-cols-1 gap-8 lg:grid-cols-[1.15fr_auto] lg:items-center lg:gap-10">
                     <div>
-                      <h2 className="text-balance text-left font-display text-3xl leading-[0.95] text-white sm:text-4xl lg:text-[2.75rem]">
-                        Your questions,
+                      <h2 className="text-balance text-start font-display text-3xl leading-[0.95] text-white sm:text-4xl lg:text-[2.75rem]">
+                        {ui.faq.headingLine1}
                         <br />
                         <span className="bg-gradient-to-r from-pomelo-blue to-pomelo-purple bg-clip-text text-transparent">
-                          answered.
+                          {ui.faq.headingLine2}
                         </span>
                       </h2>
 
@@ -259,7 +267,7 @@ export default function FaqHub() {
                             key={q.question}
                             type="button"
                             onClick={() => setIndex(i)}
-                            aria-label={`Question ${i + 1}`}
+                            aria-label={`${ui.faq.questionAria}${i + 1}`}
                             className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[0.65rem] font-semibold transition-all duration-300 ${
                               i === index
                                 ? 'bg-white text-[#140b20] shadow-[0_0_14px_-2px_rgba(0,178,226,0.8)]'
@@ -314,7 +322,7 @@ export default function FaqHub() {
                         className="inline-flex items-center gap-2.5 rounded-full border border-white/15 bg-white/[0.06] px-6 py-2.5 text-sm font-semibold text-white shadow-[0_0_25px_-8px_rgba(0,178,226,0.5)] backdrop-blur-sm transition-colors hover:border-pomelo-blue/50"
                       >
                         <IconWhatsapp className="h-4 w-4 text-[#25D366]" />
-                        Chat on WhatsApp
+                        {ui.contact.chatOnWhatsapp}
                       </a>
                     </Magnetic>
                   </div>

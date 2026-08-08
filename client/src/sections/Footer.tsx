@@ -3,9 +3,11 @@ import { Link } from 'react-router-dom'
 import logoDark from '../assets/pomelo-logo-dark-optimized.png'
 import Magnetic from '../components/Magnetic'
 import { IconArrowRight } from '../components/icons'
-import { footer, nav } from '../data/content'
+import { useContent, useLanguage } from '../context/LanguageContext'
 
 export default function Footer() {
+  const { footer, nav, ui } = useContent()
+  const { href } = useLanguage()
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
@@ -28,27 +30,27 @@ export default function Footer() {
       />
 
       <div className="relative mx-auto flex max-w-6xl flex-col items-center gap-6 px-6 pt-10 sm:flex-row sm:justify-between">
-        <img src={logoDark} alt="Pomelo Casting" width={641} height={256} className="h-16 w-auto opacity-90" />
+        <img src={logoDark} alt={ui.navbar.logoAlt} width={641} height={256} className="h-16 w-auto opacity-90" />
 
         <ul className="flex flex-wrap items-center justify-center gap-6">
           {nav.map((item) => (
             <li key={item.href}>
-              <Link to={`/${item.href}`} className="group relative text-sm text-white/60 transition-colors hover:text-pomelo-blue">
+              <Link to={href(`/${item.href}`)} className="group relative text-sm text-white/60 transition-colors hover:text-pomelo-blue">
                 {item.label}
-                <span className="absolute -bottom-1 left-0 h-px w-0 bg-gradient-to-r from-pomelo-blue to-pomelo-purple transition-all duration-300 group-hover:w-full" />
+                <span className="absolute -bottom-1 start-0 h-px w-0 bg-gradient-to-r from-pomelo-blue to-pomelo-purple transition-all duration-300 group-hover:w-full" />
               </Link>
             </li>
           ))}
           <li>
-            <Link to="/talent" className="group relative text-sm text-white/60 transition-colors hover:text-pomelo-blue">
-              Talent
-              <span className="absolute -bottom-1 left-0 h-px w-0 bg-gradient-to-r from-pomelo-blue to-pomelo-purple transition-all duration-300 group-hover:w-full" />
+            <Link to={href('/talent')} className="group relative text-sm text-white/60 transition-colors hover:text-pomelo-blue">
+              {ui.footer.talent}
+              <span className="absolute -bottom-1 start-0 h-px w-0 bg-gradient-to-r from-pomelo-blue to-pomelo-purple transition-all duration-300 group-hover:w-full" />
             </Link>
           </li>
           <li>
-            <Link to="/apply" className="group relative text-sm text-white/60 transition-colors hover:text-pomelo-blue">
-              Apply
-              <span className="absolute -bottom-1 left-0 h-px w-0 bg-gradient-to-r from-pomelo-blue to-pomelo-purple transition-all duration-300 group-hover:w-full" />
+            <Link to={href('/apply')} className="group relative text-sm text-white/60 transition-colors hover:text-pomelo-blue">
+              {ui.footer.apply}
+              <span className="absolute -bottom-1 start-0 h-px w-0 bg-gradient-to-r from-pomelo-blue to-pomelo-purple transition-all duration-300 group-hover:w-full" />
             </Link>
           </li>
         </ul>
@@ -59,7 +61,7 @@ export default function Footer() {
             <button
               type="button"
               onClick={scrollToTop}
-              aria-label="Back to top"
+              aria-label={ui.footer.backToTop}
               className="flex h-10 w-10 items-center justify-center rounded-full border border-white/15 text-white/60 transition-colors hover:border-pomelo-blue hover:text-pomelo-blue"
             >
               <IconArrowRight className="h-4 w-4 -rotate-90" />

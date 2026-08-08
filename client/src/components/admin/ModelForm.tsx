@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import type { FormEvent } from 'react'
 import PhotoDropzone from '../PhotoDropzone'
-import { application } from '../../data/content'
+import { application } from '../../data/content.en'
 import type { ModelImage, TalentModel } from '../../lib/models'
 
 const MAX_IMAGES = 8

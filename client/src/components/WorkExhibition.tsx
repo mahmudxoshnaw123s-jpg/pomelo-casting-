@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import type { MouseEvent } from 'react'
 import BrandPhoto from './BrandPhoto'
 import SplitText from './SplitText'
-import { work } from '../data/content'
+import { useContent } from '../context/LanguageContext'
 import { images } from '../data/images'
 
 const BLUE = '#00b2e2'
@@ -29,6 +29,7 @@ const stageVariants = {
 }
 
 export default function WorkExhibition() {
+  const { work, ui } = useContent()
   const [[index, direction], setIndexState] = useState<[number, number]>([0, 0])
   const total = work.items.length
   const project = work.items[index]
@@ -64,7 +65,7 @@ export default function WorkExhibition() {
   return (
     <section
       id="work"
-      aria-label="Selected work"
+      aria-label={ui.work.sectionAria}
       onMouseMove={handleMouseMove}
       className="relative isolate overflow-hidden bg-gradient-to-b from-[#0b0713] via-[#130b21] to-[#0a0f1a] py-28 sm:py-36"
     >
@@ -166,7 +167,7 @@ export default function WorkExhibition() {
           <button
             type="button"
             onClick={goPrev}
-            aria-label="Previous project"
+            aria-label={ui.work.previous}
             className="absolute left-0 top-1/2 z-20 flex h-11 w-11 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-white/[0.06] text-white backdrop-blur-xl transition-colors hover:border-pomelo-blue/50 hover:text-pomelo-blue max-lg:hidden"
           >
             <svg viewBox="0 0 24 24" className="h-4 w-4 rotate-180" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -176,7 +177,7 @@ export default function WorkExhibition() {
           <button
             type="button"
             onClick={goNext}
-            aria-label="Next project"
+            aria-label={ui.work.next}
             className="absolute right-0 top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 translate-x-1/2 items-center justify-center rounded-full border border-white/15 bg-white/[0.06] text-white backdrop-blur-xl transition-colors hover:border-pomelo-blue/50 hover:text-pomelo-blue max-lg:hidden"
           >
             <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -193,7 +194,7 @@ export default function WorkExhibition() {
                 key={item.title}
                 type="button"
                 onClick={() => go(i, i > index ? 1 : -1)}
-                aria-label={`View ${item.title}`}
+                aria-label={`${ui.work.view}${item.title}`}
                 aria-current={active}
                 className="group relative isolate h-16 w-16 shrink-0 overflow-hidden rounded-xl sm:h-20 sm:w-20"
               >

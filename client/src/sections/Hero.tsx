@@ -7,7 +7,7 @@ import PremiumButton from '../components/PremiumButton'
 import SplitText from '../components/SplitText'
 import WordRotator from '../components/WordRotator'
 import heroPhoto from '../assets/hero-crosswalk-blue.jpg'
-import { hero } from '../data/content'
+import { useContent } from '../context/LanguageContext'
 
 const particles = Array.from({ length: 16 }).map((_, i) => ({
   left: (i * 37 + 11) % 100,
@@ -47,6 +47,7 @@ function HeroParticle({
 }
 
 export default function Hero() {
+  const { hero, ui } = useContent()
   const ref = useRef<HTMLElement>(null)
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] })
 
@@ -69,7 +70,7 @@ export default function Hero() {
   return (
     <section
       id="top"
-      aria-label="Introduction"
+      aria-label={ui.hero.introAria}
       ref={ref}
       onMouseMove={handleMove}
       className="relative isolate min-h-[100svh] overflow-hidden bg-[#0a0f1a]"
@@ -77,7 +78,7 @@ export default function Hero() {
       <div className="absolute inset-0 -z-20">
         <img
           src={heroPhoto}
-          alt="Models walking for Pomelo Casting"
+          alt={ui.hero.imageAlt}
           className="h-full w-full object-cover opacity-70"
           style={{ objectPosition: 'center 30%' }}
         />
@@ -180,7 +181,7 @@ export default function Hero() {
           <div className="h-1.5 w-1.5 rounded-full bg-pomelo-blue" />
         </motion.div>
         <p className="mt-2 text-center text-[0.65rem] font-semibold uppercase tracking-[0.3em] text-white/40">
-          Step inside
+          {ui.hero.stepInside}
         </p>
       </motion.div>
     </section>

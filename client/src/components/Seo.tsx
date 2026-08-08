@@ -1,5 +1,8 @@
 import { useEffect } from 'react'
 import { DEFAULT_OG_IMAGE, SITE_NAME, absoluteUrl } from '../data/seo'
+import { useLanguage } from '../context/LanguageContext'
+import { LANGUAGE_PREFIXES, localizePath } from '../lib/language'
+import type { Language } from '../lib/language'
 
 interface SeoProps {
   title: string
@@ -29,14 +32,40 @@ function setLink(rel: string, href: string) {
   el.setAttribute('href', href)
 }
 
+/** One `<link rel="alternate" hreflang="...">` per language plus x-default, so crawlers know
+ * the en/ar/ku URLs are translations of the same page rather than separate content. */
+function setAlternateLinks(basePath: string) {
+  document.head.querySelectorAll('link[data-lang-alt]').forEach((el) => el.remove())
+
+  const languages = Object.keys(LANGUAGE_PREFIXES) as Language[]
+  const entries: [string, string][] = languages.map((lang) => [lang, absoluteUrl(localizePath(lang, basePath))])
+  entries.push(['x-default', absoluteUrl(localizePath('en', basePath))])
+
+  for (const [hreflang, url] of entries) {
+    const el = document.createElement('link')
+    el.setAttribute('rel', 'alternate')
+    el.setAttribute('hreflang', hreflang)
+    el.setAttribute('href', url)
+    el.setAttribute('data-lang-alt', 'true')
+    document.head.appendChild(el)
+  }
+}
+
 export default function Seo({ title, description, path, noindex, jsonLd }: SeoProps) {
+  const { href } = useLanguage()
+
   useEffect(() => {
-    const url = absoluteUrl(path)
+    const url = absoluteUrl(href(path))
 
     document.title = title
     setMeta('name', 'description', description)
     setMeta('name', 'robots', noindex ? 'noindex, nofollow' : 'index, follow')
     setLink('canonical', url)
+    if (noindex) {
+      document.head.querySelectorAll('link[data-lang-alt]').forEach((el) => el.remove())
+    } else {
+      setAlternateLinks(path)
+    }
 
     setMeta('property', 'og:type', 'website')
     setMeta('property', 'og:site_name', SITE_NAME)
@@ -65,7 +94,7 @@ export default function Seo({ title, description, path, noindex, jsonLd }: SeoPr
     } else if (script) {
       script.remove()
     }
-  }, [title, description, path, noindex, jsonLd])
+  }, [title, description, path, noindex, jsonLd, href])
 
   return null
 }

@@ -24,7 +24,7 @@ export default function Counter({ value, suffix = '', className }: CounterProps)
   }, [spring, suffix])
 
   return (
-    <span ref={ref} className={className}>
+    <span ref={ref} dir="ltr" className={className}>
       0{suffix}
     </span>
   )

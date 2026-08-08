@@ -2,11 +2,12 @@ import { AnimatePresence, motion, useMotionValue, useScroll, useSpring, useTrans
 import type { MouseEvent } from 'react'
 import { useRef, useState } from 'react'
 import babylonBg from '../assets/babylon-optimized.jpg'
-import { contact } from '../data/content'
+import { useContent } from '../context/LanguageContext'
 
 const ease = [0.16, 1, 0.3, 1] as const
 
 function GlobeLauncher({ onLaunch }: { onLaunch: () => void }) {
+  const { ui } = useContent()
   return (
     <motion.button
       type="button"
@@ -43,7 +44,7 @@ function GlobeLauncher({ onLaunch }: { onLaunch: () => void }) {
       </motion.div>
 
       <span className="text-sm font-semibold uppercase tracking-[0.3em] text-white/60 transition-colors group-hover:text-white">
-        Click to locate us
+        {ui.studioMap.clickToLocate}
       </span>
     </motion.button>
   )
@@ -58,6 +59,7 @@ const particles = Array.from({ length: 18 }).map((_, i) => ({
 }))
 
 export default function StudioMap() {
+  const { contact, ui } = useContent()
   const sectionRef = useRef<HTMLElement>(null)
   const { scrollYProgress } = useScroll({ target: sectionRef, offset: ['start end', 'end start'] })
   const bgY = useTransform(scrollYProgress, [0, 1], ['-6%', '6%'])
@@ -88,7 +90,7 @@ export default function StudioMap() {
   return (
     <section
       ref={sectionRef}
-      aria-label="Studio location"
+      aria-label={ui.studioMap.sectionAria}
       onMouseMove={handleMove}
       className="relative isolate overflow-hidden py-28 sm:py-36"
     >
@@ -130,7 +132,7 @@ export default function StudioMap() {
           transition={{ duration: 0.6, delay: 0.1 }}
           className="mx-auto max-w-xl text-balance font-display text-3xl leading-tight text-white sm:text-4xl"
         >
-          Find us in the heart of Ankawa.
+          {ui.studioMap.findUsHeading}
         </motion.h3>
 
         <motion.div
@@ -160,7 +162,7 @@ export default function StudioMap() {
                   </motion.div>
                 )}
                 <motion.iframe
-                  title="Pomelo Casting location"
+                  title={ui.studioMap.mapTitle}
                   src={mapEmbedSrc}
                   loading="lazy"
                   referrerPolicy="no-referrer-when-downgrade"
@@ -192,7 +194,7 @@ export default function StudioMap() {
             rel="noreferrer"
             className="text-sm font-semibold uppercase tracking-widest text-pomelo-blue transition-colors hover:text-white"
           >
-            Get directions →
+            {ui.contact.getDirections}
           </a>
         </motion.div>
       </div>

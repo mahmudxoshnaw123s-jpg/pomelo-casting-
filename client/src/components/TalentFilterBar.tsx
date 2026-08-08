@@ -2,11 +2,15 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { useState } from 'react'
 import type { ReactNode } from 'react'
 import type { TalentModel } from '../lib/models'
+import { useContent } from '../context/LanguageContext'
 import { IconChevronDown, IconGenderFemale, IconGenderMale, IconRuler, IconSliders } from './icons'
 
 const ease = [0.16, 1, 0.3, 1] as const
 const spring = { type: 'spring' as const, stiffness: 420, damping: 26 }
 
+// Canonical English keys — these must match the real (admin-entered, English-only) model data
+// exactly, since matching happens against that data regardless of the site's display language.
+// Only the *labels* shown to the user are translated.
 const GENDERS = ['Female', 'Male'] as const
 const HAIR_COLORS = ['Black', 'Brown', 'Blonde', 'Red', 'Gray'] as const
 const EYE_COLORS = ['Brown', 'Blue', 'Green', 'Hazel', 'Gray'] as const
@@ -33,10 +37,10 @@ const GENDER_ICONS: Record<string, typeof IconGenderFemale> = {
 }
 
 const HEIGHT_BUCKETS = [
-  { key: 'under-160', label: 'Under 160 cm', test: (cm: number) => cm < 160 },
-  { key: '160-170', label: '160–170 cm', test: (cm: number) => cm >= 160 && cm < 170 },
-  { key: '170-180', label: '170–180 cm', test: (cm: number) => cm >= 170 && cm < 180 },
-  { key: '180-plus', label: '180+ cm', test: (cm: number) => cm >= 180 },
+  { key: 'under-160', test: (cm: number) => cm < 160 },
+  { key: '160-170', test: (cm: number) => cm >= 160 && cm < 170 },
+  { key: '170-180', test: (cm: number) => cm >= 170 && cm < 180 },
+  { key: '180-plus', test: (cm: number) => cm >= 180 },
 ] as const
 
 export interface TalentFilters {
@@ -80,9 +84,49 @@ export function matchesFilters(model: TalentModel, filters: TalentFilters): bool
 }
 
 type FilterKey = keyof TalentFilters
+type Ui = ReturnType<typeof useContent>['ui']
 
 function toggleValue(list: string[], value: string): string[] {
   return list.includes(value) ? list.filter((v) => v !== value) : [...list, value]
+}
+
+function genderLabel(key: string, ui: Ui): string {
+  return key === 'Female' ? ui.filterBar.female : ui.filterBar.male
+}
+
+function heightLabel(key: string, ui: Ui): string {
+  switch (key) {
+    case 'under-160':
+      return ui.filterBar.underHeight
+    case '160-170':
+      return ui.filterBar.height160170
+    case '170-180':
+      return ui.filterBar.height170180
+    default:
+      return ui.filterBar.height180plus
+  }
+}
+
+function hairLabel(key: string, ui: Ui): string {
+  const map: Record<string, string> = {
+    Black: ui.filterBar.hairBlack,
+    Brown: ui.filterBar.hairBrown,
+    Blonde: ui.filterBar.hairBlonde,
+    Red: ui.filterBar.hairRed,
+    Gray: ui.filterBar.hairGray,
+  }
+  return map[key] ?? key
+}
+
+function eyeLabel(key: string, ui: Ui): string {
+  const map: Record<string, string> = {
+    Brown: ui.filterBar.eyeBrown,
+    Blue: ui.filterBar.eyeBlue,
+    Green: ui.filterBar.eyeGreen,
+    Hazel: ui.filterBar.eyeHazel,
+    Gray: ui.filterBar.eyeGray,
+  }
+  return map[key] ?? key
 }
 
 /** A small glowing glass badge that hosts either a color swatch or an icon glyph — the glow intensifies when its pill is active. */
@@ -178,6 +222,7 @@ interface TalentFilterBarProps {
 }
 
 export default function TalentFilterBar({ filters, onChange, resultCount }: TalentFilterBarProps) {
+  const { ui } = useContent()
   const [open, setOpen] = useState(false)
   const count = activeCount(filters)
   const active = hasActiveFilters(filters)
@@ -193,9 +238,10 @@ export default function TalentFilterBar({ filters, onChange, resultCount }: Tale
   const clearAll = () => onChange(EMPTY_FILTERS)
 
   const chipLabel = (key: FilterKey, value: string): string => {
-    if (key === 'height') return HEIGHT_BUCKETS.find((b) => b.key === value)?.label ?? value
-    if (key === 'hairColor') return `${value} Hair`
-    if (key === 'eyeColor') return `${value} Eyes`
+    if (key === 'gender') return genderLabel(value, ui)
+    if (key === 'height') return heightLabel(value, ui)
+    if (key === 'hairColor') return ui.filterBar.hairChip(hairLabel(value, ui))
+    if (key === 'eyeColor') return ui.filterBar.eyeChip(eyeLabel(value, ui))
     return value
   }
 
@@ -242,7 +288,7 @@ export default function TalentFilterBar({ filters, onChange, resultCount }: Tale
             <IconSliders className="h-3.5 w-3.5 text-white" />
           </motion.span>
 
-          <span>Filter</span>
+          <span>{ui.filterBar.filter}</span>
 
           <AnimatePresence mode="popLayout">
             {count > 0 && (
@@ -265,7 +311,8 @@ export default function TalentFilterBar({ filters, onChange, resultCount }: Tale
         </motion.button>
 
         <p className="text-sm text-white/45">
-          <span className="font-semibold text-white/85">{resultCount}</span> Talent{resultCount === 1 ? '' : 's'} Found
+          <span className="font-semibold text-white/85">{resultCount}</span>{' '}
+          {resultCount === 1 ? ui.filterBar.talentFound : ui.filterBar.talentsFound}
         </p>
       </div>
 
@@ -285,26 +332,26 @@ export default function TalentFilterBar({ filters, onChange, resultCount }: Tale
               className="mt-6 grid gap-8 rounded-3xl border border-white/10 bg-white/[0.03] p-7 shadow-[0_20px_60px_-20px_rgba(0,0,0,0.6)] backdrop-blur-xl sm:grid-cols-2 sm:p-8 lg:grid-cols-4"
             >
               <FilterGroup
-                title="Gender"
-                options={GENDERS.map((g) => ({ key: g, label: g, Icon: GENDER_ICONS[g] }))}
+                title={ui.filterBar.gender}
+                options={GENDERS.map((g) => ({ key: g, label: genderLabel(g, ui), Icon: GENDER_ICONS[g] }))}
                 selected={filters.gender}
                 onToggle={(v) => toggle('gender', v)}
               />
               <FilterGroup
-                title="Height"
-                options={HEIGHT_BUCKETS.map((b) => ({ key: b.key, label: b.label, Icon: IconRuler }))}
+                title={ui.filterBar.height}
+                options={HEIGHT_BUCKETS.map((b) => ({ key: b.key, label: heightLabel(b.key, ui), Icon: IconRuler }))}
                 selected={filters.height}
                 onToggle={(v) => toggle('height', v)}
               />
               <FilterGroup
-                title="Hair Color"
-                options={HAIR_COLORS.map((c) => ({ key: c, label: c, swatch: HAIR_SWATCHES[c] }))}
+                title={ui.filterBar.hairColor}
+                options={HAIR_COLORS.map((c) => ({ key: c, label: hairLabel(c, ui), swatch: HAIR_SWATCHES[c] }))}
                 selected={filters.hairColor}
                 onToggle={(v) => toggle('hairColor', v)}
               />
               <FilterGroup
-                title="Eye Color"
-                options={EYE_COLORS.map((c) => ({ key: c, label: c, swatch: EYE_SWATCHES[c] }))}
+                title={ui.filterBar.eyeColor}
+                options={EYE_COLORS.map((c) => ({ key: c, label: eyeLabel(c, ui), swatch: EYE_SWATCHES[c] }))}
                 selected={filters.eyeColor}
                 onToggle={(v) => toggle('eyeColor', v)}
               />
@@ -356,9 +403,9 @@ export default function TalentFilterBar({ filters, onChange, resultCount }: Tale
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.95 }}
               transition={spring}
-              className="ml-1 text-xs font-semibold uppercase tracking-widest text-white/40 underline decoration-white/20 underline-offset-4 transition-colors duration-300 hover:text-white hover:decoration-white/60"
+              className="ms-1 text-xs font-semibold uppercase tracking-widest text-white/40 underline decoration-white/20 underline-offset-4 transition-colors duration-300 hover:text-white hover:decoration-white/60"
             >
-              Clear all
+              {ui.filterBar.clearAll}
             </motion.button>
           </motion.div>
         )}

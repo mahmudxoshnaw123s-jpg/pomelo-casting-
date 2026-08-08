@@ -7,9 +7,10 @@ import PremiumButton from './PremiumButton'
 import SplitText from './SplitText'
 import { IconArrowRight } from './icons'
 import { useModalFocus } from '../hooks/useModalFocus'
-import { insights } from '../data/content'
+import { useContent, useLanguage } from '../context/LanguageContext'
 import { images } from '../data/images'
 import { fetchPosts } from '../lib/posts'
+import type { insights as InsightsEn } from '../data/content.en'
 
 interface DisplayPost {
   id: string
@@ -22,22 +23,26 @@ interface DisplayPost {
   image: string
 }
 
-// Current hard-coded articles, used until posts are published from the admin panel.
-const fallbackCover: DisplayPost = {
-  id: 'fallback-cover',
-  ...insights.featured,
-  image: images[insights.featured.image],
+function buildFallbackCover(insights: typeof InsightsEn): DisplayPost {
+  return {
+    id: 'fallback-cover',
+    ...insights.featured,
+    image: images[insights.featured.image],
+  }
 }
-const fallbackList: DisplayPost[] = insights.posts.map((post, i) => ({
-  id: `fallback-${i}`,
-  title: post.title,
-  excerpt: post.excerpt,
-  category: post.category,
-  author: post.author,
-  date: post.date,
-  readTime: post.readTime,
-  image: images[post.image],
-}))
+
+function buildFallbackList(insights: typeof InsightsEn): DisplayPost[] {
+  return insights.posts.map((post, i) => ({
+    id: `fallback-${i}`,
+    title: post.title,
+    excerpt: post.excerpt,
+    category: post.category,
+    author: post.author,
+    date: post.date,
+    readTime: post.readTime,
+    image: images[post.image],
+  }))
+}
 
 const particles = Array.from({ length: 16 }).map((_, i) => ({
   left: (i * 33 + 13) % 100,
@@ -60,6 +65,7 @@ function ArticleModal({
   onClose: () => void
   onNav: (dir: 1 | -1) => void
 }) {
+  const { ui } = useContent()
   const post = posts[index]
   const total = posts.length
   const containerRef = useRef<HTMLDivElement>(null)
@@ -96,7 +102,7 @@ function ArticleModal({
       <button
         type="button"
         onClick={onClose}
-        aria-label="Close article"
+        aria-label={ui.insights.closeArticle}
         className="absolute right-4 top-4 flex h-11 w-11 items-center justify-center rounded-full border border-white/15 bg-white/5 text-white transition-colors hover:border-pomelo-blue/50 hover:text-pomelo-blue sm:right-6 sm:top-6"
       >
         <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -112,7 +118,7 @@ function ArticleModal({
               e.stopPropagation()
               onNav(-1)
             }}
-            aria-label="Previous story"
+            aria-label={ui.insights.previous}
             className="absolute left-2 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-white/5 text-white transition-colors hover:border-pomelo-blue/50 hover:text-pomelo-blue sm:left-6"
           >
             <IconArrowRight className="h-4 w-4 rotate-180" />
@@ -123,7 +129,7 @@ function ArticleModal({
               e.stopPropagation()
               onNav(1)
             }}
-            aria-label="Next story"
+            aria-label={ui.insights.next}
             className="absolute right-2 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-white/5 text-white transition-colors hover:border-pomelo-blue/50 hover:text-pomelo-blue sm:right-6"
           >
             <IconArrowRight className="h-4 w-4" />
@@ -171,12 +177,23 @@ function ArticleModal({
 }
 
 export default function InsightsEditorial() {
-  const [cover, setCover] = useState<DisplayPost>(fallbackCover)
-  const [list, setList] = useState<DisplayPost[]>(fallbackList)
+  const { insights, ui } = useContent()
+  const { language } = useLanguage()
+  const [cover, setCover] = useState<DisplayPost>(() => buildFallbackCover(insights))
+  const [list, setList] = useState<DisplayPost[]>(() => buildFallbackList(insights))
   const [openIndex, setOpenIndex] = useState<number | null>(null)
   const allPosts = [cover, ...list]
 
+  // Language switches reset back to the translated static fallback articles...
   useEffect(() => {
+    setCover(buildFallbackCover(insights))
+    setList(buildFallbackList(insights))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [insights])
+
+  // ...then, in English only, the live /admin-managed posts (English-only) override it.
+  useEffect(() => {
+    if (language !== 'en') return
     let active = true
     fetchPosts(false)
       .then((posts) => {
@@ -203,7 +220,7 @@ export default function InsightsEditorial() {
     return () => {
       active = false
     }
-  }, [])
+  }, [language])
 
   const coverRef = useRef<HTMLDivElement>(null)
   const { scrollYProgress } = useScroll({ target: coverRef, offset: ['start start', 'end start'] })
@@ -237,7 +254,7 @@ export default function InsightsEditorial() {
     <>
     <section
       id="insights"
-      aria-label="Insights"
+      aria-label={ui.insights.sectionAria}
       onMouseMove={handleAmbientMove}
       className="relative isolate overflow-hidden bg-gradient-to-b from-[#0b0713] via-[#130b21] to-[#0a0f1a]"
     >
@@ -308,7 +325,7 @@ export default function InsightsEditorial() {
                 </p>
               </div>
             </div>
-            <PremiumButton onClick={() => setOpenIndex(0)}>Read the story</PremiumButton>
+            <PremiumButton onClick={() => setOpenIndex(0)}>{ui.insights.readTheStory}</PremiumButton>
           </motion.div>
         </motion.div>
       </div>

@@ -1,11 +1,12 @@
 import { useState } from 'react'
 import type { KeyboardEvent } from 'react'
-import { services } from '../data/content'
+import { useContent } from '../context/LanguageContext'
 import { serviceVisuals } from '../data/serviceVisuals'
 
 const grade = 'grayscale(0.35) contrast(1.04) brightness(1.03)'
 
 export default function ServicesHorizontalAccordion() {
+  const { services, ui } = useContent()
   const [active, setActive] = useState(0)
   const items = services.items
 
@@ -75,8 +76,8 @@ export default function ServicesHorizontalAccordion() {
                   href="#contact"
                   className="mt-5 inline-flex w-fit items-center gap-2 text-sm text-white/70 underline decoration-white/30 underline-offset-4 transition-colors duration-300 hover:text-white hover:decoration-white/70"
                 >
-                  Enquire about this service
-                  <span aria-hidden="true">→</span>
+                  {ui.services.enquire}
+                  <span aria-hidden="true">{ui.arrow}</span>
                 </a>
               </div>
             </div>

@@ -11,7 +11,7 @@ export interface ContactResponse {
   message: string
 }
 
-export async function submitContact(payload: ContactPayload): Promise<ContactResponse> {
+export async function submitContact(payload: ContactPayload, genericError = 'Something went wrong. Please try again.'): Promise<ContactResponse> {
   const res = await fetch('/api/contact', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -21,7 +21,7 @@ export async function submitContact(payload: ContactPayload): Promise<ContactRes
   const data = (await res.json().catch(() => null)) as ContactResponse | null
 
   if (!res.ok || !data) {
-    throw new Error(data?.message ?? 'Something went wrong. Please try again.')
+    throw new Error(data?.message ?? genericError)
   }
 
   return data
@@ -32,7 +32,21 @@ export interface ApplicationResponse {
   message: string
 }
 
-export function submitApplication(formData: FormData, onProgress?: (percent: number) => void): Promise<ApplicationResponse> {
+export interface SubmitApplicationMessages {
+  genericError: string
+  networkError: string
+}
+
+const defaultSubmitApplicationMessages: SubmitApplicationMessages = {
+  genericError: 'Something went wrong. Please try again.',
+  networkError: 'Network error. Please check your connection and try again.',
+}
+
+export function submitApplication(
+  formData: FormData,
+  onProgress?: (percent: number) => void,
+  messages: SubmitApplicationMessages = defaultSubmitApplicationMessages,
+): Promise<ApplicationResponse> {
   return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest()
     xhr.open('POST', '/api/apply')
@@ -53,11 +67,11 @@ export function submitApplication(formData: FormData, onProgress?: (percent: num
       if (xhr.status >= 200 && xhr.status < 300 && data) {
         resolve(data)
       } else {
-        reject(new Error(data?.message ?? 'Something went wrong. Please try again.'))
+        reject(new Error(data?.message ?? messages.genericError))
       }
     }
 
-    xhr.onerror = () => reject(new Error('Network error. Please check your connection and try again.'))
+    xhr.onerror = () => reject(new Error(messages.networkError))
 
     xhr.send(formData)
   })

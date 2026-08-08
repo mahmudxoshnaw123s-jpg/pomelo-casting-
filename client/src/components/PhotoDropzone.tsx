@@ -1,6 +1,7 @@
 import { AnimatePresence, motion } from 'framer-motion'
 import { useEffect, useId, useRef, useState } from 'react'
 import type { DragEvent, KeyboardEvent } from 'react'
+import { useContent } from '../context/LanguageContext'
 
 interface PhotoDropzoneProps {
   label: string
@@ -29,7 +30,7 @@ function IconTrash() {
   )
 }
 
-function PhotoThumb({ file, onRemove }: { file: File; onRemove: () => void }) {
+function PhotoThumb({ file, onRemove, removeLabel }: { file: File; onRemove: () => void; removeLabel: string }) {
   // Created inside an effect (not useMemo during render) so StrictMode's dev-only
   // mount->cleanup->mount replay revokes the first URL before the <img> ever requests
   // it, instead of racing an in-flight blob fetch against the revoke.
@@ -53,8 +54,8 @@ function PhotoThumb({ file, onRemove }: { file: File; onRemove: () => void }) {
       <button
         type="button"
         onClick={onRemove}
-        aria-label={`Remove ${file.name}`}
-        className="absolute right-1 top-1 flex h-6 w-6 items-center justify-center rounded-full bg-black/60 text-white opacity-0 transition-opacity group-hover:opacity-100"
+        aria-label={`${removeLabel}${file.name}`}
+        className="absolute end-1 top-1 flex h-6 w-6 items-center justify-center rounded-full bg-black/60 text-white opacity-0 transition-opacity group-hover:opacity-100"
       >
         <IconTrash />
       </button>
@@ -63,6 +64,7 @@ function PhotoThumb({ file, onRemove }: { file: File; onRemove: () => void }) {
 }
 
 export default function PhotoDropzone({ label, hint, required, files, max, onChange, error }: PhotoDropzoneProps) {
+  const { ui } = useContent()
   const [dragOver, setDragOver] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
   const canAddMore = files.length < max
@@ -103,7 +105,7 @@ export default function PhotoDropzone({ label, hint, required, files, max, onCha
     <div>
       <div className="mb-1.5 flex items-baseline justify-between">
         <label htmlFor={inputId} className="text-xs font-semibold uppercase tracking-widest text-white/60">
-          {label} {!required && <span className="normal-case text-white/55">(optional)</span>}
+          {label} {!required && <span className="normal-case text-white/55">{ui.form.optional}</span>}
         </label>
         <AnimatePresence>
           {error && (
@@ -124,7 +126,7 @@ export default function PhotoDropzone({ label, hint, required, files, max, onCha
       <div className="flex flex-wrap gap-3">
         <AnimatePresence initial={false}>
           {files.map((file, i) => (
-            <PhotoThumb key={`${file.name}-${file.lastModified}-${i}`} file={file} onRemove={() => removeAt(i)} />
+            <PhotoThumb key={`${file.name}-${file.lastModified}-${i}`} file={file} onRemove={() => removeAt(i)} removeLabel={ui.form.removePhoto} />
           ))}
         </AnimatePresence>
 
@@ -132,7 +134,7 @@ export default function PhotoDropzone({ label, hint, required, files, max, onCha
           <motion.div
             role="button"
             tabIndex={0}
-            aria-label={`Upload ${label.toLowerCase()}`}
+            aria-label={`${ui.form.uploadPhoto}${label}`}
             aria-required={required}
             aria-describedby={describedBy}
             onClick={openPicker}
@@ -150,7 +152,7 @@ export default function PhotoDropzone({ label, hint, required, files, max, onCha
             }`}
           >
             <IconUpload />
-            <span className="text-[0.6rem] font-semibold uppercase tracking-wider">Add photo</span>
+            <span className="text-[0.6rem] font-semibold uppercase tracking-wider">{ui.form.addPhoto}</span>
           </motion.div>
         )}
       </div>

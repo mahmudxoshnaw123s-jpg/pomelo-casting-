@@ -5,7 +5,7 @@ import FieldShell from './FieldShell'
 import PhotoDropzone from './PhotoDropzone'
 import SplitText from './SplitText'
 import { IconCheck, IconSpinner } from './icons'
-import { application } from '../data/content'
+import { useContent } from '../context/LanguageContext'
 import { submitApplication } from '../lib/api'
 import { validateApplicationAll } from '../lib/validateApplication'
 import type { ApplicationFormErrors, ApplicationFormValues } from '../lib/validateApplication'
@@ -40,6 +40,7 @@ const particles = Array.from({ length: 14 }).map((_, i) => ({
 }))
 
 export default function ModelApplicationForm() {
+  const { application, ui } = useContent()
   const [values, setValues] = useState<ApplicationFormValues>(initialValues)
   const [touched, setTouched] = useState<Partial<Record<keyof ApplicationFormValues, boolean>>>({})
   const [status, setStatus] = useState<Status>('idle')
@@ -52,11 +53,11 @@ export default function ModelApplicationForm() {
   const [additional, setAdditional] = useState<File[]>([])
   const [photosTouched, setPhotosTouched] = useState(false)
 
-  const errors: ApplicationFormErrors = validateApplicationAll(values)
+  const errors: ApplicationFormErrors = validateApplicationAll(values, ui.validateApplication)
   const photoErrors = {
-    fullBody: photosTouched && fullBody.length === 0 ? 'A full body photo is required.' : undefined,
-    mediumShot: photosTouched && mediumShot.length === 0 ? 'A medium shot is required.' : undefined,
-    closeUp: photosTouched && closeUp.length === 0 ? 'A close-up photo is required.' : undefined,
+    fullBody: photosTouched && fullBody.length === 0 ? ui.application.fullBodyRequired : undefined,
+    mediumShot: photosTouched && mediumShot.length === 0 ? ui.application.mediumShotRequired : undefined,
+    closeUp: photosTouched && closeUp.length === 0 ? ui.application.closeUpRequired : undefined,
   }
 
   const handleChange =
@@ -108,7 +109,7 @@ export default function ModelApplicationForm() {
     additional.forEach((file) => formData.append('additional', file))
 
     try {
-      await submitApplication(formData, setProgress)
+      await submitApplication(formData, setProgress, { genericError: ui.api.genericError, networkError: ui.api.networkError })
       setStatus('success')
       setValues(initialValues)
       setTouched({})
@@ -119,7 +120,7 @@ export default function ModelApplicationForm() {
       setPhotosTouched(false)
     } catch (err) {
       setStatus('error')
-      setServerError(err instanceof Error ? err.message : 'Something went wrong. Please try again.')
+      setServerError(err instanceof Error ? err.message : ui.api.genericError)
     }
   }
 
@@ -138,7 +139,7 @@ export default function ModelApplicationForm() {
 
   return (
     <section
-      aria-label="Application form"
+      aria-label={ui.application.formAria}
       onMouseMove={handleAmbientMove}
       className="relative isolate overflow-hidden bg-gradient-to-b from-[#0b0713] via-[#130b21] to-[#0a0f1a] py-28 sm:py-36"
     >
@@ -154,15 +155,11 @@ export default function ModelApplicationForm() {
       <motion.div
         style={{ x: blobX, y: blobY }}
         className="pointer-events-none absolute -top-1/4 left-1/3 h-2/3 w-2/3 rounded-full bg-pomelo-blue/15 blur-[130px]"
-        animate={{ scale: [1, 1.08, 1] }}
-        transition={{ duration: 17, repeat: Infinity, ease: 'easeInOut' }}
         aria-hidden="true"
       />
       <motion.div
         style={{ x: useTransform(blobX, (v) => -v), y: useTransform(blobY, (v) => -v) }}
         className="pointer-events-none absolute bottom-0 -left-1/4 h-2/3 w-2/3 rounded-full bg-pomelo-purple/20 blur-[130px]"
-        animate={{ scale: [1, 1.1, 1] }}
-        transition={{ duration: 19, repeat: Infinity, ease: 'easeInOut' }}
         aria-hidden="true"
       />
       <div className="pointer-events-none absolute inset-0" aria-hidden="true">
@@ -220,26 +217,26 @@ export default function ModelApplicationForm() {
                   onClick={() => setStatus('idle')}
                   className="mt-8 text-sm font-semibold text-pomelo-blue hover:text-white"
                 >
-                  Submit another application
+                  {ui.application.submitAnother}
                 </button>
               </motion.div>
             ) : (
               <motion.form key="form" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onSubmit={handleSubmit} noValidate>
-                <h2 className="mb-6 text-sm font-semibold uppercase tracking-[0.25em] text-white/50">Model information</h2>
+                <h2 className="mb-6 text-sm font-semibold uppercase tracking-[0.25em] text-white/50">{ui.application.modelInfoHeading}</h2>
                 <div className="grid gap-6 sm:grid-cols-2">
-                  <FieldShell label="Full name" htmlFor="fullName" error={touched.fullName ? errors.fullName : undefined} showValid={touched.fullName}>
+                  <FieldShell label={ui.application.fullName} htmlFor="fullName" error={touched.fullName ? errors.fullName : undefined} showValid={touched.fullName}>
                     <input
                       id="fullName"
                       value={values.fullName}
                       onChange={handleChange('fullName')}
                       onBlur={handleBlur('fullName')}
                       className={`${fieldClass} ${borderClass('fullName')}`}
-                      placeholder="Jane Doe"
+                      placeholder={ui.application.fullNamePh}
                       autoComplete="name"
                     />
                   </FieldShell>
 
-                  <FieldShell label="Age" htmlFor="age" error={touched.age ? errors.age : undefined} showValid={touched.age}>
+                  <FieldShell label={ui.application.age} htmlFor="age" error={touched.age ? errors.age : undefined} showValid={touched.age}>
                     <input
                       id="age"
                       type="number"
@@ -249,11 +246,11 @@ export default function ModelApplicationForm() {
                       onChange={handleChange('age')}
                       onBlur={handleBlur('age')}
                       className={`${fieldClass} ${borderClass('age')}`}
-                      placeholder="24"
+                      placeholder={ui.application.agePh}
                     />
                   </FieldShell>
 
-                  <FieldShell label="Phone number" htmlFor="phone" error={touched.phone ? errors.phone : undefined} showValid={touched.phone}>
+                  <FieldShell label={ui.application.phone} htmlFor="phone" error={touched.phone ? errors.phone : undefined} showValid={touched.phone}>
                     <input
                       id="phone"
                       type="tel"
@@ -261,13 +258,13 @@ export default function ModelApplicationForm() {
                       onChange={handleChange('phone')}
                       onBlur={handleBlur('phone')}
                       className={`${fieldClass} ${borderClass('phone')}`}
-                      placeholder="+964 750 000 0000"
+                      placeholder={ui.application.phonePh}
                       autoComplete="tel"
                     />
                   </FieldShell>
 
                   <FieldShell
-                    label="Email address"
+                    label={ui.application.email}
                     htmlFor="email"
                     optional
                     error={touched.email ? errors.email : undefined}
@@ -280,34 +277,34 @@ export default function ModelApplicationForm() {
                       onChange={handleChange('email')}
                       onBlur={handleBlur('email')}
                       className={`${fieldClass} ${borderClass('email')}`}
-                      placeholder="jane@email.com"
+                      placeholder={ui.application.emailPh}
                       autoComplete="email"
                     />
                   </FieldShell>
 
-                  <FieldShell label="Height" htmlFor="height" error={touched.height ? errors.height : undefined} showValid={touched.height}>
+                  <FieldShell label={ui.application.height} htmlFor="height" error={touched.height ? errors.height : undefined} showValid={touched.height}>
                     <input
                       id="height"
                       value={values.height}
                       onChange={handleChange('height')}
                       onBlur={handleBlur('height')}
                       className={`${fieldClass} ${borderClass('height')}`}
-                      placeholder={`5'8" / 173cm`}
+                      placeholder={ui.application.heightPh}
                     />
                   </FieldShell>
 
-                  <FieldShell label="Weight" htmlFor="weight" error={touched.weight ? errors.weight : undefined} showValid={touched.weight}>
+                  <FieldShell label={ui.application.weight} htmlFor="weight" error={touched.weight ? errors.weight : undefined} showValid={touched.weight}>
                     <input
                       id="weight"
                       value={values.weight}
                       onChange={handleChange('weight')}
                       onBlur={handleBlur('weight')}
                       className={`${fieldClass} ${borderClass('weight')}`}
-                      placeholder="130lb / 59kg"
+                      placeholder={ui.application.weightPh}
                     />
                   </FieldShell>
 
-                  <FieldShell label="Hair color" htmlFor="hairColor" error={touched.hairColor ? errors.hairColor : undefined} showValid={touched.hairColor}>
+                  <FieldShell label={ui.application.hairColor} htmlFor="hairColor" error={touched.hairColor ? errors.hairColor : undefined} showValid={touched.hairColor}>
                     <select
                       id="hairColor"
                       value={values.hairColor}
@@ -316,17 +313,17 @@ export default function ModelApplicationForm() {
                       className={`${fieldClass} ${borderClass('hairColor')}`}
                     >
                       <option value="" disabled className="bg-[#130b21]">
-                        Select
+                        {ui.application.select}
                       </option>
                       {application.hairColors.map((c) => (
                         <option key={c} value={c} className="bg-[#130b21]">
-                          {c}
+                          {ui.application.hairColorLabels[c] ?? c}
                         </option>
                       ))}
                     </select>
                   </FieldShell>
 
-                  <FieldShell label="Eye color" htmlFor="eyeColor" error={touched.eyeColor ? errors.eyeColor : undefined} showValid={touched.eyeColor}>
+                  <FieldShell label={ui.application.eyeColor} htmlFor="eyeColor" error={touched.eyeColor ? errors.eyeColor : undefined} showValid={touched.eyeColor}>
                     <select
                       id="eyeColor"
                       value={values.eyeColor}
@@ -335,28 +332,28 @@ export default function ModelApplicationForm() {
                       className={`${fieldClass} ${borderClass('eyeColor')}`}
                     >
                       <option value="" disabled className="bg-[#130b21]">
-                        Select
+                        {ui.application.select}
                       </option>
                       {application.eyeColors.map((c) => (
                         <option key={c} value={c} className="bg-[#130b21]">
-                          {c}
+                          {ui.application.eyeColorLabels[c] ?? c}
                         </option>
                       ))}
                     </select>
                   </FieldShell>
 
-                  <FieldShell label="Shoe size" htmlFor="shoeSize" error={touched.shoeSize ? errors.shoeSize : undefined} showValid={touched.shoeSize}>
+                  <FieldShell label={ui.application.shoeSize} htmlFor="shoeSize" error={touched.shoeSize ? errors.shoeSize : undefined} showValid={touched.shoeSize}>
                     <input
                       id="shoeSize"
                       value={values.shoeSize}
                       onChange={handleChange('shoeSize')}
                       onBlur={handleBlur('shoeSize')}
                       className={`${fieldClass} ${borderClass('shoeSize')}`}
-                      placeholder="US 8"
+                      placeholder={ui.application.shoeSizePh}
                     />
                   </FieldShell>
 
-                  <FieldShell label="Shirt size" htmlFor="shirtSize" error={touched.shirtSize ? errors.shirtSize : undefined} showValid={touched.shirtSize}>
+                  <FieldShell label={ui.application.shirtSize} htmlFor="shirtSize" error={touched.shirtSize ? errors.shirtSize : undefined} showValid={touched.shirtSize}>
                     <select
                       id="shirtSize"
                       value={values.shirtSize}
@@ -365,7 +362,7 @@ export default function ModelApplicationForm() {
                       className={`${fieldClass} ${borderClass('shirtSize')}`}
                     >
                       <option value="" disabled className="bg-[#130b21]">
-                        Select
+                        {ui.application.select}
                       </option>
                       {application.shirtSizes.map((s) => (
                         <option key={s} value={s} className="bg-[#130b21]">
@@ -376,7 +373,7 @@ export default function ModelApplicationForm() {
                   </FieldShell>
 
                   <FieldShell
-                    label="Languages spoken"
+                    label={ui.application.languages}
                     htmlFor="languages"
                     error={touched.languages ? errors.languages : undefined}
                     showValid={touched.languages}
@@ -387,15 +384,15 @@ export default function ModelApplicationForm() {
                       onChange={handleChange('languages')}
                       onBlur={handleBlur('languages')}
                       className={`${fieldClass} ${borderClass('languages')}`}
-                      placeholder="English, Kurdish, Arabic"
+                      placeholder={ui.application.languagesPh}
                     />
                   </FieldShell>
                 </div>
 
-                <h2 className="mb-6 mt-12 text-sm font-semibold uppercase tracking-[0.25em] text-white/50">Photos</h2>
+                <h2 className="mb-6 mt-12 text-sm font-semibold uppercase tracking-[0.25em] text-white/50">{ui.application.photosHeading}</h2>
                 <div className="space-y-8">
                   <PhotoDropzone
-                    label="Full body photo"
+                    label={ui.application.fullBodyLabel}
                     required
                     files={fullBody}
                     max={1}
@@ -403,7 +400,7 @@ export default function ModelApplicationForm() {
                     error={photoErrors.fullBody}
                   />
                   <PhotoDropzone
-                    label="Medium shot"
+                    label={ui.application.mediumShotLabel}
                     required
                     files={mediumShot}
                     max={1}
@@ -411,7 +408,7 @@ export default function ModelApplicationForm() {
                     error={photoErrors.mediumShot}
                   />
                   <PhotoDropzone
-                    label="Close-up (headshot)"
+                    label={ui.application.closeUpLabel}
                     required
                     files={closeUp}
                     max={1}
@@ -419,8 +416,8 @@ export default function ModelApplicationForm() {
                     error={photoErrors.closeUp}
                   />
                   <PhotoDropzone
-                    label="Additional photos"
-                    hint="Up to 3 more — full body, movement, or editorial shots."
+                    label={ui.application.additionalLabel}
+                    hint={ui.application.additionalHint}
                     files={additional}
                     max={3}
                     onChange={setAdditional}
@@ -445,7 +442,7 @@ export default function ModelApplicationForm() {
                   <span className="pointer-events-none absolute inset-y-0 left-[-40%] w-1/3 -skew-x-12 bg-white/25 transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-[220%]" />
                   <span className="relative flex items-center gap-2">
                     {status === 'submitting' && <IconSpinner className="h-4 w-4 animate-spin" />}
-                    {status === 'submitting' ? `Submitting… ${progress}%` : 'Submit application →'}
+                    {status === 'submitting' ? `${ui.application.submitting}${progress}%` : ui.application.submit}
                   </span>
                 </motion.button>
 

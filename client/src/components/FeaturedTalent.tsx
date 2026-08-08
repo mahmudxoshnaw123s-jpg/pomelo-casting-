@@ -3,9 +3,10 @@ import { useEffect, useState } from 'react'
 import Magnetic from './Magnetic'
 import PremiumButton from './PremiumButton'
 import SplitText from './SplitText'
-import { featuredTalent } from '../data/content'
+import { useContent } from '../context/LanguageContext'
 import { images } from '../data/images'
 import { fetchModels } from '../lib/models'
+import type { featuredTalent as FeaturedTalentEn } from '../data/content.en'
 
 interface TalentCardData {
   src: string
@@ -14,11 +15,13 @@ interface TalentCardData {
 }
 
 // Placeholder talent used before any featured models are uploaded (keeps the section full).
-const fallbackCards: TalentCardData[] = featuredTalent.images.map((item) => ({
-  src: images[item.image],
-  caption: item.caption,
-  tag: item.tag,
-}))
+function buildFallbackCards(featuredTalent: typeof FeaturedTalentEn): TalentCardData[] {
+  return featuredTalent.images.map((item) => ({
+    src: images[item.image],
+    caption: item.caption,
+    tag: item.tag,
+  }))
+}
 
 // Clean staggered rhythm — each column sits at a different height, like an editorial spread.
 const STAGGER = [
@@ -55,32 +58,53 @@ function Portrait({ item, index }: { item: TalentCardData; index: number }) {
   )
 }
 
+// Shown only while real talent photos are being fetched — avoids ever flashing the
+// generic placeholder cards (which have real-looking captions) as if they were final content.
+function PortraitSkeleton({ index }: { index: number }) {
+  const layout = STAGGER[index % STAGGER.length]
+  return (
+    <div className={`${layout.mt}`}>
+      <div className={`relative ${layout.aspect} w-full animate-pulse overflow-hidden rounded-xl bg-white/[0.06]`} />
+      <div className="mt-4 space-y-2">
+        <div className="h-5 w-2/3 animate-pulse rounded bg-white/[0.06]" />
+        <div className="h-2.5 w-1/3 animate-pulse rounded bg-white/[0.06]" />
+      </div>
+    </div>
+  )
+}
+
 export default function FeaturedTalent() {
-  const [cards, setCards] = useState<TalentCardData[]>(fallbackCards)
+  const { featuredTalent, ui } = useContent()
+  const [cards, setCards] = useState<TalentCardData[] | null>(null)
 
   useEffect(() => {
     let active = true
+    const fallbackCards = buildFallbackCards(featuredTalent)
     fetchModels(true)
       .then((models) => {
         if (!active) return
         const modelCards: TalentCardData[] = models
           .filter((m) => m.images.length > 0)
-          .map((m) => ({ src: m.images[0].url, caption: m.firstName, tag: 'Pomelo Talent' }))
-        if (modelCards.length === 0) return
+          .map((m) => ({ src: m.images[0].url, caption: m.firstName, tag: ui.featuredTalent.pomeloTalentTag }))
+        if (modelCards.length === 0) {
+          setCards(fallbackCards)
+          return
+        }
         setCards([...modelCards, ...fallbackCards].slice(0, 4))
       })
       .catch(() => {
-        /* keep placeholders before Firebase is configured */
+        if (active) setCards(fallbackCards)
       })
     return () => {
       active = false
     }
-  }, [])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [featuredTalent])
 
-  const list = cards.slice(0, 4)
+  const list = cards?.slice(0, 4) ?? null
 
   return (
-    <section aria-label="Featured talent" className="relative isolate overflow-hidden bg-[#0a0f1a] py-28 sm:py-36">
+    <section aria-label={ui.featuredTalent.sectionAria} className="relative isolate overflow-hidden bg-[#0a0f1a] py-28 sm:py-36">
       {/* one soft, calm glow for depth — no grid or particles, so the photos lead */}
       <div
         className="pointer-events-none absolute left-1/2 top-1/2 h-[36rem] w-[60rem] max-w-[92vw] -translate-x-1/2 -translate-y-1/2 rounded-[50%] opacity-40 blur-[130px]"
@@ -105,11 +129,17 @@ export default function FeaturedTalent() {
         </div>
 
         <div className="mt-16 grid grid-cols-2 gap-6 sm:gap-8 lg:mt-20 lg:flex lg:items-start lg:gap-8">
-          {list.map((item, i) => (
-            <div key={`${item.caption}-${i}`} className="lg:flex-1">
-              <Portrait item={item} index={i} />
-            </div>
-          ))}
+          {list === null
+            ? Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} className="lg:flex-1">
+                  <PortraitSkeleton index={i} />
+                </div>
+              ))
+            : list.map((item, i) => (
+                <div key={`${item.caption}-${i}`} className="lg:flex-1">
+                  <Portrait item={item} index={i} />
+                </div>
+              ))}
         </div>
 
         <motion.div

@@ -1,4 +1,4 @@
-import { about, contact, faqSection, services } from './content'
+import { about, contact, faqSection, services } from './content.en'
 
 // Central SEO config.
 // SITE_URL is a placeholder until production hosting is decided — once the real domain is live,

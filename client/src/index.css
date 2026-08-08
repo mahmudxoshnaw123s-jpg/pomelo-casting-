@@ -3,12 +3,102 @@
 @import "@fontsource/montserrat/500.css";
 @import "@fontsource/montserrat/600.css";
 @import "@fontsource/montserrat/700.css";
+@import "@fontsource/cairo/400.css";
+@import "@fontsource/cairo/500.css";
+@import "@fontsource/cairo/600.css";
+@import "@fontsource/cairo/700.css";
+@import "@fontsource/vazirmatn/400.css";
+@import "@fontsource/vazirmatn/500.css";
+@import "@fontsource/vazirmatn/600.css";
+@import "@fontsource/vazirmatn/700.css";
+
+/*
+ * The imports above use font-display: swap for the Arabic-script subsets, which briefly
+ * renders Arabic/Kurdish text in a fallback font before the real font loads. That fallback
+ * font doesn't have correct Arabic-script contextual joining, so letters flash as visibly
+ * disconnected for a moment on every fresh page load. These overrides target just the
+ * Arabic-script subset (same files, same weights) with font-display: block, so the browser
+ * waits briefly for the real font instead of ever showing broken letter joining.
+ *
+ * Cairo is used for Arabic only. Kurdish uses Vazirmatn instead of Cairo: Cairo's glyphs
+ * for the Kurdish-only letters (ۆ ێ ڵ ڕ) render with the small diacritic mark floating
+ * disconnected above the base letter (a real glyph-design defect, reproducible even after
+ * Cairo has fully loaded/settled — not a loading-timing issue). Vazirmatn draws all of
+ * these correctly integrated, confirmed by rendering comparison. See
+ * feedback-kurdish-font-glyph-defect memory.
+ */
+@font-face {
+  font-family: 'Cairo';
+  font-style: normal;
+  font-display: block;
+  font-weight: 400;
+  src: url(../node_modules/@fontsource/cairo/files/cairo-arabic-400-normal.woff2) format('woff2');
+  unicode-range: U+0600-06FF,U+0750-077F,U+0870-088E,U+0890-0891,U+0897-08E1,U+08E3-08FF,U+200C-200E,U+2010-2011,U+204F,U+2E41,U+FB50-FDFF,U+FE70-FE74,U+FE76-FEFC;
+}
+@font-face {
+  font-family: 'Cairo';
+  font-style: normal;
+  font-display: block;
+  font-weight: 500;
+  src: url(../node_modules/@fontsource/cairo/files/cairo-arabic-500-normal.woff2) format('woff2');
+  unicode-range: U+0600-06FF,U+0750-077F,U+0870-088E,U+0890-0891,U+0897-08E1,U+08E3-08FF,U+200C-200E,U+2010-2011,U+204F,U+2E41,U+FB50-FDFF,U+FE70-FE74,U+FE76-FEFC;
+}
+@font-face {
+  font-family: 'Cairo';
+  font-style: normal;
+  font-display: block;
+  font-weight: 600;
+  src: url(../node_modules/@fontsource/cairo/files/cairo-arabic-600-normal.woff2) format('woff2');
+  unicode-range: U+0600-06FF,U+0750-077F,U+0870-088E,U+0890-0891,U+0897-08E1,U+08E3-08FF,U+200C-200E,U+2010-2011,U+204F,U+2E41,U+FB50-FDFF,U+FE70-FE74,U+FE76-FEFC;
+}
+@font-face {
+  font-family: 'Cairo';
+  font-style: normal;
+  font-display: block;
+  font-weight: 700;
+  src: url(../node_modules/@fontsource/cairo/files/cairo-arabic-700-normal.woff2) format('woff2');
+  unicode-range: U+0600-06FF,U+0750-077F,U+0870-088E,U+0890-0891,U+0897-08E1,U+08E3-08FF,U+200C-200E,U+2010-2011,U+204F,U+2E41,U+FB50-FDFF,U+FE70-FE74,U+FE76-FEFC;
+}
+@font-face {
+  font-family: 'Vazirmatn';
+  font-style: normal;
+  font-display: block;
+  font-weight: 400;
+  src: url(../node_modules/@fontsource/vazirmatn/files/vazirmatn-arabic-400-normal.woff2) format('woff2');
+  unicode-range: U+0600-06FF,U+0750-077F,U+0870-088E,U+0890-0891,U+0897-08E1,U+08E3-08FF,U+200C-200E,U+2010-2011,U+204F,U+2E41,U+FB50-FDFF,U+FE70-FE74,U+FE76-FEFC;
+}
+@font-face {
+  font-family: 'Vazirmatn';
+  font-style: normal;
+  font-display: block;
+  font-weight: 500;
+  src: url(../node_modules/@fontsource/vazirmatn/files/vazirmatn-arabic-500-normal.woff2) format('woff2');
+  unicode-range: U+0600-06FF,U+0750-077F,U+0870-088E,U+0890-0891,U+0897-08E1,U+08E3-08FF,U+200C-200E,U+2010-2011,U+204F,U+2E41,U+FB50-FDFF,U+FE70-FE74,U+FE76-FEFC;
+}
+@font-face {
+  font-family: 'Vazirmatn';
+  font-style: normal;
+  font-display: block;
+  font-weight: 600;
+  src: url(../node_modules/@fontsource/vazirmatn/files/vazirmatn-arabic-600-normal.woff2) format('woff2');
+  unicode-range: U+0600-06FF,U+0750-077F,U+0870-088E,U+0890-0891,U+0897-08E1,U+08E3-08FF,U+200C-200E,U+2010-2011,U+204F,U+2E41,U+FB50-FDFF,U+FE70-FE74,U+FE76-FEFC;
+}
+@font-face {
+  font-family: 'Vazirmatn';
+  font-style: normal;
+  font-display: block;
+  font-weight: 700;
+  src: url(../node_modules/@fontsource/vazirmatn/files/vazirmatn-arabic-700-normal.woff2) format('woff2');
+  unicode-range: U+0600-06FF,U+0750-077F,U+0870-088E,U+0890-0891,U+0897-08E1,U+08E3-08FF,U+200C-200E,U+2010-2011,U+204F,U+2E41,U+FB50-FDFF,U+FE70-FE74,U+FE76-FEFC;
+}
 
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
   --font-sans: "Montserrat", ui-sans-serif, system-ui, sans-serif;
   --font-display: "Montserrat", ui-sans-serif, system-ui, sans-serif;
+  --font-ar: "Cairo", ui-sans-serif, system-ui, sans-serif;
+  --font-ku: "Vazirmatn", ui-sans-serif, system-ui, sans-serif;
 
   --color-pomelo-purple: #895193;
   --color-pomelo-purple-dark: #5f3766;
@@ -47,10 +137,45 @@
     scroll-behavior: smooth;
   }
 
+  /*
+   * This is a single-page scroller where several sections (Hero, Work, Insights, FAQ,
+   * Contact) each run their own always-on decorative animation loop (blurred ambient
+   * blobs, floating particles, a rotating conic-gradient) via Framer Motion `animate`
+   * with `repeat: Infinity` — these start on mount and never stop, regardless of scroll
+   * position. Because nothing in a single-page layout ever unmounts, by the time a user
+   * scrolls to the Contact section every earlier section's loop is still compositing
+   * off-screen, and measured frame times there dropped to 11-18fps. `content-visibility:
+   * auto` tells the browser to skip layout/paint/compositing entirely for section
+   * subtrees that are off-screen, which stops that off-screen animation cost without
+   * touching each section's animation code individually. `contain-intrinsic-size`
+   * gives an initial size estimate so a section doesn't collapse to 0 height before its
+   * first render; `auto` makes the browser remember each section's real rendered size
+   * after that for accurate layout on subsequent scrolls.
+   */
+  section {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 900px;
+  }
+
   body {
     @apply bg-base text-ink font-sans antialiased m-0;
     font-feature-settings: "ss01" 1;
     transition: background-color 0.35s ease, color 0.35s ease;
+  }
+
+  html[lang="ar"] {
+    --font-sans: var(--font-ar);
+    --font-display: var(--font-ar);
+  }
+
+  html[lang="ku"] {
+    --font-sans: var(--font-ku);
+    --font-display: var(--font-ku);
+  }
+
+  html[lang="ar"] body,
+  html[lang="ku"] body {
+    font-feature-settings: normal;
   }
 
   ::selection {
@@ -84,6 +209,10 @@
   .marquee-track {
     animation: marquee 26s linear infinite;
   }
+
+  [dir="rtl"] .marquee-track {
+    animation-name: marquee-rtl;
+  }
 }
 
 @keyframes marquee {
@@ -92,6 +221,15 @@
   }
   to {
     transform: translateX(-50%);
+  }
+}
+
+@keyframes marquee-rtl {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(50%);
   }
 }
 
