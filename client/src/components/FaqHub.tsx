@@ -1,6 +1,5 @@
-import { AnimatePresence, motion, useMotionValue, useSpring, useTransform } from 'framer-motion'
+import { AnimatePresence, motion } from 'framer-motion'
 import { useEffect, useState } from 'react'
-import type { MouseEvent } from 'react'
 import Magnetic from './Magnetic'
 import PomeloMark from './PomeloMark'
 import pomeloLogo from '../assets/pomelo-logo-dark-optimized.png'
@@ -137,17 +136,6 @@ export default function FaqHub() {
   const active = topics.find((t) => t.key === activeTopic)!
   const item = active.items[index] ?? active.items[0]
 
-  const mx = useMotionValue(0.5)
-  const my = useMotionValue(0.5)
-  const rotateX = useSpring(useTransform(my, [0, 1], [7, 1]), { stiffness: 150, damping: 20 })
-  const rotateY = useSpring(useTransform(mx, [0, 1], [-8, -2]), { stiffness: 150, damping: 20 })
-
-  const handlePanelMove = (e: MouseEvent<HTMLDivElement>) => {
-    const rect = e.currentTarget.getBoundingClientRect()
-    mx.set((e.clientX - rect.left) / rect.width)
-    my.set((e.clientY - rect.top) / rect.height)
-  }
-
   const selectTopic = (key: TopicKey) => {
     setActiveTopic(key)
     setIndex(0)
@@ -190,15 +178,9 @@ export default function FaqHub() {
         transition={{ duration: 0.8, ease }}
         className="relative mx-auto max-w-5xl px-6"
       >
-        <motion.div
-          onMouseMove={handlePanelMove}
+        <div
           onMouseEnter={() => setPaused(true)}
-          onMouseLeave={() => {
-            mx.set(0.5)
-            my.set(0.5)
-            setPaused(false)
-          }}
-          style={{ rotateX, rotateY, transformPerspective: 1400 }}
+          onMouseLeave={() => setPaused(false)}
           className="relative"
         >
           <GripHand side="left" />
@@ -335,7 +317,7 @@ export default function FaqHub() {
               </div>
             </div>
           </div>
-        </motion.div>
+        </div>
       </motion.div>
     </section>
   )

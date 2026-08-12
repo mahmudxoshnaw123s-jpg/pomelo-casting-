@@ -47,7 +47,7 @@ export function validateApplicationField(
     case 'age': {
       if (!value.trim()) return messages.age
       const age = Number(value)
-      if (!Number.isInteger(age) || age < 14 || age > 90) return messages.ageInvalid
+      if (!Number.isInteger(age) || age < 1 || age > 50) return messages.ageInvalid
       return ''
     }
     case 'phone':

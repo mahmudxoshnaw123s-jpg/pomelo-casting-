@@ -543,7 +543,7 @@ export const ui = {
     fullName: 'Please enter your full name.',
     nameShort: 'Name looks too short.',
     age: 'Please enter your age.',
-    ageInvalid: 'Enter a valid age (14–90).',
+    ageInvalid: 'Enter a valid age (1–50).',
     phone: 'Please enter your phone number.',
     phoneInvalid: 'Enter a valid phone number.',
     email: 'Enter a valid email address.',

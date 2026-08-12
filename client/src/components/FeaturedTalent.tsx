@@ -1,22 +1,28 @@
 import { motion } from 'framer-motion'
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import Magnetic from './Magnetic'
 import PremiumButton from './PremiumButton'
 import SplitText from './SplitText'
-import { useContent } from '../context/LanguageContext'
+import { useContent, useLanguage } from '../context/LanguageContext'
 import { images } from '../data/images'
 import { fetchModels } from '../lib/models'
-import type { featuredTalent as FeaturedTalentEn } from '../data/content.en'
+import type { featuredTalent as FeaturedTalentEn, talentPage as TalentPageEn } from '../data/content.en'
 
 interface TalentCardData {
+  id: string | null
   src: string
   caption: string
   tag: string
 }
 
 // Placeholder talent used before any featured models are uploaded (keeps the section full).
-function buildFallbackCards(featuredTalent: typeof FeaturedTalentEn): TalentCardData[] {
+// Matched to the /talent page's fallback gallery by image, so clicking still opens the
+// same placeholder profile there instead of going nowhere.
+function buildFallbackCards(featuredTalent: typeof FeaturedTalentEn, talentPage: typeof TalentPageEn): TalentCardData[] {
+  const idByImage = new Map(talentPage.gallery.map((g) => [g.image, g.id]))
   return featuredTalent.images.map((item) => ({
+    id: idByImage.get(item.image) ?? null,
     src: images[item.image],
     caption: item.caption,
     tag: item.tag,
@@ -33,6 +39,24 @@ const STAGGER = [
 
 function Portrait({ item, index }: { item: TalentCardData; index: number }) {
   const layout = STAGGER[index % STAGGER.length]
+  const { href } = useLanguage()
+  const photo = (
+    <div className={`relative ${layout.aspect} w-full overflow-hidden rounded-xl`}>
+      <img
+        src={item.src}
+        alt={item.caption}
+        loading="lazy"
+        className="h-full w-full object-cover grayscale transition-all duration-[900ms] ease-[cubic-bezier(0.16,1,0.3,1)] will-change-transform group-hover:scale-[1.04] group-hover:grayscale-0"
+        style={{ objectPosition: 'center 15%' }}
+      />
+    </div>
+  )
+  const caption = (
+    <figcaption className="mt-4">
+      <p className="font-display text-xl leading-tight text-white transition-colors group-hover:text-pomelo-blue">{item.caption}</p>
+      <p className="mt-1 text-[0.65rem] font-semibold uppercase tracking-[0.3em] text-white/40">{item.tag}</p>
+    </figcaption>
+  )
   return (
     <motion.figure
       initial={{ opacity: 0, y: 40 }}
@@ -41,19 +65,17 @@ function Portrait({ item, index }: { item: TalentCardData; index: number }) {
       transition={{ duration: 0.8, delay: index * 0.1, ease: [0.16, 1, 0.3, 1] }}
       className={`group ${layout.mt}`}
     >
-      <div className={`relative ${layout.aspect} w-full overflow-hidden rounded-xl`}>
-        <img
-          src={item.src}
-          alt={item.caption}
-          loading="lazy"
-          className="h-full w-full object-cover grayscale transition-all duration-[900ms] ease-[cubic-bezier(0.16,1,0.3,1)] will-change-transform group-hover:scale-[1.04] group-hover:grayscale-0"
-          style={{ objectPosition: 'center 15%' }}
-        />
-      </div>
-      <figcaption className="mt-4">
-        <p className="font-display text-xl leading-tight text-white">{item.caption}</p>
-        <p className="mt-1 text-[0.65rem] font-semibold uppercase tracking-[0.3em] text-white/40">{item.tag}</p>
-      </figcaption>
+      {item.id ? (
+        <Link to={href(`/talent?model=${encodeURIComponent(item.id)}`)}>
+          {photo}
+          {caption}
+        </Link>
+      ) : (
+        <Link to={href('/talent')}>
+          {photo}
+          {caption}
+        </Link>
+      )}
     </motion.figure>
   )
 }
@@ -74,18 +96,18 @@ function PortraitSkeleton({ index }: { index: number }) {
 }
 
 export default function FeaturedTalent() {
-  const { featuredTalent, ui } = useContent()
+  const { featuredTalent, talentPage, ui } = useContent()
   const [cards, setCards] = useState<TalentCardData[] | null>(null)
 
   useEffect(() => {
     let active = true
-    const fallbackCards = buildFallbackCards(featuredTalent)
+    const fallbackCards = buildFallbackCards(featuredTalent, talentPage)
     fetchModels(true)
       .then((models) => {
         if (!active) return
         const modelCards: TalentCardData[] = models
           .filter((m) => m.images.length > 0)
-          .map((m) => ({ src: m.images[0].url, caption: m.firstName, tag: ui.featuredTalent.pomeloTalentTag }))
+          .map((m) => ({ id: m.id, src: m.images[0].url, caption: m.firstName, tag: ui.featuredTalent.pomeloTalentTag }))
         if (modelCards.length === 0) {
           setCards(fallbackCards)
           return

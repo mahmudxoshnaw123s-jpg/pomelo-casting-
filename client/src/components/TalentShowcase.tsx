@@ -1,5 +1,6 @@
 import { AnimatePresence, motion, useScroll, useTransform } from 'framer-motion'
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import AmbientField from './AmbientField'
 import BrandPhoto from './BrandPhoto'
 import Magnetic from './Magnetic'
@@ -244,7 +245,17 @@ export default function TalentShowcase() {
   const { talentPage, ui } = useContent()
   const [rawModels, setRawModels] = useState<TalentModel[] | null>(null)
   const [filters, setFilters] = useState<TalentFilters>(EMPTY_FILTERS)
-  const [openId, setOpenId] = useState<string | null>(null)
+  const [searchParams, setSearchParams] = useSearchParams()
+  const [openId, setOpenId] = useState<string | null>(() => searchParams.get('model'))
+
+  const closeModal = () => {
+    setOpenId(null)
+    if (searchParams.has('model')) {
+      const next = new URLSearchParams(searchParams)
+      next.delete('model')
+      setSearchParams(next, { replace: true })
+    }
+  }
   const heroRef = useRef<HTMLDivElement>(null)
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ['start start', 'end start'] })
   const heroScale = useTransform(scrollYProgress, [0, 1], [1, 1.15])
@@ -425,7 +436,7 @@ export default function TalentShowcase() {
         </motion.div>
       </section>
 
-      <AnimatePresence>{openItem && <Lightbox item={openItem} onClose={() => setOpenId(null)} />}</AnimatePresence>
+      <AnimatePresence>{openItem && <Lightbox item={openItem} onClose={closeModal} />}</AnimatePresence>
     </div>
   )
 }

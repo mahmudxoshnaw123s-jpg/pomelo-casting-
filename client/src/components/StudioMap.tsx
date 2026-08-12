@@ -76,8 +76,6 @@ export default function StudioMap() {
   const my = useMotionValue(0)
   const smx = useSpring(mx, { stiffness: 45, damping: 20 })
   const smy = useSpring(my, { stiffness: 45, damping: 20 })
-  const tiltX = useTransform(smy, [-0.5, 0.5], [4, -4])
-  const tiltY = useTransform(smx, [-0.5, 0.5], [-4, 4])
   const glowX = useTransform(smx, [-0.5, 0.5], [-18, 18])
   const glowY = useTransform(smy, [-0.5, 0.5], [-14, 14])
 
@@ -140,7 +138,6 @@ export default function StudioMap() {
           whileInView={{ opacity: 1, y: 0, scale: 1 }}
           viewport={{ once: true, amount: 0.2 }}
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-          style={{ rotateX: tiltX, rotateY: tiltY, transformPerspective: 1200 }}
           className="relative isolate mx-auto mt-14 max-w-3xl rounded-[2rem] p-px"
         >
           <div className="relative h-[360px] w-full overflow-hidden rounded-[calc(2rem-1px)] border border-white/15 bg-white/[0.04] shadow-2xl shadow-black/50 backdrop-blur-xl sm:h-[420px]">

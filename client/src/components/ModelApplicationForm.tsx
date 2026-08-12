@@ -240,8 +240,8 @@ export default function ModelApplicationForm() {
                     <input
                       id="age"
                       type="number"
-                      min={14}
-                      max={90}
+                      min={1}
+                      max={50}
                       value={values.age}
                       onChange={handleChange('age')}
                       onBlur={handleBlur('age')}
